@@ -1,0 +1,151 @@
+backend:
+  name: github
+  repo: jtseng20/r3f-app
+  branch: main # Branch to update
+
+# Save media (like profile pictures) to the public/assets folder
+media_folder: "public/assets/uploads"
+public_folder: "assets/uploads"
+local_backend: true
+
+collections:
+  - name: "pages"
+    label: "Pages"
+    files:
+      - label: "Home Page"
+        name: "home"
+        file: "public/content/home.json"
+        fields:
+          - label: "Intro Section"
+            name: "intro"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Subtitle", name: "subtitle", widget: "string" }
+              - { label: "Nav Links", name: "navLinks", widget: "list", field: { name: "link", widget: "string" } }
+          - label: "Robot Section"
+            name: "robot"
+            widget: "object"
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+          - label: "Join Us Section"
+            name: "joinUs"
+            widget: "object"
+            fields:
+              - { label: "Title Line 1", name: "titleLine1", widget: "string" }
+              - { label: "Title Line 2", name: "titleLine2", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+              - { label: "Button Text", name: "button", widget: "string" }
+      - label: "Join Page"
+        name: "join"
+        file: "public/content/join.json"
+        fields:
+          - { label: "Page Title", name: "title", widget: "string" }
+          - { label: "Intro Text", name: "introText", widget: "text" }
+          - label: "Research Topics"
+            name: "researchTopics"
+            widget: "list"
+            field: { label: "Topic", name: "topic", widget: "string" }
+          - label: "Application Form Details"
+            name: "applicationForm"
+            widget: "object"
+            fields:
+              - { label: "Form Link URL", name: "link", widget: "string" }
+              - { label: "Form Text", name: "text", widget: "text", hint: "The text surrounding the link. The phrase 'research application form' will automatically become the clickable link." }
+              - { label: "Disclaimer", name: "disclaimer", widget: "text" }
+          - { label: "Projects Heading", name: "projectsHeading", widget: "string" }
+          - { label: "No Projects Message", name: "noProjectsMessage", widget: "text", hint: "Displayed when there are no active recruitment posts." }
+          - { label: "Footer Note", name: "footerNote", widget: "text", hint: "The phrase 'research application form' will automatically become the clickable link." }
+
+  - name: "publications"
+    label: "Publications"
+    folder: "public/content/publications"
+    create: true
+    extension: "json"
+    format: "json"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Authors", name: "authors", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: "Publication Type / Venue", name: "type", widget: "string", required: false }
+      - { label: "Award (Optional)", name: "award", widget: "string", required: false }
+      - { label: "Link", name: "link", widget: "string" }
+
+  - name: "people"
+    label: "People"
+    folder: "public/content/people"
+    create: true
+    extension: "json"
+    format: "json"
+    fields:
+      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Role", name: "role", widget: "string" }
+      - { label: "Category", name: "category", widget: "select", options:["PI", "Fellows", "Students", "Alumni"] }
+      - { label: "Image", name: "image", widget: "image", required: false }
+      - { label: "Bio (PI Only)", name: "bio", widget: "text", required: false }
+
+  - name: "courses"
+    label: "Courses"
+    folder: "public/content/courses"
+    create: true
+    extension: "json"
+    format: "json"
+    fields:
+      - { label: "Course Code", name: "code", widget: "string", hint: "e.g., CS 348E" }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Image", name: "image", widget: "image" }
+      - { label: "Link", name: "link", widget: "string", required: false }
+      - { label: "Currently Active", name: "active", widget: "boolean", default: true }
+      - { label: "Last Offered (if inactive)", name: "last_offered", widget: "string", required: false, hint: "e.g., Spring 2023" }
+
+  - name: "recruitment"
+    label: "Recruitment Projects"
+    folder: "public/content/recruitment"
+    create: true
+    extension: "json"
+    format: "json"
+    fields:
+      - { label: "Project Title", name: "title", widget: "string" }
+      - { label: "Posted Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: "Contact Name", name: "contact", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Application Link", name: "link", widget: "string", required: false }
+  
+  - name: "highlights"
+    label: "Join Us Highlights"
+    folder: "public/content/highlights"
+    create: true
+    extension: "json"
+    format: "json"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Media (Image or Video)", name: "media", widget: "file", hint: "Upload an image or a short mp4/webm video" }
+      - { label: "Link", name: "link", widget: "string" }
+
+  - name: "turntable"
+    label: "Turntable Sections"
+    folder: "public/content/turntable"
+    create: true
+    format: "json"
+    extension: "json"
+    slug: "{{order}}-{{slug}}"
+    fields:
+      - { label: "Order", name: "order", widget: "number", value_type: "int", hint: "Determines the slot order (0, 1, 2...)" }
+      - { label: "Label", name: "label", widget: "string" }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Image", name: "image", widget: "image", required: false }
+      - { label: "Description", name: "description", widget: "text" }
+      - label: "Highlights"
+        name: "highlights"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Title", name: "title", widget: "string" }
+          - { label: "Description", name: "description", widget: "text" }
+          - { label: "Link URL", name: "link", widget: "string", required: false, hint: "Optional link for a 'Read More' button" }
+          - { label: "Video Type", name: "videoType", widget: "select", options: ["none", "youtube", "upload"], default: "none" }
+          - { label: "YouTube Video ID", name: "videoId", widget: "string", required: false, hint: "Only used if Video Type is 'youtube' (e.g. dQw4w9WgXcQ)" }
+          - { label: "Video File", name: "videoUrl", widget: "file", required: false, hint: "Only used if Video Type is 'upload'" }

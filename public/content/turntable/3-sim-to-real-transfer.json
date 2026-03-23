@@ -1,0 +1,8 @@
+{
+  "order": 3,
+  "label": "Bridging the Gap",
+  "title": "Sim-to-Real Transfer",
+  "image": "/assets/uploads/sim2real.png",
+  "description": "Simulation allows us to explore motion at scale, but transferring policies learned in simulation to the physical world is challenging. Much of our research focuses on closing this gap, developing methods that make simulated learning reliable for real-world deployment.",
+  "highlights": []
+}

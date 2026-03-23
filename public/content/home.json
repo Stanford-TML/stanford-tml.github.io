@@ -1,0 +1,23 @@
+{
+  "intro": {
+    "title": "The Movement Lab",
+    "subtitle": "@ Stanford",
+    "navLinks": [
+      "People",
+      "Publications",
+      "Courses",
+      "Join"
+    ]
+  },
+  "robot": {
+    "name": "Dr. Karen Liu",
+    "title": "Principal Investigator",
+    "description": "Welcome to The Movement Lab website! At TML, we study how intelligence emerges through interaction with the physical world. Our research combines machine learning and physics approaches to understand and synthesize movement, from human locomotion to dexterous manipulation to humanoid robotics. By unifying insights from computer graphics, robotics, and biomechanics, we build algorithms and systems that allow agents—both simulated and physical—to perceive, reason, and act in environments governed by the laws of physics."
+  },
+  "joinUs": {
+    "titleLine1": "Join The",
+    "titleLine2": "Movement",
+    "description": "We are looking for researchers, engineers, and dreamers who want to shape the future of embodied intelligence. Help us build the next generation of intelligent movement.",
+    "button": "OPEN POSITIONS"
+  }
+}

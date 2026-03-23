@@ -1,0 +1,9 @@
+{
+  "code": "CS348I",
+  "title": "Computer Graphics in the Era of AI",
+  "description": "This course introduces deep learning methods and AI technologies applied to four main areas of Computer Graphics: rendering, geometry, animation, and computational photography.",
+  "image": "https://picsum.photos/id/974/1920/1280.webp",
+  "link": "http://cs348i.stanford.edu/",
+  "active": false,
+  "last_offered": "Winter 2024"
+}

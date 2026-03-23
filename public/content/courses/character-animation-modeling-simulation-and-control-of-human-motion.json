@@ -1,0 +1,9 @@
+{
+  "code": "CS 348E",
+  "title": "Character Animation: Modeling, Simulation, and Control of Human Motion",
+  "description": "This course introduces technologies and mathematical tools for simulating, modeling, and controlling human/animal/robot movements. Students will be exposed to integrated knowledge and techniques across computer graphics, robotics, machine learning and biomechanics.",
+  "image": "https://picsum.photos/id/433/1920/1280.webp",
+  "link": "#",
+  "active": false,
+  "last_offered": "Spring 2023"
+}

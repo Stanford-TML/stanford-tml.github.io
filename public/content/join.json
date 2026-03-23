@@ -1,0 +1,23 @@
+{
+  "title": "Join Us",
+  "introText": "Thanks for your interest in joining TML! Research in our lab typically involves:",
+  "researchTopics":[
+    "Building generative models for motion synthesis or control",
+    "Experimenting with humanoids, robot arms, exoskeletons and dexterous hands",
+    "Training virtual agents using RL and transfer to real robots",
+    "Collecting data with different motion capture systems",
+    "Pre-training or fine-tuning VLMs for policy development",
+    "Developing and using multibody simulators",
+    "Designing and building 3D-printable humanoids",
+    "Solving both convex and non-convex optimization problems",
+    "Analyzing, simulating and understanding human interaction with assistive devices and robots."
+  ],
+  "applicationForm": {
+    "link": "https://forms.gle/...",
+    "text": "If you are interested in working at TML, please fill out the research application form (Stanford email required).",
+    "disclaimer": "Your submission will be reviewed by current TML members—typically those you indicate in the form. We will contact you in two weeks if your background interests align with ongoing projects. Due to the high volume of applications received, we regret that we are unable to respond to all submissions."
+  },
+  "projectsHeading": "Open Project Opportunities:",
+  "noProjectsMessage": "No specific projects are actively recruiting at this exact moment, but we are always looking for great talent.",
+  "footerNote": "If none of these projects interest you, but you would still like to work with the Movement Lab, please write a short cover letter explaining your motivations and/or what you would like to do (some examples: pursue your own research project, join existing research projects in either a researcher or a software engineering role, etc.) and submit it as your answer to the question \"Specify any project you are interested in working on.\" on the research application form. Then select at least one Movement Lab member on the last question."
+}

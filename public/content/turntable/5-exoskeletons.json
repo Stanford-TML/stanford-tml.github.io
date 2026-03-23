@@ -1,0 +1,8 @@
+{
+  "order": 5,
+  "label": "Embodied Robotics",
+  "title": "Exoskeletons",
+  "image": "/assets/uploads/exo.png",
+  "description": "Exoskeletons represent the frontier of human-robot integration. These assistive systems combine advances in robotics, sensing, and machine learning with lightweight hardware design. Our work spans the full stack—from electronics and mechanics to data-driven behavior modeling and intent prediction.",
+  "highlights": []
+}
