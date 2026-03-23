@@ -16,7 +16,7 @@ const PATHS = {
   safetyDefeat: 'gltf/defeat/defeat.gltf',
   pick: 'gltf/pick/pick.gltf',
   tree: 'assets/meshes/tree.obj',
-  muscle: 'gltf/muscle/muscle.gltf',
+  muscle: 'gltf/muscle/muscle-v2.glb',
   exo: 'gltf/exo/exo.glb',
   font: 'Concert One_Regular.json'
 }
