@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: jtseng20/r3f-app
+  repo: Stanford-TML/stanford-tml.github.io
   branch: main # Branch to update
 
 # Save media (like profile pictures) to the public/assets folder
