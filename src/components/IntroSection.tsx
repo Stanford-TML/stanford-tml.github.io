@@ -6,8 +6,8 @@ import * as THREE from 'three'
 import { getSectionOffsets } from '../ScrollManager'
 import { getHomeContentSync } from '../services/cms'
 
-const FONT_URL = 'Montserrat_Regular.json'
-const BUTTON_FONT_URL = 'fonts/Montserrat-Regular.ttf' 
+const FONT_URL = '/fonts/Montserrat_Regular.json'
+const BUTTON_FONT_URL = '/fonts/Montserrat-Regular.ttf' 
 
 // --- NEON SIGN COMPONENT ---
 const NeonSign = ({ text, position, color, intensity, size }: any) => {
@@ -213,35 +213,35 @@ export const IntroSection = () => {
       {showRobots && (
         <group>
              <IntroRobot 
-                path="gltf/g1_lay/g1_lay.gltf"
+                path="/gltf/g1_lay/g1_lay.gltf"
                 name="Robot: Lay"
                 defaultPos={[1.45, 0.41, 0]} 
                 defaultRot={[-0.07, -1.44, 0]}
                 defaultScale={0.5}
             />
             <IntroRobot 
-                path="gltf/g1_sit_loop/g1_sit_loop.gltf"
+                path="/gltf/g1_sit_loop/g1_sit_loop.gltf"
                 name="Robot: Sit (G1)"
                 defaultPos={[-2.7, 0.31, 0.07]}
                 defaultRot={[0, -1.4, 0]}
                 defaultScale={0.5}
             />
             <IntroRobot 
-                path="gltf/run_pose/run_pose.gltf"
+                path="/gltf/run_pose/run_pose.gltf"
                 name="Robot: Run Pose"
                 defaultPos={[3.5, -2.03, -3.34]}
                 defaultRot={[0, -1, 0]}
                 defaultScale={1}
             />
             <IntroRobot 
-                path="gltf/sit_loop/sit_loop.gltf"
+                path="/gltf/sit_loop/sit_loop.gltf"
                 name="Robot: Sit (Std)"
                 defaultPos={[-3.5, -2, -4]} 
                 defaultRot={[0, 0.9, 0]}
                 defaultScale={1}
             />
              <IntroRobot 
-                path="gltf/jacks/jacks.gltf"
+                path="/gltf/jacks/jacks.gltf"
                 name="Robot: Jumping Jacks"
                 defaultPos={[1.38, 0.27, 1.8]} 
                 defaultRot={[0, 4.42, 0]}

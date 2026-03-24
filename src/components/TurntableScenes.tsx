@@ -8,17 +8,17 @@ import { OBJLoader } from 'three/addons/loaders/OBJLoader.js'
 
 // --- ASSET PATHS ---
 const PATHS = {
-  kick: 'gltf/kick/kick.gltf',
-  sim2real: 'gltf/sim2real/sim2real.gltf',
-  fall: 'gltf/fall/fall.gltf',
-  football: 'assets/football.jpg',
-  safetyKick: 'gltf/kick_sign/kick_sign.gltf',
-  safetyDefeat: 'gltf/defeat/defeat.gltf',
-  pick: 'gltf/pick/pick.gltf',
-  tree: 'assets/meshes/tree.obj',
-  muscle: 'gltf/muscle/muscle-v2.glb',
-  exo: 'gltf/exo/exo.glb',
-  font: 'Concert One_Regular.json'
+  kick: '/gltf/kick/kick.gltf',
+  sim2real: '/gltf/sim2real/sim2real.gltf',
+  fall: '/gltf/fall/fall.gltf',
+  football: '/assets/football.jpg',
+  safetyKick: '/gltf/kick_sign/kick_sign.gltf',
+  safetyDefeat: '/gltf/defeat/defeat.gltf',
+  pick: '/gltf/pick/pick.gltf',
+  tree: '/assets/meshes/tree.obj',
+  muscle: '/gltf/muscle/muscle-v2.glb',
+  exo: '/gltf/exo/exo.glb',
+  font: '/fonts/Concert One_Regular.json'
 }
 
 // Preload

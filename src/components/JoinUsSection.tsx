@@ -6,8 +6,8 @@ import { useControls } from 'leva'
 import * as THREE from 'three'
 import { fetchHomeContent } from '../services/cms'
 
-const ROBOT_PATH = 'gltf/run_small/run_small.gltf'
-const FONT_URL = 'Concert One_Regular.json'
+const ROBOT_PATH = '/gltf/run_small/run_small.gltf'
+const FONT_URL = '/fonts/Concert One_Regular.json'
 
 export const JoinUsSection = () => {
   const { startPage, duration } = getSectionOffsets('joinUs')

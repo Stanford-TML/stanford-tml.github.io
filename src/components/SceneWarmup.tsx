@@ -6,14 +6,14 @@ import { SkeletonUtils } from 'three-stdlib'
 // Importing constants from TurntableScenes is better if possible, 
 // but for robustness we'll just hardcode the keys here as we just need to load *something*.
 const PATHS = {
-  kick: 'gltf/kick/kick.gltf',
-  sim2real: 'gltf/sim2real/sim2real.gltf',
-  // fall: 'gltf/fall/fall.gltf',
-  safetyKick: 'gltf/kick_sign/kick_sign.gltf',
-  safetyDefeat: 'gltf/defeat/defeat.gltf',
-  pick: 'gltf/pick/pick.gltf',
-  muscle: 'gltf/muscle/muscle-v2.glb',
-  exo: 'gltf/exo/exo.glb',
+  kick: '/gltf/kick/kick.gltf',
+  sim2real: '/gltf/sim2real/sim2real.gltf',
+  // fall: '/gltf/fall/fall.gltf',
+  safetyKick: '/gltf/kick_sign/kick_sign.gltf',
+  safetyDefeat: '/gltf/defeat/defeat.gltf',
+  pick: '/gltf/pick/pick.gltf',
+  muscle: '/gltf/muscle/muscle-v2.glb',
+  exo: '/gltf/exo/exo.glb',
 }
 
 export const SceneWarmup = () => {
