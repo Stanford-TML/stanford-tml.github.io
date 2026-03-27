@@ -4,7 +4,7 @@
 export const SECTIONS = {
   intro: 1,
   robot: 10,
-  turntable: 15,
+  turntable: 20,
   joinUs: 5
 }
 

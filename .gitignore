@@ -6,10 +6,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-# **/muscle/*
-**/rajagopal*
-*_water*
-*scene_run*
 
 node_modules
 dist
