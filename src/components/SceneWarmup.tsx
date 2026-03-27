@@ -12,7 +12,7 @@ const PATHS = {
   safetyKick: '/gltf/kick_sign/kick_sign.gltf',
   safetyDefeat: '/gltf/defeat/defeat.gltf',
   pick: '/gltf/pick/pick.gltf',
-  muscle: '/gltf/muscle/muscle-v2.glb',
+  muscle: '/gltf/muscle/muscle-compact.glb',
   exo: '/gltf/exo/exo.glb',
 }
 

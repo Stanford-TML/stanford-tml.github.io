@@ -16,7 +16,7 @@ const PATHS = {
   safetyDefeat: '/gltf/defeat/defeat.gltf',
   pick: '/gltf/pick/pick.gltf',
   tree: '/assets/meshes/tree.obj',
-  muscle: '/gltf/muscle/muscle-v2.glb',
+  muscle: '/gltf/muscle/muscle-compact.glb',
   exo: '/gltf/exo/exo.glb',
   font: '/fonts/Concert One_Regular.json'
 }
@@ -677,31 +677,18 @@ const MUSCLE_MATERIAL = new THREE.MeshStandardMaterial({
     side: THREE.DoubleSide
 })
 
+
 export const SceneMuscle = ({ isActive, progress }: any) => {
-    const { gl, camera } = useThree()
-    
     // 1. Load Asset
     const { scene, animations } = useGLTF(PATHS.muscle)
     
-    // 2. Clone scene
+    // 2. Clone scene (Best practice for SkinnedMeshes to prevent shared state bugs)
     const clonedScene = useMemo(() => SkeletonUtils.clone(scene), [scene])
     
-    // 3. Process Animations: Force Discrete Interpolation (Snapping)
-    const processedAnimations = useMemo(() => {
-        animations.forEach(clip => {
-            // if (!clip.name.includes("vtp"))
-                clip.tracks.forEach(track => {
-                    track.setInterpolation(THREE.InterpolateDiscrete)
-                })
-        })
-        return animations
-    }, [animations])
-    
-    // 4. Bind Animations
-    const { actions, names, mixer } = useAnimations(processedAnimations, clonedScene)
+    // 3. Bind Animations
+    const { actions, names, mixer } = useAnimations(animations, clonedScene)
 
-    const [morphMeshes, setMorphMeshes] = useState<THREE.Mesh[]>([])
-
+    // 4. Controls
     const { pos, rot, scale, scrubMode, animSpeed, debugWireframe } = useControls('Turntable', {
         'Topic 06 (Muscle)': folder({
             pos: { value: [0, 0.91, 8], step: 0.1 },
@@ -713,136 +700,50 @@ export const SceneMuscle = ({ isActive, progress }: any) => {
         })
     })
 
-    // 5. Init: Apply Material, Identify Meshes, PRE-COMPILE, and PRE-WARM
-    useLayoutEffect(() => {
-        const muscles: THREE.Mesh[] = []
-        
-        clonedScene.traverse((child) => {
-            if ((child as THREE.Mesh).isMesh) {
-                const m = child as THREE.Mesh
-                
-                // --- A. Identify & Style Muscles ---
-                if (m.name.includes("Variant")) {
-                    m.material = MUSCLE_MATERIAL
-                    m.frustumCulled = false 
-                    m.visible = true // Force visible temporarily for the compiler
-                    muscles.push(m)
-                }
-                // --- B. Identify Bones ---
-                else if (m.name.includes("vtp")) {
-                    m.frustumCulled = false
-                    m.visible = true // Ensure bones are always visible
-                }
-            }
-        })
-        setMorphMeshes(muscles)
-
-        // --- C. Pre-Compile (Fixes Lag Spike) ---
-        gl.compile(clonedScene, camera)
-
-        // --- D. Pre-Warm State (Fixes Initial Invisibility) ---
-        const START_TIME = 0.04 
-        
-        if (actions && names.length > 0) {
-            names.forEach((name) => {
-                const action = actions[name]
-                if (action) {
-                    action.play()
-                    action.enabled = true
-                    action.setEffectiveWeight(1)
-                    action.paused = true // Keep paused for explicit time control
-                    action.setLoop(THREE.LoopOnce, 1) // Prevent varying clip lengths from looping out of sync
-                    action.clampWhenFinished = true
-                    action.time = START_TIME
-                }
-            })
-            
-            // --- FULL ANIMATION PRE-WARM ---
-            // Scrub through the entire timeline to force Three.js to initialize all PropertyBindings,
-            // Interpolants, and cache any lazy-evaluated track data for the dozens of muscles.
-            const masterAction = actions[names[0]]
-            const duration = masterAction?.getClip().duration || 1.0
-            
-            for (let step = 0; step <= 10; step++) {
-                const t = (step / 10) * duration;
-                names.forEach(name => {
-                    if (actions[name]) actions[name].time = t;
-                });
-                mixer.update(0);
-            }
-            
-            // Reset to start time
-            names.forEach(name => {
-                if (actions[name]) actions[name].time = START_TIME;
-            });
-            mixer.update(0)
-            
-            // Run visibility logic immediately for the start time
-            for (let m = 0; m < muscles.length; m++) {
-                const mesh = muscles[m]
-                if (!mesh.morphTargetInfluences) continue
-                let isActive = false
-                const influences = mesh.morphTargetInfluences
-                for(let i = 0; i < influences.length; i++) {
-                    if (influences[i] > 0.5) {
-                        isActive = true
-                        break
-                    }
-                }
-                mesh.visible = isActive
-            }
-        }
-
-    }, [clonedScene, actions, names, mixer, gl, camera])
-
-    // 6. Wireframe Toggle
+    // 5. Setup Materials & Wireframe
     useEffect(() => {
         clonedScene.traverse((child) => {
             if ((child as THREE.Mesh).isMesh) {
                 const m = child as THREE.Mesh
+                
+                // SkinnedMeshes can disappear at screen edges if their bounding box isn't updated. 
+                // Disabling frustum culling is the standard fix for this.
+                m.frustumCulled = false 
+                
+                if (m.name.includes("Skinned")) {
+                    m.material = MUSCLE_MATERIAL
+                }
+                
                 if (m.material) {
                     (m.material as THREE.MeshStandardMaterial).wireframe = debugWireframe
                 }
             }
         })
-    }, [debugWireframe, clonedScene])
+    }, [clonedScene, debugWireframe])
 
-    // 7. Animation Loop
-    useFrame((state, delta) => {
+    // 6. Initialize Animation
+    useEffect(() => {
+        if (!actions || names.length === 0) return
+        
+        // Play the armature action(s)
+        names.forEach(name => {
+            const action = actions[name]
+            if (action) action.play()
+        })
+    }, [actions, names])
+
+    // 7. Animation Loop (Scrubbing)
+    useFrame((state) => {
         if (!actions || names.length === 0) return
         
         const masterAction = actions[names[0]]
         const duration = masterAction?.getClip().duration || 1.0
-        const START_TIME = 0.04 
         
-        let time = START_TIME
+        // Use mixer.setTime() to globally scrub the animation to the exact frame
         if (scrubMode) {
-             time = Math.max(START_TIME, progress * duration)
+            mixer.setTime(progress * duration)
         } else {
-             const autoTime = (state.clock.elapsedTime * animSpeed) % duration
-             time = Math.max(START_TIME, autoTime)
-        }
-
-        for (let i = 0; i < names.length; i++) {
-            const act = actions[names[i]]
-            if (act) act.time = time
-        }
-        mixer.update(0)
-
-        // 8. Fast Visibility Toggle (Thresholding)
-        for (let m = 0; m < morphMeshes.length; m++) {
-            const mesh = morphMeshes[m]
-            if (!mesh.morphTargetInfluences) continue
-            
-            let isActive = false
-            const influences = mesh.morphTargetInfluences
-            for(let i = 0; i < influences.length; i++) {
-                if (influences[i] > 0.5) {
-                    isActive = true
-                    break
-                }
-            }
-            mesh.visible = isActive
+            mixer.setTime((state.clock.elapsedTime * animSpeed) % duration)
         }
     })
 
