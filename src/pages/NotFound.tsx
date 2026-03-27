@@ -6,7 +6,7 @@ export const NotFound = () => {
     {/* Change 'w-1/3' to 'w-full md:w-1/3' */}
     <div className="relative w-full md:w-1/3 mt-24 mb-8">
         <img 
-        src="assets/404.png" 
+        src="/assets/404.png" 
         alt="404 Error" 
         className="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" 
         />

@@ -187,7 +187,7 @@ export const Join = () => {
             </div>
             {/* Rendered Scene Image */}
             <div className="relative w-full mt-24 mb-8">
-            <img src="assets/scene_run.png" alt="A rendered scene" className="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
+            <img src="/assets/scene_run.png" alt="A rendered scene" className="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
             
             {/* Feathering Overlays */}
             <div className="absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-[#e0e0e0] to-transparent pointer-events-none"></div>

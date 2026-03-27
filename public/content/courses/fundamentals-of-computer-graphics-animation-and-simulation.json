@@ -2,7 +2,7 @@
   "code": "CS248B",
   "title": "Fundamentals of Computer Graphics: Animation and Simulation",
   "description": "This course provides a comprehensive introduction to computer graphics, focusing on fundamental concepts and techniques in Computer Animation and Physics Simulation. Topics include numerical integration, 3D character modeling, keyframe animation, skinning",
-  "image": "https://picsum.photos/id/85/1920/1280.webp",
+  "image": "/assets/uploads/graphics.png",
   "link": "#",
   "active": false,
   "last_offered": "Fall 2025"

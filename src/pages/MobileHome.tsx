@@ -43,7 +43,7 @@ export const MobileHome = () => {
       <div className="px-6 py-10 -mt-4 relative z-0">
         <div className="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col items-center text-center">
           <img 
-            src="assets/karen.jpg" 
+            src="/assets/karen.jpg" 
             alt={robot.name} 
             className="w-36 h-36 rounded-full object-cover mb-5 shadow-md border-4 border-white" 
           />

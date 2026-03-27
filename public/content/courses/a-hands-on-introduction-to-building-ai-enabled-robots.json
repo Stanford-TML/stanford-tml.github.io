@@ -2,7 +2,7 @@
   "code": "CS 123",
   "title": "A Hands-On Introduction to Building AI-Enabled Robots",
   "description": "This course offers a hands-on introduction to AI-powered robotics. Unlike most introductory robotics courses, students will learn essential robotics concepts by constructing a quadruped robot from scratch and training it to perform real-world tasks. The course covers a broad range of topics critical to robot learning, including motor control, forward and inverse kinematics, system identification, simulation, and reinforcement learning.",
-  "image": "https://picsum.photos/id/596/1920/1280.webp",
+  "image": "/assets/uploads/pupper.jpg",
   "link": "",
   "active": false,
   "last_offered": "Fall 2025"
