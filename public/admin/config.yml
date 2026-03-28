@@ -1,7 +1,8 @@
 backend:
   name: github
   repo: Stanford-TML/stanford-tml.github.io
-  branch: main # Branch to update
+  branch: main
+  base_url: https://sveltia-cms-auth.drstrange767.workers.dev
 
 # Save media (like profile pictures) to the public/assets folder
 media_folder: "public/assets/uploads"
