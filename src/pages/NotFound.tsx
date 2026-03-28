@@ -1,15 +1,13 @@
 // FILE: src/pages/NotFound.tsx
+import { ProgressiveImage } from '../components/ProgressiveImage'
+
 export const NotFound = () => {
   return (
     <div className="absolute top-0 left-0 w-screen min-h-screen bg-[#ddd] flex flex-col items-center justify-center px-6 font-sans text-center overflow-hidden" style={{ fontFamily: 'Montserrat, sans-serif' }}>
     {/* Rendered Scene Image */}
     {/* Change 'w-1/3' to 'w-full md:w-1/3' */}
     <div className="relative w-full md:w-1/3 mt-24 mb-8">
-        <img 
-        src="/assets/404.png" 
-        alt="404 Error" 
-        className="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" 
-        />
+        <ProgressiveImage highResSrc="/assets/404.png" lowResSrc="/assets/404_small.png" alt="404 Error" imageClass="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
 
         {/* Feathering Overlays */}
         <div className="absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-[#ddd] to-transparent pointer-events-none"></div>

@@ -11,6 +11,7 @@ import { fetchHomeContent } from '../services/cms'
 import { useControls } from 'leva'
 import * as THREE from 'three'
 import type { GLTF } from 'three-stdlib'
+import { ProgressiveImage } from '../components/ProgressiveImage'
 
 type GLTFResult = GLTF & {
   nodes: { [key: string]: THREE.SkinnedMesh | THREE.Bone }
@@ -309,19 +310,7 @@ export const RobotRig = () => {
                 width: '350px',
                 flexShrink: 0
               }}>
-                <img 
-                  src="assets/karen.jpg" 
-                  alt={content.name}
-                  style={{
-                    width: '300px', 
-                    height: '300px',
-                    objectFit: 'cover',
-                    borderRadius: '50%', 
-                    border: '8px solid #ffffff',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
-                    marginBottom: '30px'
-                  }} 
-                />
+                <ProgressiveImage highResSrc="assets/karen.jpg" lowResSrc="assets/karen_small.jpg" alt={content.name} />
                 <div style={{ textAlign: 'center' }}>
                   <h2 style={{margin: '0 0 10px 0', fontSize: '2.4rem', color: '#2e2d29', fontWeight: 700}}>
                     {content.name}

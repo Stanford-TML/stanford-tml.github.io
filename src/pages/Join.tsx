@@ -1,6 +1,7 @@
 // FILE: src/pages/Join.tsx
 import { useEffect, useState } from 'react'
 import { fetchRecruitment, fetchHighlights, fetchJoinContent } from '../services/cms'
+import { ProgressiveImage } from '../components/ProgressiveImage'
 
 export const Join = () => {
     const [projects, setProjects] = useState<any[] | null>(null)
@@ -107,11 +108,7 @@ export const Join = () => {
                                             className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
                                         />
                                     ) : (
-                                        <img
-                                            src={mediaSrc}
-                                            alt={item.title}
-                                            className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
-                                        />
+                                        <ProgressiveImage highResSrc={mediaSrc} alt={item.title} imageClass="absolute inset-0 w-full h-full object-cover pointer-events-none z-0" />
                                     )}
 
                                     <div className="highlight-overlay absolute inset-0 z-10 flex items-center justify-center p-6">
@@ -187,7 +184,7 @@ export const Join = () => {
             </div>
             {/* Rendered Scene Image */}
             <div className="relative w-full mt-24 mb-8">
-            <img src="/assets/scene_run.png" alt="A rendered scene" className="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
+            <ProgressiveImage highResSrc="/assets/scene_run.png" lowResSrc="/assets/scene_run_small.png" alt="A rendered scene" imageClass="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
             
             {/* Feathering Overlays */}
             <div className="absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-[#e0e0e0] to-transparent pointer-events-none"></div>

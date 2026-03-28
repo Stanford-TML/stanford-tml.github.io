@@ -1,6 +1,7 @@
 // FILE: src/pages/Courses.tsx
 import { useEffect, useState } from 'react'
 import { fetchCourses } from '../services/cms'
+import { ProgressiveImage } from '../components/ProgressiveImage'
 
 export const Courses = () => {
     const [courses, setCourses] = useState<any[] | null>(null)
@@ -33,11 +34,7 @@ export const Courses = () => {
                     {courses.map((course, idx) => (
                         <div key={idx} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col">
                             <div className="h-48 w-full overflow-hidden bg-gray-100">
-                                <img
-                                    src={course.image || 'https://via.placeholder.com/600x400?text=Course+Image'}
-                                    alt={course.title}
-                                    className="w-full h-full object-cover"
-                                />
+                                <ProgressiveImage highResSrc={course.image || 'https://via.placeholder.com/600x400?text=Course+Image'} alt={course.title} imageClass="w-full h-full object-cover" />
                             </div>
                             <div className="p-8 flex flex-col flex-grow">
                                 <h3 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">
@@ -70,7 +67,7 @@ export const Courses = () => {
             </div>
             {/* Rendered Scene Image */}
             <div className="relative w-full mt-24 mb-8">
-                <img src="assets/scene_lecture.png" alt="Lecture Scene" className="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
+                <ProgressiveImage highResSrc="/assets/scene_lecture.png" lowResSrc="/assets/scene_lecture_small.png" alt="Lecture Scene" imageClass="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
 
                 {/* Feathering Overlays */}
                 <div className="absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-[#e0e0e0] to-transparent pointer-events-none"></div>

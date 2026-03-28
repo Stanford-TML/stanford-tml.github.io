@@ -1,6 +1,7 @@
 // FILE: src/pages/MobileHome.tsx
 import { useEffect, useState } from 'react'
 import { getHomeContentSync, fetchTurntable } from '../services/cms'
+import { ProgressiveImage } from '../components/ProgressiveImage'
 
 export const MobileHome = () => {
   const [turntableData, setTurntableData] = useState<any[]>([])
@@ -42,11 +43,7 @@ export const MobileHome = () => {
       {/* PI / Blurb Section */}
       <div className="px-6 py-10 -mt-4 relative z-0">
         <div className="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col items-center text-center">
-          <img 
-            src="/assets/karen.jpg" 
-            alt={robot.name} 
-            className="w-36 h-36 rounded-full object-cover mb-5 shadow-md border-4 border-white" 
-          />
+          <ProgressiveImage highResSrc="/assets/karen.jpg" lowResSrc="/assets/karen_small.jpg" alt={robot.name} imageClass="w-36 h-36 rounded-full object-cover mb-5 shadow-md border-4 border-white" />
           <h3 className="text-2xl font-bold text-gray-900 mb-1">{robot.name}</h3>
           <p className="text-xs font-bold text-[#8C1515] uppercase tracking-widest mb-6">
             {robot.title}
@@ -66,11 +63,7 @@ export const MobileHome = () => {
               
               {/* Static Image Placeholder for CMS */}
               {item.image && (
-                <img 
-                  src={item.image} 
-                  alt={item.title} 
-                  className="w-full h-48 object-cover rounded-xl mb-5 bg-gray-100"
-                />
+                <ProgressiveImage highResSrc={item.image} alt={item.title} imageClass="w-full h-48 object-cover rounded-xl mb-5 bg-gray-100" />
               )}
 
               <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 font-bold">

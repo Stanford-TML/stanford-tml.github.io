@@ -1,8 +1,5 @@
-import { useControls } from 'leva'
 import { useProgress } from '@react-three/drei'
 import { useEffect, useState } from 'react'
-import { rand } from 'three/tsl'
-import { randInt } from 'three/src/math/MathUtils.js'
 
 export const LoadingScreen = () => {
   const { progress, active } = useProgress()
