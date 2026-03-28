@@ -37,7 +37,7 @@ export const fetchPeople = async () => {
     staff: allPeople.filter(p => p.category === 'Staff'),
     fellows: allPeople.filter(p => p.category === 'Fellows'),
     students: allPeople.filter(p => p.category === 'Students'),
-    alumni: allPeople.filter(p => p.category === 'Alumni').map(p => p.name) // Just names for alumni
+    alumni: allPeople.filter(p => p.category === 'Alumni')
   };
 }
 

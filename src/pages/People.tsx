@@ -95,14 +95,25 @@ export const People = () => {
               <div className="flex-1 h-px bg-gray-300"></div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8 pl-2">
-              {data.alumni.map((alumnus: string, idx: number) => (
-                <div key={idx} className="flex items-center gap-3 group">
-                  <div className="w-1.5 h-1.5 rounded-full bg-gray-400 group-hover:bg-[#8C1515] transition-colors"></div>
-                  <span className="text-gray-700 font-medium group-hover:text-[#8C1515] transition-colors cursor-default">
-                    {alumnus}
-                  </span>
-                </div>
-              ))}
+              {data.alumni.map((alumnus: any, idx: number) => {
+                // Standardize the role string
+                let role = alumnus.title || alumnus.role || '';
+                const r = role.toLowerCase();
+                if (r.includes('phd') || r.includes('ph.d')) role = 'PhD';
+                else if (r.includes('postdoc')) role = 'Postdoc';
+                else if (r.includes('master') || r.includes('ms')) role = 'MS';
+                else if (r.includes('undergrad') || r.includes('bs') || r.includes('b.s')) role = 'BS';
+                else if (r.includes('research scientist')) role = 'Research Scientist';
+
+                return (
+                  <div key={idx} className="flex items-center gap-3 group">
+                    <div className="w-1.5 h-1.5 rounded-full bg-gray-400 group-hover:bg-[#8C1515] transition-colors"></div>
+                    <span className="text-gray-700 font-medium group-hover:text-[#8C1515] transition-colors cursor-default">
+                      {alumnus.name} {role && <span className="text-gray-400 text-sm ml-1">({role})</span>}
+                    </span>
+                  </div>
+                )
+              })}
             </div>
           </div>
 

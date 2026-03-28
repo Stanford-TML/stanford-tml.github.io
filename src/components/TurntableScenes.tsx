@@ -745,18 +745,22 @@ export const SceneExo = ({ isActive, progress }: any) => {
         motionLineColor: '#ffffff', motionLineOffset: 1.55, motionLineRotation:new THREE.Euler(-0.45, 0, 0.0), motionLineLength: 11, motionLineThickness: 2.5, motionLineSpeed: 10, motionLineOpacity: 0.7, motionLineIntensity: 3, lightIntensity: 10, lightOnFrame: 0.84
     }
 
+    const { hideFrame, targetMeshNames } = {
+        hideFrame: 0.8,
+        targetMeshNames: ["guy_joints", "guy_skin"]
+    }
+
     useLayoutEffect(() => {
         clonedScene.traverse((child: any) => {
-            if (child.isMesh && child.material) {
-                // Clone material to avoid affecting other instances
-                child.material = child.material.clone()
-                if (child.material.roughness !== undefined && child.material.roughness < minRoughness) {
-                    child.material.roughness = minRoughness
-                }
-                
-                // Grab reference to the light material
-                if (child.material.name && child.material.name.toLowerCase().includes('lightmaterial')) {
-                    lightMatRefs.current.push(child.material)
+            if (child.isMesh) {
+                if (child.material) {
+                    child.material = child.material.clone()
+                    if (child.material.roughness !== undefined && child.material.roughness < minRoughness) {
+                        child.material.roughness = minRoughness
+                    }
+                    if (child.material.name && child.material.name.toLowerCase().includes('lightmaterial')) {
+                        lightMatRefs.current.push(child.material)
+                    }
                 }
             }
         })
@@ -771,6 +775,20 @@ export const SceneExo = ({ isActive, progress }: any) => {
             const START_TIME = .5 
             action.time = Math.max(START_TIME, progress * duration)
             action.getMixer().update(0)
+        }
+
+        // --- SINGULARITY FIX LOGIC ---
+        if (targetMeshNames && targetMeshNames.length > 0) {
+            // Hide specific mesh
+            targetMeshNames.forEach((meshName) => {
+                const meshToHide = clonedScene.getObjectByName(meshName)
+                if (meshToHide) {
+                    meshToHide.visible = progress < hideFrame
+                }
+            })
+        } else {
+            // Fallback: If you leave the name blank, it just hides the entire robot
+            clonedScene.visible = progress < hideFrame
         }
 
         // Light Material Logic
