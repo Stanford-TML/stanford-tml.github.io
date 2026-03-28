@@ -1,33 +1,8 @@
 {
   "order": 2,
   "label": "The Ultimate Test of Embodied Intelligence",
-  "title": "Dexterous Manipulation",
+  "title": "Whole-Body Dexterous Manipulation",
   "image": "/assets/uploads/dexterous.png",
   "description": "Dexterity is intelligence expressed through contact. Enabling robots to interact with the rich physical world requires deep integration of skills bridging perception, reasoning, learning, and control.",
-  "highlights": [
-    {
-      "title": "Interesting Highlight 1",
-      "description": "adsfbfgfhgrjhgmnvmvbvcxdsfdsfers",
-      "link": "",
-      "videoType": "youtube",
-      "videoId": "dQw4w9WgXcQ",
-      "videoUrl": ""
-    },
-    {
-      "title": "More highlights",
-      "description": "4w2324 bfd",
-      "link": "#",
-      "videoType": "upload",
-      "videoId": "",
-      "videoUrl": "/assets/uploads/keaton.mp4"
-    },
-    {
-      "title": "third highlight",
-      "description": "Stuff hello lorem ipsum j dskj ksdjioj ij i jasoijuewlj sdf oaje okxcfpi ejidjsl e rj ldksfure kjado;k fewikdsl; a fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff e",
-      "link": "#",
-      "videoType": "none",
-      "videoId": "",
-      "videoUrl": ""
-    }
-  ]
+  "highlights": []
 }
