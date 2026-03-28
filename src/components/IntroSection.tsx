@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Text3D, useScroll, useGLTF, useAnimations, Text } from '@react-three/drei'
-import { useControls } from 'leva'
 import * as THREE from 'three'
 import { getSectionOffsets } from '../ScrollManager'
 import { getHomeContentSync } from '../services/cms'
@@ -55,11 +54,7 @@ const IntroRobot = ({ path, name, defaultPos, defaultRot, defaultScale }: any) =
   const { scene, animations } = useGLTF(path)
   const { actions } = useAnimations(animations, group)
   // @ts-ignore
-  const { position, rotation, scale } = useControls(name, {
-    position: { value: defaultPos, step: 0.01 },
-    rotation: { value: defaultRot, step: 0.01 },
-    scale: { value: defaultScale, min: 0.1, max: 5, step: 0.1 }
-  })
+  const { position, rotation, scale } = { position: defaultPos, rotation: defaultRot, scale: defaultScale }
 
   useEffect(() => {
     scene.traverse((child: any) => {
@@ -132,21 +127,11 @@ export const IntroSection = () => {
     textPosition, textSize, textColor, textRoughness, 
     neonColor, neonIntensity, neonSize, neonOffset,
     showRobots, buttonScale, buttonX, buttonY, buttonGap,
-  } = useControls('Intro Section', {
-    textPosition: { value: [-2.8, 0, 0], step: 0.1 },
-    textSize: { value: 0.4, min: 0.1, max: 1 },
-    textColor: '#000000',
-    textRoughness: { value: 0.8, min: 0, max: 1, label: 'Text Matte' },
-    showRobots: { value: true, label: 'Show Robots' },
-    neonColor: '#e52b2b',
-    neonIntensity: { value: 7, min: 0, max: 20 },
-    neonSize: { value: 0.12, min: 0.05, max: 0.5 },
-    neonOffset: { value: [2.5, -0.3, 0.1], step: 0.05 },
-    buttonScale: { value: 0.15, min: 0.1, max: 2, step: 0.05 },
-    buttonX: { value: 0.8, min: -5, max: 5, step: 0.1 },
-    buttonY: { value: 1.4, min: -5, max: 5, step: 0.1 },
-    buttonGap: { value: 1.6, min: 0, max: 5, step: 0.1 },
-  })
+  } = {
+    textPosition: new THREE.Vector3(-2.8, 0, 0), textSize: 0.4, textColor: '#000000', textRoughness: 0.8,
+    showRobots: true, neonColor: '#e52b2b', neonIntensity: 7, neonSize: 0.12, neonOffset: new THREE.Vector3(2.5, -0.3, 0.1),
+    buttonScale: 0.15, buttonX: 0.8, buttonY: 1.4, buttonGap: 1.6
+  }
 
   // Fetch synchronously to prevent late Suspense from breaking the RobotRig calibration
   const homeData = getHomeContentSync()

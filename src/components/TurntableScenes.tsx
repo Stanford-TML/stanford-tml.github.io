@@ -1,7 +1,6 @@
 import { useRef, useState, useEffect, useLayoutEffect, useMemo } from 'react'
 import { useFrame, useLoader, useThree } from '@react-three/fiber'
 import { useGLTF, useAnimations, useTexture, Text3D, Grid } from '@react-three/drei'
-import { useControls, folder } from 'leva'
 import * as THREE from 'three'
 import { SkeletonUtils } from 'three-stdlib'
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js'
@@ -340,13 +339,7 @@ export const SceneDynamicMotion = ({ progress, isActive }: any) => {
   const { scene, animations } = useGLTF(PATHS.kick)
   const { actions } = useAnimations(animations, group)
   
-  const { pos, rot, finishProgress } = useControls('Turntable', {
-    'Topic 01': folder({
-        pos: { value: [3, 0, 8], step: 0.1, label: 'Position' },
-        rot: { value: [0, 10, 0], step: 0.1, label: 'Rotation' },
-        finishProgress: { value: 0.85, min: 0.5, max: 1.0, label: 'Anim Finish %' }
-    })
-  })
+  const { pos, rot, finishProgress } = { pos: new THREE.Vector3(3, 0, 8), rot: new THREE.Euler(0, 10, 0), finishProgress: 0.85 }
 
   useFrame(() => {
     if (!actions || !group.current) return
@@ -374,14 +367,7 @@ export const SceneRetargeting = ({ isActive }: any) => {
   const clonedScene = useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { actions } = useAnimations(animations, group)
   
-  const { pos, rot, scale, holoColor } = useControls('Turntable', {
-    'Topic 02': folder({
-        pos: { value: [0, 0, 8], step: 0.1, label: 'Position' },
-        rot: { value: [0, 0, 0], step: 0.1, label: 'Rotation' },
-        scale: { value: 1, min: 0.1, max: 2, step: 0.1 },
-        holoColor: '#00ccff'
-    })
-  })
+  const { pos, rot, scale, holoColor } = { pos: new THREE.Vector3(0, 0, 8), rot: new THREE.Euler(0, 0, 0), scale: 1, holoColor: '#00ccff' }
 
   useEffect(() => {
     if (!actions) return
@@ -425,18 +411,9 @@ export const ScenePhysicalConsistency = ({ isActive, progress }: any) => {
   const { actions } = useAnimations(animations, group)
   const soccerTexture = useTexture(PATHS.football)
 
-  const { pos, rot, ballStartPos, ballTargetOffset, gravity, ballSize, showBall, animStartOffset } = useControls('Turntable', {
-    'Topic 03': folder({
-        pos: { value: [2.5, 0, 9], step: 0.1, label: 'Robot Pos' },
-        rot: { value: [0, 4, 0], step: 0.1, label: 'Robot Rot' },
-        ballStartPos: { value: [2, 1.5, 2], step: 0.1, label: 'Entry Position' },
-        ballTargetOffset: { value: [0.1, 0.8, 1.7], step: 0.01, label: 'Impact Offset' }, 
-        gravity: { value: 9.8, min: 1, max: 20 },
-        ballSize: { value: 0.15, min: 0.05, max: 0.5 },
-        showBall: true,
-        animStartOffset: { value: 0.2, min: 0, max: 0.5, label: 'Start Delay' }
-    })
-  })
+  const { pos, rot, ballStartPos, ballTargetOffset, gravity, ballSize, showBall, animStartOffset } = {
+    pos: new THREE.Vector3(2.5, 0, 9), rot: 4, ballStartPos: new THREE.Vector3(2, 1.5, 2), ballTargetOffset: new THREE.Vector3(0.1, 0.8, 1.7), gravity: 9.8, ballSize: 0.15, showBall: true, animStartOffset: 0.2
+  }
 
   useFrame(() => {
     if (!actions) return
@@ -509,20 +486,18 @@ export const SceneRobotSafety = ({ isActive, progress }: any) => {
     const { actions: kickActions } = useAnimations(kickGltf?.animations || [], kickGroup)
     const { actions: defeatActions } = useAnimations(defeatGltf?.animations || [], defeatGroup)
 
-    const { kickPos, kickRot, defeatPos, defeatRot, signPos, neonColor, impactFrame, saberColor, saberMaxLength, saberIgniteFrame } = useControls('Turntable', {
-        'Topic 04': folder({
-            kickPos: { value: [-0.7, 0, 8], step: 0.01 },
-            kickRot: { value: [0, 1.7, 0], step: 0.1 },
-            defeatPos: { value: [2, 0, 9], step: 0.1 },
-            defeatRot: { value: [0, 10.5, 0], step: 0.1 },
-            signPos: { value: [-1.5, 0, 6.5], step: 0.1 },
-            neonColor: '#ff4545',
-            impactFrame: { value: 0.17, min: 0, max: 1 }, 
-            saberColor: '#59ff59',
-            saberMaxLength: { value: 1.2, min: 0.1, max: 3 },
-            saberIgniteFrame: { value: 0.6, min: 0, max: 1 }
-        })
-    })
+    const { kickPos, kickRot, defeatPos, defeatRot, signPos, neonColor, impactFrame, saberColor, saberMaxLength, saberIgniteFrame } = {
+        kickPos: new THREE.Vector3(-0.7, 0, 8),
+        kickRot: new THREE.Euler(0, 1.7, 0),
+        defeatPos: new THREE.Vector3(2, 0, 9),
+        defeatRot: new THREE.Euler(0, 10.5, 0),
+        signPos: new THREE.Vector3(-1.5, 0, 6.5),
+        neonColor: '#ff4545',
+        impactFrame: 0.17,
+        saberColor: '#59ff59',
+        saberMaxLength: 1.2,
+        saberIgniteFrame: 0.6
+    }
 
     // Use LayoutEffect for shaders to prevent flash
     useLayoutEffect(() => {
@@ -606,21 +581,19 @@ export const SceneInteraction = ({ isActive }: any) => {
     const { actions } = useAnimations(animations, group)
     const treeClone = useMemo(() => tree.clone(), [tree])
 
-    const { robotPos, robotRot, treePos, treeScale, barkColor, leafColor, w1, w2, w3, grassPos, grassScale } = useControls('Turntable', {
-        'Topic 05': folder({
-            robotPos: { value: [-0.5, -0.03, 7.5], step: 0.01 },
-            robotRot: { value: [0, -0.8, 0], step: 0.1 },
-            treePos: { value: [1, 0, 8], step: 0.1 },
-            treeScale: { value: 0.1, min: 0.001, max: 1 },
-            barkColor: '#8b4513',
-            leafColor: '#00ff44',   
-            w1: { value: [0.12, 0.28], min: 0, max: 1 },
-            w2: { value: [0.4, 0.55], min: 0, max: 1 },
-            w3: { value: [0.65, 0.81], min: 0, max: 1 },
-            grassPos: { value: [1, 0.1, 8], step: 0.1 },
-            grassScale: { value: 0.75, min: 0.1, max: 5 }
-        })
-    })
+    const { robotPos, robotRot, treePos, treeScale, barkColor, leafColor, w1, w2, w3, grassPos, grassScale } = {
+        robotPos: new THREE.Vector3(-0.5, -0.03, 7.5),
+        robotRot: new THREE.Euler(0, -0.8, 0),
+        treePos: new THREE.Vector3(1, 0, 8),
+        treeScale: 0.1,
+        barkColor: '#8b4513',
+        leafColor: '#00ff44',
+        w1: [0.12, 0.28],
+        w2: [0.4, 0.55],
+        w3: [0.65, 0.81],
+        grassPos: new THREE.Vector3(1, 0.1, 8),
+        grassScale: 0.75
+    }
 
     // Use LayoutEffect to apply shaders immediately. Removed isActive dependency.
     useLayoutEffect(() => {
@@ -689,16 +662,14 @@ export const SceneMuscle = ({ isActive, progress }: any) => {
     const { actions, names, mixer } = useAnimations(animations, clonedScene)
 
     // 4. Controls
-    const { pos, rot, scale, scrubMode, animSpeed, debugWireframe } = useControls('Turntable', {
-        'Topic 06 (Muscle)': folder({
-            pos: { value: [0, 0.91, 8], step: 0.1 },
-            rot: { value: [1.6, 0, 2], step: 0.1 },
-            scale: { value: 1.0, min: 0.1, max: 5 },
-            scrubMode: { value: true, label: 'Scrub by Scroll' },
-            animSpeed: { value: 0.5, min: 0.1, max: 2, render: (get) => !get('Turntable.Topic 06 (Muscle).scrubMode') },
-            debugWireframe: false,
-        })
-    })
+    const { pos, rot, scale, scrubMode, animSpeed, debugWireframe } = {
+        pos: new THREE.Vector3(0, 0.91, 8),
+        rot: new THREE.Euler(1.6, 0, 2),
+        scale: 1.0,
+        scrubMode: true,
+        animSpeed: 0.5,
+        debugWireframe: false
+    }
 
     // 5. Setup Materials & Wireframe
     useEffect(() => {
@@ -767,37 +738,12 @@ export const SceneExo = ({ isActive, progress }: any) => {
     const lightMatRefs = useRef<THREE.MeshStandardMaterial[]>([])
 
     const { 
-        pos, rot, scale, 
-        minRoughness, 
-        spotPos, spotIntensity, spotColor, 
-        explosionFrame, explosionColor, explosionPos,
-        motionLineColor, motionLineRotation, motionLineOffset, motionLineLength, motionLineThickness,
-        motionLineSpeed, motionLineOpacity, motionLineIntensity,
-        lightIntensity, lightOnFrame
-    } = useControls('Turntable', {
-        'Topic 07 (Exo)': folder({
-            pos: { value: [1, 0.2, 5], step: 0.1 },
-            rot: { value: [0, -0.5, 0], step: 0.1 },
-            scale: { value: 0.1, min: 0.01, max: 5 },
-            minRoughness: { value: 0.4, min: 0, max: 1, step: 0.05 },
-            spotPos: { value: [0, 8, 4], step: 0.1 },
-            spotIntensity: { value: 0, min: 0, max: 10000 },
-            spotColor: '#ffffff',
-            explosionFrame: { value: 0.945, min: 0, max: 1, step: 0.005 },
-            explosionColor: '#ff8c00',
-            explosionPos: { value: [12, -1, 22], step: 0.1 },
-            motionLineColor: '#ffffff',
-            motionLineOffset: { value: 1.55, min: 0, max: 10, step: 0.01 },
-            motionLineRotation: { value:[-0.45, 0, 0.0], step: 0.01 },
-            motionLineLength: { value: 11, min: 1, max: 50 },
-            motionLineThickness: { value: 2.5, min: 0.05, max: 5 },
-            motionLineSpeed: { value: 10, min: 0.1, max: 20, step: 0.1 },
-            motionLineOpacity: { value: 0.7, min: 0, max: 1, step: 0.05 },
-            motionLineIntensity: { value: 3, min: 0, max: 50, step: 1 },
-            lightIntensity: { value: 10, min: 0, max: 100, step: 0.1 },
-            lightOnFrame: { value: 0.84, min: 0, max: 1, step: 0.01 }
-        })
-    })
+        pos, rot, scale, minRoughness, spotPos, spotIntensity, spotColor, explosionFrame, explosionColor, explosionPos,
+        motionLineColor, motionLineRotation, motionLineOffset, motionLineLength, motionLineThickness, motionLineSpeed, motionLineOpacity, motionLineIntensity, lightIntensity, lightOnFrame
+    } = {
+        pos: new THREE.Vector3(1, 0.2, 5), rot: new THREE.Euler(0, -0.5, 0), scale: 0.1, minRoughness: 0.4, spotPos: new THREE.Vector3(0, 8, 4), spotIntensity: 0, spotColor: '#ffffff', explosionFrame: 0.945, explosionColor: '#ff8c00', explosionPos: new THREE.Vector3(12, -1, 22),
+        motionLineColor: '#ffffff', motionLineOffset: 1.55, motionLineRotation:new THREE.Euler(-0.45, 0, 0.0), motionLineLength: 11, motionLineThickness: 2.5, motionLineSpeed: 10, motionLineOpacity: 0.7, motionLineIntensity: 3, lightIntensity: 10, lightOnFrame: 0.84
+    }
 
     useLayoutEffect(() => {
         clonedScene.traverse((child: any) => {
@@ -845,11 +791,11 @@ export const SceneExo = ({ isActive, progress }: any) => {
 
             if (motionLineGroupRef.current && motionLineMatRef.current) {
                 motionLineGroupRef.current.visible = true
-                const start = new THREE.Vector3(explosionPos[0], explosionPos[1] + motionLineOffset, explosionPos[2])
+                const start = new THREE.Vector3(explosionPos.x, explosionPos.y + motionLineOffset, explosionPos.z)
                 
                 motionLineGroupRef.current.position.copy(start)
                 // Directly apply Euler angles instead of using lookAt
-                motionLineGroupRef.current.rotation.set(motionLineRotation[0], motionLineRotation[1], motionLineRotation[2])
+                motionLineGroupRef.current.rotation.set(motionLineRotation.x, motionLineRotation.y, motionLineRotation.z)
                 
                 // Apply speed multiplier to the line's expansion
                 const lineExpProgress = Math.min(expProgress * motionLineSpeed, 1.0)

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, useLayoutEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useGLTF, useAnimations, useScroll, Text3D, Html, MeshReflectorMaterial } from '@react-three/drei'
 import { getSectionOffsets, getTotalPages } from '../ScrollManager'
-import { useControls } from 'leva'
 import * as THREE from 'three'
 import { fetchHomeContent } from '../services/cms'
 
@@ -37,40 +36,25 @@ export const JoinUsSection = () => {
 
   // --- CONTROLS ---
   const {
-    mainPosition,
-    mainScale,
-    lettersOffset,
-    letterKerning,
-    lettersRotation,
-    robotPosition,
-    robotRotation,
-    playbackSpeed,
-    fallenTPosition,
-    fallenTRotation,
-    floorPosition,
-    floorScale,
-    textOffset,
-    triggerThreshold,
-    neonColor,
-    neonIntensity
-  } = useControls('Join Us Section', {
-    mainPosition: { value: [-1.8, -1, -5], step: 0.1 },
-    mainScale: { value: 1.2, min: 0.5, max: 2 },
-    lettersOffset: { value: [-3, 0, -2], step: 0.1, label: 'Letters Pos' },
-    letterKerning: { value: 1.8, step: 0.1, label: 'M-L Kerning' },
-    lettersRotation: { value: [0, 0.3, 0], step: 0.1, label: 'Letters Rot' },
-    robotPosition: { value: [-10.8, 0.0, -3.3], step: 0.1, label: 'Robot Pos' },
-    robotRotation: { value: [0, 0.4, 0], step: 0.1, label: 'Robot Rot' },
-    playbackSpeed: { value: 1.0, min: 0.1, max: 3.0, step: 0.1, label: 'Anim Speed' },
-    fallenTPosition: { value: [-4.2, 0.0, -1.8], step: 0.1, label: 'Fallen T Pos' },
-    fallenTRotation: { value: [-1.57, 0, 0.2], step: 0.1, label: 'Fallen T Rot' },
-    floorPosition: { value: [-2, 0, -1], step: 0.1 },
-    floorScale: { value: 0.6, min: 0.5, max: 5 },
-    textOffset: { value: [51, -10], step: 1, label: 'Text Offset %' },
-    triggerThreshold: { value: 0.1, min: 0, max: 1 },
+    mainPosition, mainScale, lettersOffset, letterKerning, lettersRotation, robotPosition, robotRotation, playbackSpeed, fallenTPosition, fallenTRotation, floorPosition, floorScale, textOffset, triggerThreshold, neonColor, neonIntensity
+  } = {
+    mainPosition: new THREE.Vector3(-1.8, -1, -5),
+    mainScale: 1.2,
+    lettersOffset: new THREE.Vector3(-3, 0, -2),
+    letterKerning: 1.8,
+    lettersRotation: new THREE.Euler(0, 0.3, 0),
+    robotPosition: new THREE.Vector3(-10.8, 0.0, -3.3),
+    robotRotation: new THREE.Euler(0, 0.4, 0),
+    playbackSpeed: 1.0,
+    fallenTPosition: new THREE.Vector3(-4.2, 0.0, -1.8),
+    fallenTRotation: new THREE.Euler(-1.57, 0, 0.2),
+    floorPosition: new THREE.Vector3(-2, 0, -1),
+    floorScale: 0.6,
+    textOffset: new THREE.Vector2(51, -10),
+    triggerThreshold: 0.1,
     neonColor: '#ff4545',
-    neonIntensity: { value: 8, min: 1, max: 10 }
-  })
+    neonIntensity: 8
+  }
 
   const { scene, animations } = useGLTF(ROBOT_PATH)
   const { actions } = useAnimations(animations, group)
@@ -155,9 +139,9 @@ export const JoinUsSection = () => {
     }
 
     group.current.position.set(
-      mainPosition[0] + xPos,
-      mainPosition[1] + yPos,
-      mainPosition[2]
+      mainPosition.x + xPos,
+      mainPosition.y + yPos,
+      mainPosition.z
     )
 
     // --- HTML ANIMATION ---
@@ -275,7 +259,7 @@ export const JoinUsSection = () => {
           metalness={0.5}
         />
       </mesh>
-      <mesh position={[floorPosition[0], floorPosition[1] - 0.1, floorPosition[2]]} rotation={[0, 0, 0]} scale={floorScale} castShadow receiveShadow>
+      <mesh position={[floorPosition.x, floorPosition.y - 0.1, floorPosition.z]} rotation={[0, 0, 0]} scale={floorScale} castShadow receiveShadow>
         <cylinderGeometry args={[5, 5, 0.1, 64]} />
         <MeshReflectorMaterial
           mirror={0.7}
@@ -322,7 +306,7 @@ export const JoinUsSection = () => {
             flexDirection: 'column',
             justifyContent: 'center',
             paddingRight: '10%',
-            transform: `translate(${textOffset[0]}%, ${textOffset[1]}%)`,
+            transform: `translate(${textOffset.x}%, ${textOffset.y}%)`,
             pointerEvents: 'auto',
             textAlign: 'left'
           }}>

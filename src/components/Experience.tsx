@@ -1,6 +1,5 @@
 // FILE: src/components/Experience.tsx
 import { Environment, useScroll, Scroll, OrbitControls, Grid, Html  } from '@react-three/drei'
-import { useControls } from 'leva'
 import { useState, useRef, useMemo, useEffect } from 'react'
 import * as THREE from 'three' 
 import { useFrame } from '@react-three/fiber'
@@ -21,40 +20,23 @@ export const Experience = () => {
   const dirLightRef = useRef<THREE.DirectionalLight>(null)
   const spotLightRef = useRef<THREE.SpotLight>(null)
 
-  const { debugOrbit } = useControls('Debug', {
-    debugOrbit: { value: false, label: 'Unlock Orbit Controls' }
-  })
+  const { debugOrbit } = { debugOrbit: false }
 
   // --- 1. SCENE COLORS & LIGHTING ---
   const { 
     bgColor, fogColor, floorColor, gridColor, gridSectionColor,
     ambientColor, ambientIntensity, dirLightColor, dirLightIntensity, dirLightPosition, envIntensity,
     darknessLevel, spotPos, spotTarget, spotIntensity, spotColor, spotAngle, spotPenumbra
-  } = useControls('Scene Colors & Lights', {
-    bgColor: '#c7c7c7',
-    fogColor: '#9d9d9d',
-    floorColor: '#a0a0a0',
-    gridColor: '#af1414',
-    gridSectionColor: '#767676',
-    ambientColor: '#ffffff',
-    ambientIntensity: { value: 0.4, min: 0, max: 2 },
-    dirLightColor: '#ffffff',
-    dirLightIntensity: { value: 1.5, min: 0, max: 5 },
-    dirLightPosition: { value: [5, 10, 5] },
-    envIntensity: { value: 0.5, min: 0, max: 2 },
-    darknessLevel: { value: 0.95, min: 0, max: 1, step: 0.05, label: 'Turntable Darkness' },
-    spotPos: { value: [0, 10, 8], step: 0.1, label: 'Spotlight Pos' },
-    spotTarget: { value: [-2, 2, -1], step: 0.1, label: 'Spotlight Target' },
-    spotIntensity: { value: 1500, min: 0, max: 5000, label: 'Spotlight Intensity' },
-    spotColor: '#ffddbc',
-    spotAngle: { value: 0.35, min: 0.1, max: 1.5, step: 0.05 },
-    spotPenumbra: { value: 0.9, min: 0, max: 1, step: 0.01 }
-  })
+  } = {
+    bgColor: '#c7c7c7', fogColor: '#9d9d9d', floorColor: '#a0a0a0', gridColor: '#af1414', gridSectionColor: '#767676',
+    ambientColor: '#ffffff', ambientIntensity: 0.4, dirLightColor: '#ffffff', dirLightIntensity: 1.5, dirLightPosition: new THREE.Vector3(5.0, 10.0, 5.0), envIntensity: 0.5,
+    darknessLevel: 0.95, spotPos: new THREE.Vector3(0, 10, 8), spotTarget:new THREE.Vector3(-2.0, 2.0, -1.0), spotIntensity: 1500, spotColor: '#ffddbc', spotAngle: 0.35, spotPenumbra: 0.9
+  }
 
   // Create a stable target object for the spotlight to point at
   const spotTargetObj = useMemo(() => new THREE.Object3D(), [])
   useEffect(() => {
-      spotTargetObj.position.set(spotTarget[0], spotTarget[1], spotTarget[2])
+      spotTargetObj.position.set(spotTarget.x, spotTarget.y, spotTarget.z)
   }, [spotTarget])
 
   // Base colors for interpolation
@@ -63,15 +45,9 @@ export const Experience = () => {
   const targetDarkColor = useMemo(() => new THREE.Color('#000000'), [])
 
   // --- 2. EFFECTS ---
-  const { parallaxIntensity, bloomThreshold, bloomIntensity } = useControls('Effects', {
-    parallaxIntensity: { value: 0.1, min: 0, max: 1, step: 0.05 },
-    bloomThreshold: { value: 1.1, min: 0, max: 5, step: 0.1 },
-    bloomIntensity: { value: 1.5, min: 0, max: 5, step: 0.1 }
-  })
+  const { parallaxIntensity, bloomThreshold, bloomIntensity } = { parallaxIntensity: 0.1, bloomThreshold: 1.1, bloomIntensity: 1.5 }
 
-  const { floorHeight } = useControls('Global Floor', {
-    floorHeight: { value: -2, min: -5, max: 0, step: 0.1 },
-  })
+  const { floorHeight } = { floorHeight: -2 }
 
   useFrame((state) => {
     if(scroll) {
@@ -228,11 +204,15 @@ const NavWrapper = () => {
   const scroll = useScroll()
   const totalPages = getTotalPages()
   const [isNavVisible, setIsNavVisible] = useState(false)
+  const[showBackToTop, setShowBackToTop] = useState(false)
 
   useFrame(() => {
     if (scroll) {
       const show = scroll.offset > (1 / totalPages)
       if (show !== isNavVisible) setIsNavVisible(show)
+      
+      const showTop = scroll.offset > 0.2
+      if (showTop !== showBackToTop) setShowBackToTop(showTop)
     }
   })
 
@@ -244,6 +224,21 @@ const NavWrapper = () => {
       style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: 999999 }}
     >
       <StickyNav isVisible={isNavVisible} />
+      {showBackToTop && (
+        <button
+          onClick={() => scroll.el.scrollTo({ top: 0, behavior: 'smooth' })}
+          style={{
+            position: 'absolute', bottom: '40px', right: '40px', padding: '15px', fontSize: '20px',
+            background: '#af1414', color: 'white', border: 'none', cursor: 'pointer',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.3)', pointerEvents: 'auto', width: '180px', height: '50px',
+            display: 'flex', justifyContent: 'center', alignItems: 'center', transition: 'background 0.3s, transform 0.3s'
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = '#e31b1b'; e.currentTarget.style.transform = 'scale(1.1)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = '#af1414'; e.currentTarget.style.transform = 'scale(1)' }}
+        >
+          Back to Top ↑
+        </button>
+      )}
     </Html>
   )
 }

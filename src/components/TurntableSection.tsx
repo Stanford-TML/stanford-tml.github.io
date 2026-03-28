@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Html, useScroll, MeshReflectorMaterial } from '@react-three/drei'
 import { getSectionOffsets, getTotalPages } from '../ScrollManager'
-import { useControls } from 'leva'
 import * as THREE from 'three'
 import { fetchTurntable } from '../services/cms'
 
@@ -37,16 +36,10 @@ export const TurntableSection = () => {
   const { viewport, gl, camera } = useThree()
   
   const { 
-    position, exitSpeed, scale,
-    textRight, debugForceVisible, animationDelay,
-  } = useControls('Turntable', {
-    position: { value:[-1, -1.5, -TURNTABLE_SIZE], step: 0.1 },
-    exitSpeed: { value: 1.0, min: 0.5, max: 2 },
-    scale: { value: 1, min: 0.5, max: 2, step: 0.1 },
-    textRight: { value: 2, min: -50, max: 50, step: 1 },
-    debugForceVisible: false,
-    animationDelay: { value: 0.2, min: 0, max: 2, step: 0.1, label: 'Anim Delay (s)' },
-  })
+    position, exitSpeed, scale, textRight, debugForceVisible, animationDelay,
+  } = {
+    position:[-1, -1.5, -TURNTABLE_SIZE], exitSpeed: 1.0, scale: 1, textRight: 2, debugForceVisible: false, animationDelay: 0.2
+  }
   
   // CMS Content State
   const[turntableContent, setTurntableContent] = useState<any[]>([])

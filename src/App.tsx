@@ -2,7 +2,6 @@
 import { Canvas } from '@react-three/fiber'
 import { ScrollControls } from '@react-three/drei'
 import { Suspense, useState, useEffect } from 'react'
-import { Leva } from 'leva'
 import { Experience } from './components/Experience'
 import { getTotalPages } from './ScrollManager'
 import { LoadingScreen } from './components/LoadingScreen'
@@ -14,6 +13,7 @@ import {Join } from './pages/Join'
 import { Courses } from './pages/Courses'
 import { Publications } from './pages/Publications'
 import { StickyNav } from './components/StickyNav'
+import { GlobalBackToTop } from './components/GlobalBackToTop'
 import { NotFound } from './pages/NotFound'
 
 function App() {
@@ -60,10 +60,6 @@ function App() {
       return (
         <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
           <LoadingScreen />
-          <Leva 
-            collapsed={false} 
-            theme={{ sizes: { rootWidth: '320px' } }}
-          />
 
           <Canvas
             shadows
@@ -92,6 +88,7 @@ function App() {
       {/* Render a global nav for non-home pages or mobile. Desktop Home handles its own nav inside Experience.tsx */}
       {(currentRoute !== '#home' || isMobile) && <StickyNav isVisible={true} />}
       {renderPage()}
+      {(currentRoute !== '#home' || isMobile) && <GlobalBackToTop />}
     </>
   )
 }
