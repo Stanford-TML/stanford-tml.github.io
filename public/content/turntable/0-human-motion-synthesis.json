@@ -4,5 +4,22 @@
   "title": "Human Motion Synthesis",
   "image": "/assets/uploads/kick.png",
   "description": "Human motion provides a window into the principles of intelligent control. TML's work builds on decades of research in computer animation. Many of the control policies used in today's humanoid robots trace their origins to models developed for generating realistic and physically plausible animated characters. Computer animation remains a powerful platform for rapidly advancing research in motion control and physical simulation.",
-  "highlights": []
+  "highlights": [
+    {
+      "title": "Human-object interaction from human-level instructions",
+      "description": "ICCV 2025",
+      "link": "https://hoifhli.github.io",
+      "videoType": "none",
+      "videoId": "ztTsMeIgIGk",
+      "videoUrl": ""
+    },
+    {
+      "title": "Learning to Ball: Composing Policies for Long-Horizon Basketball Moves",
+      "description": "ACM Transactions on Graphics (Proceedings of SIGGRAPH Asia 2025)",
+      "link": "https://pei-xu.github.io/basketball",
+      "videoType": "youtube",
+      "videoId": "2RBFIjjmR2I",
+      "videoUrl": ""
+    }
+  ]
 }
