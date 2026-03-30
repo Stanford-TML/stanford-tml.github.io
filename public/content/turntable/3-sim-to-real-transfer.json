@@ -12,6 +12,14 @@
       "videoType": "youtube",
       "videoId": "kr3I_g1GLYw",
       "videoUrl": ""
+    },
+    {
+      "title": "Omniretarget: Interaction-preserving data generation for humanoid whole-body loco-manipulation and scene interaction",
+      "description": "ICRA 2026",
+      "link": "https://omniretarget.github.io",
+      "videoType": "none",
+      "videoId": "",
+      "videoUrl": ""
     }
   ]
 }
