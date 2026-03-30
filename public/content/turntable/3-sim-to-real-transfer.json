@@ -4,5 +4,14 @@
   "title": "Sim-to-Real Transfer",
   "image": "/assets/uploads/sim2real.png",
   "description": "Simulation allows us to explore motion at scale, but transferring policies learned in simulation to the physical world is challenging. Much of our research focuses on closing this gap, developing methods that make simulated learning reliable for real-world deployment.",
-  "highlights": []
+  "highlights": [
+    {
+      "title": "Retargeting Matters: General Motion Retargeting for Humanoid Motion Tracking",
+      "description": "Open-source automatic retargeting for humanoid robots (ICRA 2026).",
+      "link": "https://github.com/YanjieZe/GMR",
+      "videoType": "youtube",
+      "videoId": "https://www.youtube.com/watch?v=kr3I_g1GLYw",
+      "videoUrl": ""
+    }
+  ]
 }
