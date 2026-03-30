@@ -4,5 +4,14 @@
   "title": "Humanoid Intelligence",
   "image": "/assets/uploads/humanoid.png",
   "description": "Humanoid robots present a new frontier for embodied intelligence. We develop integrated systems that advance navigation, manipulation, and locomotion simultaneously, enabling robots to operate robustly in complex human environments.",
-  "highlights": []
+  "highlights": [
+    {
+      "title": "Beyondmimic: From motion tracking to versatile humanoid control via guided diffusion",
+      "description": "A real-world framework to learn from human motions for versatile and naturalistic humanoid control via guided diffusion.",
+      "link": "https://beyondmimic.github.io",
+      "videoType": "youtube",
+      "videoId": "https://www.youtube.com/watch?v=RS_MtKVIAzY",
+      "videoUrl": ""
+    }
+  ]
 }
