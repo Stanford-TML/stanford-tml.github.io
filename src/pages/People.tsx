@@ -74,13 +74,26 @@ export const People = () => {
                 {/* Stripped the white boxes, just clean images and text */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
                   {items.map((person: any) => (
-                    <div key={person.id} className="group flex flex-col items-center text-center">
-                      <div className="relative w-full aspect-square overflow-hidden rounded-lg mb-4 bg-gray-200 shadow-sm">
-                        <ProgressiveImage highResSrc={person.image} alt={person.name} imageClass="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
+                    <div key={person.id || person.name} className="group flex flex-col items-center text-center">
+                      <div className="relative w-full aspect-square overflow-hidden rounded-lg mb-4 bg-gray-200 shadow-sm flex items-center justify-center text-gray-400">
+                        {/* If they don't have an image yet, the gray box serves as a placeholder */}
+                        {person.image ? (
+                           <ProgressiveImage highResSrc={person.image} alt={person.name} imageClass="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
+                        ) : (
+                           <svg className="w-16 h-16 opacity-30" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        )}
                         <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
                       </div>
                       <h3 className="text-lg font-bold text-gray-900 mb-1">{person.name}</h3>
-                      <p className="text-[#8C1515] font-semibold text-xs uppercase tracking-wider">{person.role}</p>
+                      <p className="text-[#8C1515] font-semibold text-xs uppercase tracking-wider">
+                        {person.role}
+                        {/* Optional Mentor Tag */}
+                        {person.mentor && (
+                          <span className="block mt-1 text-gray-500 text-[10px] font-medium tracking-normal normal-case">
+                            Mentored by {person.mentor}
+                          </span>
+                        )}
+                      </p>
                     </div>
                   ))}
                 </div>

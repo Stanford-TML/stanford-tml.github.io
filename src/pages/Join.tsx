@@ -39,106 +39,116 @@ export const Join = () => {
                 <div className="w-24 h-1 bg-[#8C1515] mx-auto rounded-full"></div>
             </div>
 
-            {/* Auto-Scrolling Highlights Gallery */}
-            {highlights.length > 0 && (
-                <div className="w-full overflow-hidden mb-16 relative bg-gray-900 py-8 shadow-inner">
-                    <style>{`
-            @keyframes scroll {
-              0% { transform: translateX(0); }
-              /* Translate by exactly 1/12th of the total width to seamlessly loop 1 set */
-              100% { transform: translateX(calc(-100% / 12)); } 
-            }
-            .animate-scroll {
-              display: flex;
-              width: max-content;
-              /* Dynamic duration: 10 seconds per item so speed is always consistent */
-              animation: scroll ${highlights.length * 10}s linear infinite;
-            }
-            .animate-scroll:hover {
-              animation-play-state: paused;
-            }
-            
-            /* BULLETPROOF HOVER EFFECTS */
-            .highlight-card .highlight-overlay {
-              background-color: transparent;
-              transition: background-color 0.3s ease;
-            }
-            .highlight-card:hover .highlight-overlay {
-              background-color: rgba(0, 0, 0, 0.7);
-            }
-            
-            .highlight-card .highlight-title {
-              opacity: 0;
-              transform: translateY(1rem) scale(0.95);
-              transition: all 0.3s ease;
-            }
-            .highlight-card:hover .highlight-title {
-              opacity: 1;
-              transform: translateY(0) scale(1.05);
-            }
-          `}</style>
+                        {/* Auto-Scrolling Highlights Gallery */}
+            {highlights.length > 0 && (() => {
+                // 1. Ensure we have enough items to stretch across a large (4K) screen. 
+                // Each item is ~400px wide. We need about 10 items minimum.
+                const minItemsForScreen = 10;
+                const repeatCount = Math.ceil(minItemsForScreen / highlights.length);
+                const baseHighlights = Array(repeatCount).fill(highlights).flat();
+                
+                // 2. Duplicate the base array EXACTLY ONCE to allow for a seamless 50% loop
+                const displayHighlights = [...baseHighlights, ...baseHighlights];
 
-                    <div className="animate-scroll">
-                        {/* Duplicate the array 12 times to guarantee it fills any screen size */}
-                        {Array(12).fill(highlights).flat().map((item, idx) => {
-                        // 1. Check if the item is meant to be a YouTube video
-                        const isYouTube = item.mediaType === 'youtube' || !!item.youtubeId;
-                        const youtubeId = item.youtubeId;
+                return (
+                    <div className="w-full overflow-hidden mb-16 relative bg-gray-900 py-8 shadow-inner">
+                        <style>{`
+                @keyframes scroll {
+                  0% { transform: translateX(0); }
+                  /* Translate by exactly 50% to seamlessly loop our duplicated base array */
+                  100% { transform: translateX(-50%); } 
+                }
+                .animate-scroll {
+                  display: flex;
+                  width: max-content;
+                  /* Duration depends ONLY on the base length so speed is consistent */
+                  animation: scroll ${baseHighlights.length * 10}s linear infinite;
+                }
+                .animate-scroll:hover {
+                  animation-play-state: paused;
+                }
+                
+                /* BULLETPROOF HOVER EFFECTS */
+                .highlight-card .highlight-overlay {
+                  background-color: transparent;
+                  transition: background-color 0.3s ease;
+                }
+                .highlight-card:hover .highlight-overlay {
+                  background-color: rgba(0, 0, 0, 0.7);
+                }
+                
+                .highlight-card .highlight-title {
+                  opacity: 0;
+                  transform: translateY(1rem) scale(0.95);
+                  transition: all 0.3s ease;
+                }
+                .highlight-card:hover .highlight-title {
+                  opacity: 1;
+                  transform: translateY(0) scale(1.05);
+                }
+              `}</style>
 
-                        // 2. Process standard uploads (Image / MP4)
-                        let mediaSrc = item.media || '';
-                        if (mediaSrc && !mediaSrc.startsWith('http')) {
-                            mediaSrc = mediaSrc.replace(/^(\/?public\/)/, '/');
-                            if (!mediaSrc.startsWith('/')) mediaSrc = '/' + mediaSrc;
-                        }
-                        const isVideo = mediaSrc.match(/\.(mp4|webm|ogg|mov)$/i);
+                        <div className="animate-scroll">
+                            {displayHighlights.map((item, idx) => {
+                                const isYouTube = item.mediaType === 'youtube' || !!item.youtubeId;
+                                const youtubeId = item.youtubeId;
 
-                        return (
-                            <a
-                                key={idx}
-                                href={item.link || '#'}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="highlight-card relative block h-64 w-96 flex-shrink-0 rounded-xl overflow-hidden shadow-lg border-2 border-gray-700 transform transition-transform duration-300 hover:scale-105 hover:border-[#8C1515] bg-gray-800 mr-6"
-                            >
-                                {isYouTube && youtubeId ? (
-                                    /* YouTube Embed */
-                                    <iframe
-                                        src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0&showinfo=0&rel=0&playsinline=1`}
-                                        className="absolute inset-0 w-full h-full scale-[1.35] pointer-events-none z-0 border-0"
-                                        allow="autoplay; encrypted-media"
-                                        title={item.title}
-                                    />
-                                ) : isVideo ? (
-                                    /* Uploaded Video */
-                                    <video
-                                        src={mediaSrc}
-                                        autoPlay
-                                        loop
-                                        muted
-                                        playsInline
-                                        className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
-                                    />
-                                ) : (
-                                    /* Uploaded Image */
-                                    <ProgressiveImage 
-                                        highResSrc={mediaSrc} 
-                                        alt={item.title} 
-                                        imageClass="absolute inset-0 w-full h-full object-cover pointer-events-none z-0" 
-                                    />
-                                )}
+                                let mediaSrc = item.media || '';
+                                if (mediaSrc && !mediaSrc.startsWith('http')) {
+                                    mediaSrc = mediaSrc.replace(/^(\/?public\/)/, '/');
+                                    if (!mediaSrc.startsWith('/')) mediaSrc = '/' + mediaSrc;
+                                }
+                                const isVideo = mediaSrc.match(/\.(mp4|webm|ogg|mov)$/i);
 
-                                <div className="highlight-overlay absolute inset-0 z-10 flex items-center justify-center p-6">
-                                    <h3 className="highlight-title text-white text-2xl font-bold text-center drop-shadow-lg">
-                                        {item.title}
-                                    </h3>
-                                </div>
-                            </a>
-                        )
-                    })}
+                                return (
+                                    <a
+                                        key={idx}
+                                        href={item.link || '#'}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="highlight-card relative block h-64 w-96 flex-shrink-0 rounded-xl overflow-hidden shadow-lg border-2 border-gray-700 transform transition-transform duration-300 hover:scale-105 hover:border-[#8C1515] bg-gray-800 mr-6"
+                                    >
+                                        {isYouTube && youtubeId ? (
+                                            /* YouTube Embed */
+                                            <iframe
+                                                loading="lazy" 
+                                                // Added &vq=small to hint lower resolution stream
+                                                src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0&showinfo=0&rel=0&playsinline=1&vq=small`}
+                                                className="absolute inset-0 w-full h-full scale-[1.35] pointer-events-none z-0 border-0"
+                                                allow="autoplay; encrypted-media"
+                                                title={item.title}
+                                            />
+                                        ) : isVideo ? (
+                                            /* Uploaded Video */
+                                            <video
+                                                src={mediaSrc}
+                                                autoPlay
+                                                loop
+                                                muted
+                                                playsInline
+                                                className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+                                            />
+                                        ) : (
+                                            /* Uploaded Image */
+                                            <ProgressiveImage
+                                                highResSrc={mediaSrc}
+                                                alt={item.title}
+                                                imageClass="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+                                            />
+                                        )}
+
+                                        <div className="highlight-overlay absolute inset-0 z-10 flex items-center justify-center p-6">
+                                            <h3 className="highlight-title text-white text-2xl font-bold text-center drop-shadow-lg">
+                                                {item.title}
+                                            </h3>
+                                        </div>
+                                    </a>
+                                )
+                            })}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            })()}
 
             <div className="max-w-4xl mx-auto px-6 md:px-12 lg:px-0">
 

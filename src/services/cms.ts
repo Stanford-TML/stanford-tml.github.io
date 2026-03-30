@@ -1,5 +1,16 @@
 // FILE: src/services/cms.ts
 
+const extractYouTubeId = (input: string | undefined): string | undefined => {
+  if (!input) return input;
+  // If it's already exactly 11 characters without URL components, it's likely just the ID
+  if (input.length === 11 && !input.includes('youtube.com') && !input.includes('youtu.be')) {
+      return input;
+  }
+  // Match standard YouTube URLs and extract the 11-character ID
+  const match = input.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  return match ? match[1] : input;
+};
+
 export const fetchPublications = async () => {
   const modules = import.meta.glob('/public/content/publications/*.json', { eager: true });
   const publications = Object.values(modules).map((mod: any) => mod.default || mod);
@@ -55,14 +66,33 @@ export const fetchRecruitment = async () => {
 
 export const fetchHighlights = async () => {
   const modules = import.meta.glob('/public/content/highlights/*.json', { eager: true });
-  return Object.values(modules).map((mod: any) => mod.default || mod);
+  return Object.values(modules).map((mod: any) => {
+    const item = mod.default || mod;
+    // Safely extract the ID in case an editor pasted a full URL
+    return {
+      ...item,
+      youtubeId: extractYouTubeId(item.youtubeId)
+    };
+  });
 }
 
 export const fetchTurntable = async () => {
   const modules = import.meta.glob('/public/content/turntable/*.json', { eager: true });
-  const slots = Object.values(modules).map((mod: any) => mod.default || mod);
+  const slots = Object.values(modules).map((mod: any) => {
+    const item = mod.default || mod;
+    
+    // Turntable has nested highlights with a 'videoId' field
+    if (item.highlights && Array.isArray(item.highlights)) {
+      item.highlights = item.highlights.map((h: any) => ({
+        ...h,
+        videoId: extractYouTubeId(h.videoId)
+      }));
+    }
+    
+    return item;
+  });
   // Sort by an 'order' field if you add one, otherwise rely on filename
-  return slots.sort((a, b) => (a.order || 0) - (b.order || 0));
+  return slots.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
 }
 
 export const fetchHomeContent = async () => {
