@@ -4,5 +4,14 @@
   "title": "Exoskeletons",
   "image": "/assets/uploads/exo.png",
   "description": "Exoskeletons represent the frontier of human-robot integration. These assistive systems combine advances in robotics, sensing, and machine learning with lightweight hardware design. Our work spans the full stack—from electronics and mechanics to data-driven behavior modeling and intent prediction.",
-  "highlights": []
+  "highlights": [
+    {
+      "title": "Addbiomechanics dataset: Capturing the physics of human motion at scale",
+      "description": "AddBiomechanics is an open-source, cloud-based platform designed to automate the processing of motion capture data. By leveraging constrained optimization and machine learning, it streamlines the transition from raw trajectories to physics-consistent musculoskeletal simulations.",
+      "link": "https://addbiomechanics.org",
+      "videoType": "none",
+      "videoId": "",
+      "videoUrl": ""
+    }
+  ]
 }
