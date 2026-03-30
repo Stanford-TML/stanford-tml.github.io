@@ -123,7 +123,9 @@ collections:
     format: "json"
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Media (Image or Video)", name: "media", widget: "file", hint: "Upload an image or a short mp4/webm video" }
+      - { label: "Media Type", name: "mediaType", widget: "select", options: ["upload", "youtube"], default: "upload" }
+      - { label: "YouTube Video ID", name: "youtubeId", widget: "string", required: false, hint: "Used if Media Type is 'youtube' (e.g. dQw4w9WgXcQ)" }
+      - { label: "Media (Image or Video)", name: "media", widget: "file", required: false, hint: "Used if Media Type is 'upload'. Upload an image or a short mp4/webm video" }
       - { label: "Link", name: "link", widget: "string" }
 
   - name: "turntable"

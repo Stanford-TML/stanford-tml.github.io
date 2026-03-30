@@ -81,44 +81,61 @@ export const Join = () => {
                     <div className="animate-scroll">
                         {/* Duplicate the array 12 times to guarantee it fills any screen size */}
                         {Array(12).fill(highlights).flat().map((item, idx) => {
+                        // 1. Check if the item is meant to be a YouTube video
+                        const isYouTube = item.mediaType === 'youtube' || !!item.youtubeId;
+                        const youtubeId = item.youtubeId;
 
-                            let mediaSrc = item.media || '';
-                            if (mediaSrc && !mediaSrc.startsWith('http')) {
-                                mediaSrc = mediaSrc.replace(/^(\/?public\/)/, '/');
-                                if (!mediaSrc.startsWith('/')) mediaSrc = '/' + mediaSrc;
-                            }
+                        // 2. Process standard uploads (Image / MP4)
+                        let mediaSrc = item.media || '';
+                        if (mediaSrc && !mediaSrc.startsWith('http')) {
+                            mediaSrc = mediaSrc.replace(/^(\/?public\/)/, '/');
+                            if (!mediaSrc.startsWith('/')) mediaSrc = '/' + mediaSrc;
+                        }
+                        const isVideo = mediaSrc.match(/\.(mp4|webm|ogg|mov)$/i);
 
-                            const isVideo = mediaSrc.match(/\.(mp4|webm|ogg|mov)$/i);
+                        return (
+                            <a
+                                key={idx}
+                                href={item.link || '#'}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="highlight-card relative block h-64 w-96 flex-shrink-0 rounded-xl overflow-hidden shadow-lg border-2 border-gray-700 transform transition-transform duration-300 hover:scale-105 hover:border-[#8C1515] bg-gray-800 mr-6"
+                            >
+                                {isYouTube && youtubeId ? (
+                                    /* YouTube Embed */
+                                    <iframe
+                                        src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0&showinfo=0&rel=0&playsinline=1`}
+                                        className="absolute inset-0 w-full h-full scale-[1.35] pointer-events-none z-0 border-0"
+                                        allow="autoplay; encrypted-media"
+                                        title={item.title}
+                                    />
+                                ) : isVideo ? (
+                                    /* Uploaded Video */
+                                    <video
+                                        src={mediaSrc}
+                                        autoPlay
+                                        loop
+                                        muted
+                                        playsInline
+                                        className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+                                    />
+                                ) : (
+                                    /* Uploaded Image */
+                                    <ProgressiveImage 
+                                        highResSrc={mediaSrc} 
+                                        alt={item.title} 
+                                        imageClass="absolute inset-0 w-full h-full object-cover pointer-events-none z-0" 
+                                    />
+                                )}
 
-                            return (
-                                <a
-                                    key={idx}
-                                    href={item.link || '#'}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="highlight-card relative block h-64 w-96 flex-shrink-0 rounded-xl overflow-hidden shadow-lg border-2 border-gray-700 transform transition-transform duration-300 hover:scale-105 hover:border-[#8C1515] bg-gray-800 mr-6"
-                                >
-                                    {isVideo ? (
-                                        <video
-                                            src={mediaSrc}
-                                            autoPlay
-                                            loop
-                                            muted
-                                            playsInline
-                                            className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
-                                        />
-                                    ) : (
-                                        <ProgressiveImage highResSrc={mediaSrc} alt={item.title} imageClass="absolute inset-0 w-full h-full object-cover pointer-events-none z-0" />
-                                    )}
-
-                                    <div className="highlight-overlay absolute inset-0 z-10 flex items-center justify-center p-6">
-                                        <h3 className="highlight-title text-white text-2xl font-bold text-center drop-shadow-lg">
-                                            {item.title}
-                                        </h3>
-                                    </div>
-                                </a>
-                            )
-                        })}
+                                <div className="highlight-overlay absolute inset-0 z-10 flex items-center justify-center p-6">
+                                    <h3 className="highlight-title text-white text-2xl font-bold text-center drop-shadow-lg">
+                                        {item.title}
+                                    </h3>
+                                </div>
+                            </a>
+                        )
+                    })}
                     </div>
                 </div>
             )}
