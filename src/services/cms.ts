@@ -66,14 +66,7 @@ export const fetchRecruitment = async () => {
 
 export const fetchHighlights = async () => {
   const modules = import.meta.glob('/public/content/highlights/*.json', { eager: true });
-  return Object.values(modules).map((mod: any) => {
-    const item = mod.default || mod;
-    // Safely extract the ID in case an editor pasted a full URL
-    return {
-      ...item,
-      youtubeId: extractYouTubeId(item.youtubeId)
-    };
-  });
+  return Object.values(modules).map((mod: any) => mod.default || mod);
 }
 
 export const fetchTurntable = async () => {

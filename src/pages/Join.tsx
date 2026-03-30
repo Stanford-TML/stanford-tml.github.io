@@ -39,15 +39,18 @@ export const Join = () => {
                 <div className="w-24 h-1 bg-[#8C1515] mx-auto rounded-full"></div>
             </div>
 
-                        {/* Auto-Scrolling Highlights Gallery */}
+            {/* Auto-Scrolling Highlights Gallery */}
             {highlights.length > 0 && (() => {
-                // 1. Ensure we have enough items to stretch across a large (4K) screen. 
-                // Each item is ~400px wide. We need about 10 items minimum.
-                const minItemsForScreen = 10;
-                const repeatCount = Math.ceil(minItemsForScreen / highlights.length);
-                const baseHighlights = Array(repeatCount).fill(highlights).flat();
+                // 1. Cap to 8 items max. Native video is much lighter, 
+                // but we still want to avoid rendering 50 videos at once.
+                const safeHighlights = highlights.slice(0, 8);
                 
-                // 2. Duplicate the base array EXACTLY ONCE to allow for a seamless 50% loop
+                // 2. Ensure we have enough items to stretch across a 4K screen. 
+                const minItemsForScreen = 10;
+                const repeatCount = Math.ceil(minItemsForScreen / safeHighlights.length);
+                const baseHighlights = Array(repeatCount).fill(safeHighlights).flat();
+                
+                // 3. Duplicate exactly once for the seamless 50% loop
                 const displayHighlights = [...baseHighlights, ...baseHighlights];
 
                 return (
@@ -55,20 +58,24 @@ export const Join = () => {
                         <style>{`
                 @keyframes scroll {
                   0% { transform: translateX(0); }
-                  /* Translate by exactly 50% to seamlessly loop our duplicated base array */
                   100% { transform: translateX(-50%); } 
                 }
                 .animate-scroll {
                   display: flex;
                   width: max-content;
-                  /* Duration depends ONLY on the base length so speed is consistent */
                   animation: scroll ${baseHighlights.length * 10}s linear infinite;
                 }
                 .animate-scroll:hover {
                   animation-play-state: paused;
                 }
                 
-                /* BULLETPROOF HOVER EFFECTS */
+                /* PERFORMANCE FIX: Hardware acceleration and off-screen hiding */
+                .highlight-card {
+                  content-visibility: auto;
+                  contain-intrinsic-size: 384px 256px;
+                  transform: translateZ(0); /* Forces GPU acceleration */
+                }
+                
                 .highlight-card .highlight-overlay {
                   background-color: transparent;
                   transition: background-color 0.3s ease;
@@ -90,9 +97,6 @@ export const Join = () => {
 
                         <div className="animate-scroll">
                             {displayHighlights.map((item, idx) => {
-                                const isYouTube = item.mediaType === 'youtube' || !!item.youtubeId;
-                                const youtubeId = item.youtubeId;
-
                                 let mediaSrc = item.media || '';
                                 if (mediaSrc && !mediaSrc.startsWith('http')) {
                                     mediaSrc = mediaSrc.replace(/^(\/?public\/)/, '/');
@@ -106,34 +110,26 @@ export const Join = () => {
                                         href={item.link || '#'}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="highlight-card relative block h-64 w-96 flex-shrink-0 rounded-xl overflow-hidden shadow-lg border-2 border-gray-700 transform transition-transform duration-300 hover:scale-105 hover:border-[#8C1515] bg-gray-800 mr-6"
+                                        className="highlight-card relative block h-64 w-96 flex-shrink-0 rounded-xl overflow-hidden shadow-lg border-2 border-gray-700 transition-colors duration-300 hover:border-[#8C1515] bg-gray-800 mr-6"
                                     >
-                                        {isYouTube && youtubeId ? (
-                                            /* YouTube Embed */
-                                            <iframe
-                                                loading="lazy" 
-                                                // Added &vq=small to hint lower resolution stream
-                                                src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0&showinfo=0&rel=0&playsinline=1&vq=small`}
-                                                className="absolute inset-0 w-full h-full scale-[1.35] pointer-events-none z-0 border-0"
-                                                allow="autoplay; encrypted-media"
-                                                title={item.title}
-                                            />
-                                        ) : isVideo ? (
-                                            /* Uploaded Video */
+                                        {isVideo ? (
+                                            /* Highly Optimized Native Video */
                                             <video
                                                 src={mediaSrc}
                                                 autoPlay
                                                 loop
                                                 muted
                                                 playsInline
-                                                className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+                                                disablePictureInPicture
+                                                disableRemotePlayback
+                                                className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0 hover:scale-105 transition-transform duration-500"
                                             />
                                         ) : (
                                             /* Uploaded Image */
                                             <ProgressiveImage
                                                 highResSrc={mediaSrc}
                                                 alt={item.title}
-                                                imageClass="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+                                                imageClass="absolute inset-0 w-full h-full object-cover pointer-events-none z-0 hover:scale-105 transition-transform duration-500"
                                             />
                                         )}
 
