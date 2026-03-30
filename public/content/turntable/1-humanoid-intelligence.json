@@ -12,6 +12,22 @@
       "videoType": "youtube",
       "videoId": "RS_MtKVIAzY",
       "videoUrl": ""
+    },
+    {
+      "title": "CHIP: Adaptive Compliance for Humanoid Control through Hindsight Perturbation",
+      "description": "-",
+      "link": "https://arxiv.org/abs/2512.14689",
+      "videoType": "none",
+      "videoId": "",
+      "videoUrl": ""
+    },
+    {
+      "title": "TWIST2: Scalable, Portable, and Holistic Humanoid Data Collection System",
+      "description": "ICRA 2026",
+      "link": "https://yanjieze.com/TWIST2/",
+      "videoType": "youtube",
+      "videoId": "lTtEvI0kUfo",
+      "videoUrl": ""
     }
   ]
 }
