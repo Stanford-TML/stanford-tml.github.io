@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: npm ci # Or yarn install / pnpm install
 
+      - name: Setup ImageMagick
+        uses: mfinelli/setup-imagemagick@v5
+
       - name: Optimize images and generate placeholders
         run: |
           if [ -d "public/assets" ]; then
@@ -54,12 +57,12 @@ jobs:
                 
                 # 1. OPTIMIZE THE HIGH-RES IMAGE
                 echo "Optimizing high-res image: $img"
-                convert "$img" -resize "2000x2000>" -strip -quality 85 "$img"
+                magick "$img" -resize "2000x2000>" -strip -quality 85 "$img"
                 
                 # 2. GENERATE LOW-RES PLACEHOLDER
                 if [ ! -f "$small_img" ]; then
                   echo "Generating low-res placeholder for $img"
-                  convert "$img" -resize "50x50>" -strip -quality 50 "$small_img"
+                  magick "$img" -resize "50x50>" -strip -quality 50 "$small_img"
                 fi
               fi
             done
