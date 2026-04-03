@@ -1,6 +1,8 @@
 {
   "title": "TWIST2: Scalable, Portable, and Holistic Humanoid Data Collection System",
-  "authors": "Y Ze, S Zhao, W Wang, A Kanazawa, R Duan, P Abbeel, G Shi, J Wu, CK Liu",
-  "date": "2026-01-01",
-  "type": "2026 IEEE International Conference on Robotics and Automation (ICRA), 2026"
+  "authors": "Yanjie Ze, Siheng Zhao, Weizhuo Wang, Angjoo Kanazawa, Rocky Duan, Pieter Abbeel, Guanya Shi, Jiajun Wu, C. Karen Liu",
+  "date": "2025-09-17",
+  "type": "2026 IEEE International Conference on Robotics and Automation (ICRA), 2026",
+  "award": "",
+  "link": "https://twist-data.github.io/"
 }
