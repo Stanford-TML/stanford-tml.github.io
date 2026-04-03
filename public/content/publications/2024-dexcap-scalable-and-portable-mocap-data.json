@@ -1,8 +1,10 @@
 {
   "title": "DexCap: Scalable and Portable Mocap Data Collection System for Dexterous Manipulation",
-  "authors": "Wang, Chen, Haochen Shi, Weizhuo Wang, Ruohan Zhang, Li Fei-Fei, and Karen Liu",
-  "venue": "Robotics: Science and Systems (RSS), 2024",
-  "date": "July 2024",
+  "authors": "Chen Wang, Haochen Shi, Weizhuo Wang, Ruohan Zhang, Li Fei-Fei, C Karen Liu",
+  "date": "2024-03-12",
+  "type": "",
+  "award": "",
   "link": "https://dex-cap.github.io/",
-  "fullCitation": "Wang, Chen, Haochen Shi, Weizhuo Wang, Ruohan Zhang, Li Fei-Fei, and Karen Liu.  “DexCap: Scalable and Portable Mocap Data Collection System for Dexterous Manipulation” ,  Robotics: Science and Systems (RSS), 2024 , July 2024."
+  "fullCitation": "Wang, Chen, Haochen Shi, Weizhuo Wang, Ruohan Zhang, Li Fei-Fei, and Karen Liu.  “DexCap: Scalable and Portable Mocap Data Collection System for Dexterous Manipulation” ,  Robotics: Science and Systems (RSS), 2024 , July 2024.",
+  "venue": "Robotics: Science and Systems (RSS), 2024"
 }
