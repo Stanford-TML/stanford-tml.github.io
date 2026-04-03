@@ -54,12 +54,12 @@ jobs:
                 
                 # 1. OPTIMIZE THE HIGH-RES IMAGE
                 echo "Optimizing high-res image: $img"
-                magick "$img" -resize "2000x2000>" -strip -quality 85 "$img"
+                convert "$img" -resize "2000x2000>" -strip -quality 85 "$img"
                 
                 # 2. GENERATE LOW-RES PLACEHOLDER
                 if [ ! -f "$small_img" ]; then
                   echo "Generating low-res placeholder for $img"
-                  magick "$img" -resize "50x50>" -strip -quality 50 "$small_img"
+                  convert "$img" -resize "50x50>" -strip -quality 50 "$small_img"
                 fi
               fi
             done
