@@ -3,6 +3,12 @@ import { useEffect, useState } from 'react'
 import { fetchPeople } from '../services/cms'
 import { ProgressiveImage } from '../components/ProgressiveImage'
 
+// Helper to automatically map "/uploads/john.jpg" to "/uploads/john_small.jpg"
+const getLowResSrc = (src: string) => {
+  if (!src) return src;
+  return src.replace(/(\.[\w\d_-]+)$/i, '_small$1');
+};
+
 export const People = () => {
   const [data, setData] = useState<any>(null)
 
@@ -50,7 +56,7 @@ export const People = () => {
           {/* PI Section - Kept as a card to highlight hierarchy */}
           <div className="bg-white rounded-xl p-8 md:p-12 shadow-md mb-24 flex flex-col md:flex-row items-center gap-12 border-t-4 border-[#8C1515]">
             <div className="relative w-56 h-56 flex-shrink-0 rounded-full overflow-hidden shadow-inner border-4 border-gray-50">
-              <ProgressiveImage highResSrc={data.pi.image} alt={data.pi.name} imageClass="w-full h-full object-cover" />
+              <ProgressiveImage lowResSrc={getLowResSrc(data.pi.image)} highResSrc={data.pi.image} alt={data.pi.name} imageClass="w-full h-full object-cover" />
             </div>
             <div className="text-center md:text-left flex-1">
               <h2 className="text-4xl font-bold text-gray-900 mb-2">{data.pi.name}</h2>
@@ -78,7 +84,7 @@ export const People = () => {
                       <div className="relative w-full aspect-square overflow-hidden rounded-lg mb-4 bg-gray-200 shadow-sm flex items-center justify-center text-gray-400">
                         {/* If they don't have an image yet, the gray box serves as a placeholder */}
                         {person.image ? (
-                           <ProgressiveImage highResSrc={person.image} alt={person.name} imageClass="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
+                           <ProgressiveImage lowResSrc={getLowResSrc(person.image)} highResSrc={person.image} alt={person.name} imageClass="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
                         ) : (
                            <svg className="w-16 h-16 opacity-30" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                         )}

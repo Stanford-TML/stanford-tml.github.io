@@ -84,7 +84,7 @@ collections:
       - { label: "Name", name: "name", widget: "string" }
       - { label: "Role", name: "role", widget: "string" }
       - { label: "Mentor (Optional)", name: "mentor", widget: "string", required: false, hint: "For students/interns (e.g., 'Haochen')" }
-      - { label: "Category", name: "category", widget: "select", options:["PI", "Fellows", "Students", "Alumni"] }
+      - { label: "Category", name: "category", widget: "select", options:["PI", "Students", "Alumni"] }
       - { label: "Image", name: "image", widget: "image", required: false }
       - { label: "Bio (PI Only)", name: "bio", widget: "text", required: false }
 
