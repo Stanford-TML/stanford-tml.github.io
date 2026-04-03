@@ -37,36 +37,34 @@ jobs:
 
       - name: Optimize images and generate placeholders
         run: |
-          # Check if the uploads folder exists
-          if [ -d "public/uploads" ]; then
-            cd public/uploads
-            # Enable nullglob so the loop doesn't fail if no matches are found
-            shopt -s nullglob
+          if [ -d "public/assets" ]; then
+            cd public/assets
             
-            # Loop through all standard image types
-            for img in *.{jpg,jpeg,png,webp}; do
-              # Ensure we are not processing an already generated low-res image
+            # globstar = allows **/* to search recursively through all subfolders
+            # nullglob = prevents errors if no images are found
+            # nocaseglob = catches both .jpg and .JPG extensions
+            shopt -s globstar nullglob nocaseglob
+            
+            for img in **/*.{jpg,jpeg,png,webp}; do
+              # Ensure we aren't re-processing an already generated _small image
               if [[ "$img" != *_small.* ]]; then
                 filename="${img%.*}"
                 extension="${img##*.}"
                 small_img="${filename}_small.${extension}"
                 
                 # 1. OPTIMIZE THE HIGH-RES IMAGE
-                # -resize "2000x2000>" only shrinks images that are larger than 2000px
-                # -strip removes unnecessary camera metadata (EXIF) to save file size
-                # -quality 85 applies a slight compression (mostly affects JPEGs/WebP)
                 echo "Optimizing high-res image: $img"
                 magick "$img" -resize "2000x2000>" -strip -quality 85 "$img"
                 
                 # 2. GENERATE LOW-RES PLACEHOLDER
-                if[ ! -f "$small_img" ]; then
+                if [ ! -f "$small_img" ]; then
                   echo "Generating low-res placeholder for $img"
                   magick "$img" -resize "50x50>" -strip -quality 50 "$small_img"
                 fi
               fi
             done
           else
-            echo "Directory public/uploads not found, skipping image processing."
+            echo "Directory public/assets not found, skipping."
           fi
         
       - name: Build project
