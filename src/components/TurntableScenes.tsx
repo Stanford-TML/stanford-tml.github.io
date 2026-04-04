@@ -367,7 +367,7 @@ export const SceneRetargeting = ({ isActive }: any) => {
   const clonedScene = useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { actions } = useAnimations(animations, group)
   
-  const { pos, rot, scale, holoColor } = { pos: new THREE.Vector3(0, 0, 8), rot: new THREE.Euler(0, 0, 0), scale: 1, holoColor: '#00ccff' }
+  const { pos, rot, scale, holoColor } = { pos: new THREE.Vector3(0.5, 0, 8), rot: new THREE.Euler(0, 0, 0), scale: 1, holoColor: '#00ccff' }
 
   useEffect(() => {
     if (!actions) return

@@ -2,7 +2,7 @@
 import { Environment, useScroll, Scroll, OrbitControls, Grid, Html  } from '@react-three/drei'
 import { useState, useRef, useMemo, useEffect } from 'react'
 import * as THREE from 'three' 
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { EffectComposer, Bloom } from '@react-three/postprocessing' 
 import { RobotRig } from './RobotRig.tsx'
 import { TurntableSection } from './TurntableSection.tsx'
@@ -21,6 +21,28 @@ export const Experience = () => {
   const spotLightRef = useRef<THREE.SpotLight>(null)
 
   const { debugOrbit } = { debugOrbit: false }
+
+  // --- NEW: DYNAMIC CAMERA SCALING ---
+  const { camera, size } = useThree()
+
+  useEffect(() => {
+    // We assume the 3D scene looks best at around a 16:10 aspect ratio (1.6)
+    const targetAspect = 1.6
+    const currentAspect = size.width / size.height
+
+    if (camera instanceof THREE.PerspectiveCamera) {
+      if (currentAspect < targetAspect) {
+        // If the screen is narrower than our target, we widen the FOV
+        // 40 is your default FOV defined in App.tsx
+        camera.fov = 40 * (targetAspect / currentAspect)
+      } else {
+        // If the screen is super wide, we just stick to the default 40
+        camera.fov = 40
+      }
+      camera.updateProjectionMatrix()
+    }
+  }, [size.width, size.height, camera])
+  // -----------------------------------
 
   // --- 1. SCENE COLORS & LIGHTING ---
   const { 

@@ -6,7 +6,6 @@ import { getSectionOffsets, getTotalPages } from '../ScrollManager'
 import * as THREE from 'three'
 import { fetchTurntable } from '../services/cms'
 
-// Import the compartmentalized scenes
 import { 
     SceneDynamicMotion, 
     SceneRetargeting, 
@@ -33,7 +32,7 @@ export const TurntableSection = () => {
   const uiRef = useRef<HTMLDivElement>(null)
   const highlightsRef = useRef<HTMLDivElement>(null)
   const scroll = useScroll()
-  const { viewport, gl, camera } = useThree()
+  const { viewport, gl, camera, size } = useThree()
   
   const { 
     position, exitSpeed, scale, textRight, debugForceVisible, animationDelay,
@@ -41,18 +40,19 @@ export const TurntableSection = () => {
     position:[-1, -1.5, -TURNTABLE_SIZE], exitSpeed: 1.0, scale: 1, textRight: 2, debugForceVisible: false, animationDelay: 0.2
   }
   
-  // CMS Content State
   const[turntableContent, setTurntableContent] = useState<any[]>([])
   const [activeSlot, setActiveSlot] = useState(0)
   const [currentHighlightIndex, setCurrentHighlightIndex] = useState(0)
   const[isHovered, setIsHovered] = useState(false)
 
-  // Reset highlight index when slot changes
+  // Calculate space in the component body for React rendering
+  const currentAspect = size.width / size.height;
+  const hasEnoughSpace = (size.width > 1200 && currentAspect > 2.0) || size.width > 1400;
+
   useEffect(() => {
       setCurrentHighlightIndex(0)
   }, [activeSlot])
 
-  // Auto-scroll highlights every 5 seconds (pauses on hover)
   useEffect(() => {
       const currentItem = turntableContent[activeSlot] || turntableContent[0] || {}
       const count = currentItem.highlights?.length || 0
@@ -63,25 +63,20 @@ export const TurntableSection = () => {
       }, 5000)
       
       return () => clearInterval(interval)
-  },[activeSlot, turntableContent, isHovered])
+  }, [activeSlot, turntableContent, isHovered])
   
-  // PERFORMANCE FIX: Use a ref for opacity instead of React state
   const opacityRef = useRef(0)
-  
   const [slotProgress, setSlotProgress] = useState(0)
   const slotEnterTime = useRef(0)
-  const[isDelayed, setIsDelayed] = useState(false)
-
+  const [isDelayed, setIsDelayed] = useState(false)
 
   useEffect(() => {
     const loadContent = async () => {
       try {
         const data = await fetchTurntable()
-        if (data && data.length > 0) {
-          setTurntableContent(data)
-        }
+        if (data && data.length > 0) setTurntableContent(data)
       } catch (error) {
-        console.error("Failed to load turntable content from CMS", error)
+        console.error("Failed to load turntable content", error)
       }
     }
     loadContent()
@@ -91,6 +86,13 @@ export const TurntableSection = () => {
 
   useFrame((state, delta) => {
     if (!outerGroup.current || !turntableGroup.current) return
+
+    // Recalculate space inside useFrame to guarantee fluid 3D sliding on window resize
+    const frameAspect = state.size.width / state.size.height;
+    // either extremely wide or wide enough with a luxurious aspect ratio
+    const frameHasEnoughSpace = (state.size.width > 1200 && frameAspect > 2.0) || state.size.width > 1400;
+
+    const targetX = frameHasEnoughSpace ? position[0] : position[0] - 1.5;
 
     const {duration: durationPages, startPage} = getSectionOffsets('turntable')
     const totalPages = getTotalPages()
@@ -111,7 +113,14 @@ export const TurntableSection = () => {
         }
     }
     
-    outerGroup.current.position.set(position[0], yPos, position[2])
+    let newX = outerGroup.current.position.x;
+    if (yPos === -9999) {
+        newX = targetX; 
+    } else {
+        newX = THREE.MathUtils.damp(newX, targetX, 5, delta);
+    }
+
+    outerGroup.current.position.set(newX, yPos, position[2])
 
     if (yPos === -9999) return 
     
@@ -140,12 +149,10 @@ export const TurntableSection = () => {
     if (_isDelayed !== isDelayed) setIsDelayed(_isDelayed)
 
     const targetProgress = _isDelayed ? 0 : progressInSlot
-    const dampFactor = 6
-    const maxSpeed = 0.8 
     
-    const wantedProgress = THREE.MathUtils.damp(slotProgress, targetProgress, dampFactor, delta)
+    const wantedProgress = THREE.MathUtils.damp(slotProgress, targetProgress, 6, delta)
     let step = wantedProgress - slotProgress
-    const maxStep = maxSpeed * delta
+    const maxStep = 0.8 * delta
     step = THREE.MathUtils.clamp(step, -maxStep, maxStep)
     
     setSlotProgress(slotProgress + step)
@@ -164,9 +171,8 @@ export const TurntableSection = () => {
     }
     
     if (highlightsRef.current) {
-        const currentItem = turntableContent[activeSlot] || turntableContent[0] || {}
-        const hasHighlights = currentItem.highlights && currentItem.highlights.length > 0
-        const highlightOpacity = (opacityRef.current > 0.1 && hasHighlights) ? opacityRef.current : 0
+        const hasHighlights = contentItem.highlights && contentItem.highlights.length > 0
+        const highlightOpacity = (opacityRef.current > 0.1 && hasHighlights && frameHasEnoughSpace) ? opacityRef.current : 0
         
         highlightsRef.current.style.opacity = highlightOpacity.toString()
         highlightsRef.current.style.pointerEvents = highlightOpacity > 0.1 ? 'auto' : 'none'
@@ -181,7 +187,6 @@ export const TurntableSection = () => {
     const timer = setTimeout(() => {
         const scenes = turntableGroup.current!.children
         const hiddenObjects: THREE.Object3D[] =[]
-        
         scenes.forEach(child => {
             child.traverse((c: any) => {
                c.frustumCulled = false 
@@ -192,12 +197,76 @@ export const TurntableSection = () => {
             })
             gl.compile(child, camera)
         })
-        
         hiddenObjects.forEach(c => c.visible = false)
     }, 50)
-    
     return () => clearTimeout(timer)
   }, [gl, camera])
+
+  // NEW: A unified smart scroll handler that perfectly handles nested overflow divs
+  const handleSmartScroll = (e: React.WheelEvent<HTMLDivElement>) => {
+      const el = e.currentTarget;
+      const isScrollable = el.scrollHeight > el.clientHeight;
+      const isAtTop = el.scrollTop === 0;
+      const isAtBottom = Math.abs(el.scrollHeight - el.clientHeight - el.scrollTop) < 1;
+
+      if (isScrollable) {
+          if ((e.deltaY < 0 && !isAtTop) || (e.deltaY > 0 && !isAtBottom)) {
+              e.stopPropagation();
+              return; 
+          }
+      }
+      scroll.el.scrollTop += e.deltaY;
+  };
+
+  // NEW: Reusable Highlights Renderer (Injects Left or Right based on layout)
+  const renderHighlightsCarousel = (isCompact: boolean) => {
+      const align = isCompact ? 'left' : 'right';
+      return (
+        <>
+            <h3 style={{ margin: '0 0 20px 0', fontSize: '0.85rem', color: '#aaa', letterSpacing: '2px', textTransform: 'uppercase', textAlign: align, flexShrink: 0 }}>
+              Lab Highlights
+            </h3>
+            <div style={{ flexGrow: 1, overflow: 'hidden', position: 'relative' }}>
+                <div style={{ display: 'flex', width: '100%', height: '100%', transition: 'transform 0.5s ease-in-out', transform: `translateX(-${currentHighlightIndex * 100}%)` }}>
+                    {contentItem.highlights && contentItem.highlights.map((hl: any, i: number) => (
+                        <div key={i} style={{
+                            flex: '0 0 100%', width: '100%', height: '100%', display: 'flex', flexDirection: 'column',
+                            textAlign: align, paddingRight: isCompact ? '0' : '10px', boxSizing: 'border-box', overflowY: 'auto'
+                        }}>
+                            {hl.title && <h4 style={{ margin: '0 0 12px 0', fontSize: '1.3rem', color: '#fff', fontWeight: '700', wordWrap: 'break-word' }}>{hl.title}</h4>}
+                            {hl.description && <p style={{ margin: '0 0 10px 0', fontSize: '1rem', color: '#bbb', lineHeight: '1.5', wordWrap: 'break-word', whiteSpace: 'normal' }}>{hl.description}</p>}
+                            {hl.link && <a href={hl.link} target="_blank" rel="noreferrer" style={{ display: 'inline-block', margin: '0 0 15px 0', fontSize: '1rem', color: '#af1414', lineHeight: '1.5', textDecoration: 'none', fontWeight: 'bold' }}>Read More →</a>}
+                            
+                            {hl.videoType === 'youtube' && hl.videoId && (
+                                <div style={{ marginTop: '15px', marginBottom: '15px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
+                                    <iframe width="100%" height="180" src={`https://www.youtube.com/embed/${hl.videoId}`} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                                </div>
+                            )}
+                            {hl.videoType === 'upload' && hl.videoUrl && (
+                                <div style={{ marginTop: '15px', marginBottom: '15px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
+                                    <video width="100%" height="auto" style={{ maxHeight: '180px', objectFit: 'cover', borderRadius: '8px' }} controls autoPlay muted loop>
+                                        <source src={hl.videoUrl} type="video/mp4" />
+                                    </video>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+            {contentItem.highlights && contentItem.highlights.length > 1 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', flexShrink: 0 }}>
+                    <button onClick={() => setCurrentHighlightIndex(prev => (prev - 1 + contentItem.highlights.length) % contentItem.highlights.length)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', transition: 'background 0.2s' }}>←</button>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                        {contentItem.highlights.map((_: any, idx: number) => (
+                            <div key={idx} style={{ width: '8px', height: '8px', borderRadius: '50%', background: idx === currentHighlightIndex ? '#af1414' : 'rgba(255,255,255,0.3)', transition: 'background 0.3s' }} />
+                        ))}
+                    </div>
+                    <button onClick={() => setCurrentHighlightIndex(prev => (prev + 1) % contentItem.highlights.length)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', transition: 'background 0.2s' }}>→</button>
+                </div>
+            )}
+        </>
+      )
+  };
 
   return (
     <group ref={outerGroup} scale={finalScale}>
@@ -205,32 +274,16 @@ export const TurntableSection = () => {
            {SCENES.map((SceneComponent, index) => {
                const slotAngle = index * ((Math.PI * 2) / SCENES.length)
                const isCurrentSlot = activeSlot === index
-               
                return (
                    <group key={index} rotation={[0, slotAngle, 0]}>
-                       <SceneComponent 
-                            isActive={isCurrentSlot && !isDelayed} 
-                            progress={isCurrentSlot ? slotProgress : (activeSlot > index ? 1 : 0)}
-                       />
+                       <SceneComponent isActive={isCurrentSlot && !isDelayed} progress={isCurrentSlot ? slotProgress : (activeSlot > index ? 1 : 0)} />
                    </group>
                )
            })}
 
            <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
              <circleGeometry args={[TURNTABLE_SIZE, 64]} />
-             <MeshReflectorMaterial
-                 mirror={0.2}
-                 blur={[300, 100]}
-                 resolution={1024}
-                 mixBlur={1}
-                 mixStrength={40}
-                 roughness={0.7}
-                 depthScale={1.2}
-                 minDepthThreshold={0.4}
-                 maxDepthThreshold={1.4}
-                 color="#151515"
-                 metalness={0.5}
-             />
+             <MeshReflectorMaterial mirror={0.2} blur={[300, 100]} resolution={1024} mixBlur={1} mixStrength={40} roughness={0.7} depthScale={1.2} minDepthThreshold={0.4} maxDepthThreshold={1.4} color="#151515" metalness={0.5} />
            </mesh>
            <mesh position={[0, -0.2, 0]} rotation={[0, 0, 0]} receiveShadow castShadow>
              <cylinderGeometry args={[TURNTABLE_SIZE, TURNTABLE_SIZE, 0.2, 64]} />
@@ -245,33 +298,20 @@ export const TurntableSection = () => {
         style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', pointerEvents: 'none' }}
       >
         
-        {/* Right Panel - Active Animation Details */}
+        {/* Right Panel (Description AND Conditional Highlights) */}
         <div ref={uiRef} 
-          onWheel={(e) => { scroll.el.scrollTop += e.deltaY }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onWheel={handleSmartScroll}
           style={{
-              position: 'absolute',
-              top: '10%',
-              bottom: '5%',
-              right: `${textRight}%`,
-              width: '450px', 
-              background: 'rgba(20, 20, 20, 0.85)', 
-              padding: '40px',
-              opacity: 0, 
-              pointerEvents: 'none', 
-              transition: 'opacity 0.1s ease-out',
-              backdropFilter: 'blur(10px)', 
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '12px', 
-              boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
-              fontFamily: 'sans-serif', 
-              color: '#fff', 
-              borderLeft: '4px solid #af1414',
-              overflowY: 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center'
+              position: 'absolute', top: '10%', bottom: '5%', right: `${textRight}%`, width: '450px', 
+              background: 'rgba(20, 20, 20, 0.85)', padding: '40px', opacity: 0, pointerEvents: 'none', 
+              transition: 'opacity 0.1s ease-out', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '12px', boxShadow: '0 20px 40px rgba(0,0,0,0.5)', fontFamily: 'sans-serif', 
+              color: '#fff', borderLeft: '4px solid #af1414', overflowY: 'auto', display: 'flex', flexDirection: 'column'
             }}>
-          <div>
+          
+          <div style={{ flexShrink: 0 }}>
               <h3 style={{ margin: '0 0 10px 0', fontSize: '0.85rem', color: '#aaa', letterSpacing: '2px', textTransform: 'uppercase' }}>
                 {contentItem.label}
               </h3>
@@ -282,135 +322,32 @@ export const TurntableSection = () => {
                 {contentItem.description}
               </p>
           </div>
+
+          {/* Inject the Highlights Component underneath if there is NOT enough space for a dual-panel layout */}
+          {!hasEnoughSpace && contentItem.highlights && contentItem.highlights.length > 0 && (
+             <div style={{ marginTop: '30px', paddingTop: '30px', borderTop: '1px solid rgba(255,255,255,0.2)', display: 'flex', flexDirection: 'column', minHeight: '400px', flexShrink: 0 }}>
+                 {renderHighlightsCarousel(true)}
+             </div>
+          )}
         </div>
 
-        {/* Left Panel - Lab Highlights (Horizontal Auto-Scrolling Gallery) */}
+        {/* Left Panel (Classic Highlights) */}
         <div ref={highlightsRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          onWheel={(e) => { 
-              // Smart Scroll: Check if the current highlight needs to scroll internally
-              const activeContent = document.getElementById(`highlight-content-${currentHighlightIndex}`);
-              if (activeContent) {
-                  const isScrollable = activeContent.scrollHeight > activeContent.clientHeight;
-                  const isAtTop = activeContent.scrollTop === 0;
-                  const isAtBottom = Math.abs(activeContent.scrollHeight - activeContent.clientHeight - activeContent.scrollTop) < 1;
-
-                  if (isScrollable) {
-                      // If scrolling up and not at top, OR scrolling down and not at bottom
-                      if ((e.deltaY < 0 && !isAtTop) || (e.deltaY > 0 && !isAtBottom)) {
-                          return; // Let the native div scroll, do NOT forward to global page
-                      }
-                  }
-              }
-              // Otherwise, forward the scroll to the global page
-              scroll.el.scrollTop += e.deltaY;
-          }}
+          onWheel={handleSmartScroll}
           style={{
-              position: 'absolute',
-              top: '10%',
-              bottom: '5%',
-              left: `${textRight}%`, 
-              width: '400px', 
-              background: 'rgba(20, 20, 20, 0.85)', 
-              padding: '40px',
-              opacity: 0, 
-              pointerEvents: 'none', 
-              transition: 'opacity 0.1s ease-out, border 0.3s ease, box-shadow 0.3s ease',
-              backdropFilter: 'blur(10px)', 
+              position: 'absolute', top: '10%', bottom: '5%', left: `${textRight}%`, width: '400px', 
+              background: 'rgba(20, 20, 20, 0.85)', padding: '40px', opacity: hasEnoughSpace ? 1 : 0, pointerEvents: 'none', 
+              opacity: 0,
+              transition: 'opacity 0.1s ease-out, border 0.3s ease, box-shadow 0.3s ease', backdropFilter: 'blur(10px)', 
               border: isHovered ? '1px solid rgba(175, 20, 20, 0.5)' : '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '12px', 
-              boxShadow: isHovered ? '0 20px 40px rgba(175, 20, 20, 0.15)' : '0 20px 40px rgba(0,0,0,0.5)',
-              fontFamily: 'sans-serif', 
-              color: '#fff', 
-              borderRight: '4px solid #af1414',
-              overflow: 'hidden', // NO SCROLLBARS on main container
-              display: 'flex',
-              flexDirection: 'column'
+              borderRadius: '12px', boxShadow: isHovered ? '0 20px 40px rgba(175, 20, 20, 0.15)' : '0 20px 40px rgba(0,0,0,0.5)',
+              fontFamily: 'sans-serif', color: '#fff', borderRight: '4px solid #af1414', overflow: 'hidden', 
+              display: 'flex', flexDirection: 'column'
             }}>
             
-            {/* Header */}
-            <h3 style={{ margin: '0 0 20px 0', fontSize: '0.85rem', color: '#aaa', letterSpacing: '2px', textTransform: 'uppercase', textAlign: 'right', flexShrink: 0 }}>
-              Lab Highlights
-            </h3>
-
-            {/* Carousel Viewport */}
-            <div style={{ flexGrow: 1, overflow: 'hidden', position: 'relative' }}>
-                <div style={{
-                    display: 'flex',
-                    width: '100%',
-                    height: '100%',
-                    transition: 'transform 0.5s ease-in-out',
-                    transform: `translateX(-${currentHighlightIndex * 100}%)`
-                }}>
-                    {contentItem.highlights && contentItem.highlights.map((hl: any, i: number) => (
-                        <div key={i} id={`highlight-content-${i}`} style={{
-                            flex: '0 0 100%',
-                            width: '100%',
-                            height: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            textAlign: 'right',
-                            paddingRight: '10px',
-                            boxSizing: 'border-box',
-                            overflowY: 'auto' // Allow vertical scrolling for long content
-                        }}>
-                            {hl.title && <h4 style={{ margin: '0 0 12px 0', fontSize: '1.3rem', color: '#fff', fontWeight: '700', wordWrap: 'break-word' }}>{hl.title}</h4>}
-                            
-                            {hl.description && <p style={{ margin: '0 0 10px 0', fontSize: '1rem', color: '#bbb', lineHeight: '1.5', wordWrap: 'break-word', whiteSpace: 'normal' }}>{hl.description}</p>}
-                            
-                            {hl.link && (
-                                <a href={hl.link} target="_blank" rel="noreferrer" style={{ display: 'inline-block', margin: '0 0 15px 0', fontSize: '1rem', color: '#af1414', lineHeight: '1.5', textDecoration: 'none', fontWeight: 'bold' }}>Read More →</a>
-                            )}
-                            
-                            {hl.videoType === 'youtube' && hl.videoId && (
-                                <div style={{ marginTop: '15px', marginBottom: '15px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
-                                    <iframe width="100%" height="180" src={`https://www.youtube.com/embed/${hl.videoId}`} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-                                </div>
-                            )}
-
-                            {hl.videoType === 'upload' && hl.videoUrl && (
-                                <div style={{ marginTop: '15px', marginBottom: '15px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
-                                    <video width="100%" height="auto" style={{ maxHeight: '180px', objectFit: 'cover', borderRadius: '8px' }} controls autoPlay muted loop>
-                                        <source src={hl.videoUrl} type="video/mp4" />
-                                    </video>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Controls */}
-            {contentItem.highlights && contentItem.highlights.length > 1 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', flexShrink: 0 }}>
-                    <button 
-                        onClick={() => setCurrentHighlightIndex(prev => (prev - 1 + contentItem.highlights.length) % contentItem.highlights.length)} 
-                        style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', transition: 'background 0.2s' }}
-                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
-                        onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                    >
-                        ←
-                    </button>
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                        {contentItem.highlights.map((_: any, idx: number) => (
-                            <div key={idx} style={{
-                                width: '8px', height: '8px', borderRadius: '50%',
-                                background: idx === currentHighlightIndex ? '#af1414' : 'rgba(255,255,255,0.3)',
-                                transition: 'background 0.3s'
-                            }} />
-                        ))}
-                    </div>
-                    <button 
-                        onClick={() => setCurrentHighlightIndex(prev => (prev + 1) % contentItem.highlights.length)} 
-                        style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', transition: 'background 0.2s' }}
-                        onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
-                        onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                    >
-                        →
-                    </button>
-                </div>
-            )}
+            {hasEnoughSpace && renderHighlightsCarousel(false)}
         </div>
 
       </Html>
