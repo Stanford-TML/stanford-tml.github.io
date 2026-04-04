@@ -16,17 +16,14 @@ import { StickyNav } from './components/StickyNav'
 import { GlobalBackToTop } from './components/GlobalBackToTop'
 import { NotFound } from './pages/NotFound'
 
-// NEW: Helper function to detect if true hardware acceleration is available
 const checkHardwareAcceleration = () => {
   try {
     const canvas = document.createElement('canvas')
-    // failIfMajorPerformanceCaveat rejects the context creation if it's relying on a slow software fallback
     const gl = canvas.getContext('webgl', { failIfMajorPerformanceCaveat: true }) || 
                canvas.getContext('experimental-webgl', { failIfMajorPerformanceCaveat: true }) as WebGLRenderingContext | null
 
     if (!gl) return false
 
-    // Extra safety: Explicitly check the renderer name to catch sneaky software renderers
     const debugInfo = gl.getExtension('WEBGL_debug_renderer_info')
     if (debugInfo) {
       const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL).toLowerCase()
@@ -34,22 +31,39 @@ const checkHardwareAcceleration = () => {
         return false
       }
     }
-    
     return true
   } catch (e) {
     return false
   }
 }
 
+// NEW: Robust Mobile Detection
+const checkIsMobile = () => {
+  // 1. Standard mobile width check
+  if (window.innerWidth < 768) return true;
+  
+  // 2. Landscape phone check (it might be 900px wide, but only 400px tall!)
+  if (window.innerWidth < 950 && window.innerHeight < 500) return true;
+  
+  // 3. User Agent check (catches phones and tablets regardless of orientation)
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) return true;
+  console.log("User Agent:", navigator.userAgent);
+  
+  return false;
+}
+
 const HAS_ACCELERATION = checkHardwareAcceleration()
 
 function App() {
   const totalPages = getTotalPages()
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
-  const [currentRoute, setCurrentRoute] = useState(window.location.hash || '#home')
+  
+  // Use the new robust check for our initial state
+  const [isMobile, setIsMobile] = useState(checkIsMobile())
+  const[currentRoute, setCurrentRoute] = useState(window.location.hash || '#home')
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    // Re-evaluate on resize (e.g., if a desktop user resizes their window)
+    const handleResize = () => setIsMobile(checkIsMobile())
     window.addEventListener('resize', handleResize)
     
     const handleHashChange = () => setCurrentRoute(window.location.hash || '#home')
@@ -60,6 +74,21 @@ function App() {
       window.removeEventListener('hashchange', handleHashChange)
     }
   },[])
+
+  // NEW: Determine if we should show the Lite mode
+  const userPref = localStorage.getItem('experiencePref') // returns 'lite', '3d', or null
+  
+  // If the user picked a preference, honor it. Otherwise, auto-detect based on hardware/mobile.
+  const isLiteMode = userPref ? userPref === 'lite' : (isMobile || !HAS_ACCELERATION)
+
+  // NEW: Toggle function that saves to local storage and reloads
+  const toggleMode = () => {
+    const newMode = isLiteMode ? '3d' : 'lite'
+    localStorage.setItem('experiencePref', newMode)
+    
+    // We force a hard reload when switching to completely clear the WebGL context memory
+    window.location.reload()
+  }
 
   const renderPage = () => {
     const currentPath = window.location.pathname
@@ -76,8 +105,8 @@ function App() {
     
     if (currentRoute === '' || currentRoute === '#' || currentRoute === '#home') {
       
-      // Serve MobileHome if the screen is small OR if they lack a hardware GPU
-      if (isMobile || !HAS_ACCELERATION) {
+      // Use our new consolidated boolean
+      if (isLiteMode) {
         return <MobileHome />
       }
 
@@ -106,12 +135,51 @@ function App() {
     return <NotFound />
   }
 
+    // Add this quick helper variable right above your return statement
+  const isHomePage = currentRoute === '' || currentRoute === '#' || currentRoute === '#home';
+
   return (
     <>
-      {/* Updated conditional rendering for navigation components to also account for !HAS_ACCELERATION */}
-      {(currentRoute !== '#home' || isMobile || !HAS_ACCELERATION) && <StickyNav isVisible={true} />}
+      {/* ONLY show the Escape Hatch Button on the Home page */}
+      {isHomePage && !isMobile && (
+        <button
+          onClick={toggleMode}
+          style={{
+            position: 'fixed',
+            bottom: '40px',
+            left: '40px',
+            padding: '15px',
+            fontSize: '18px',
+            background: '#af1414',
+            color: 'white',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+            zIndex: 1000000,
+            width: '200px',
+            height: '50px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            transition: 'background 0.3s, transform 0.3s',
+            fontFamily: 'Montserrat, sans-serif'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#e31b1b'
+            e.currentTarget.style.transform = 'scale(1.1)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#af1414'
+            e.currentTarget.style.transform = 'scale(1)'
+          }}
+        >
+          {isLiteMode ? "✨ Try 3D Version" : "⚡ Lite Version"}
+        </button>
+      )}
+
+      {(currentRoute !== '#home' || isLiteMode) && <StickyNav isVisible={true} />}
       {renderPage()}
-      {(currentRoute !== '#home' || isMobile || !HAS_ACCELERATION) && <GlobalBackToTop />}
+      {(currentRoute !== '#home' || isLiteMode) && <GlobalBackToTop />}
     </>
   )
 }

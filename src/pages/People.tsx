@@ -1,5 +1,5 @@
 // FILE: src/pages/People.tsx
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import { fetchPeople } from '../services/cms'
 import { ProgressiveImage } from '../components/ProgressiveImage'
 
@@ -65,10 +65,27 @@ export const People = () => {
             </div>
           </div>
 
-          {/* Reusable Grid Component for Staff, Fellows, Students */}
+                    {/* Reusable Grid Component for Staff, Fellows, Students */}
           {['Staff', 'Fellows', 'Students'].map((sectionKey) => {
-            const items = data[sectionKey.toLowerCase()]
+            let items = data[sectionKey.toLowerCase()]
             if (!items || items.length === 0) return null
+
+            // Helper to determine hierarchy level
+            const getRank = (role: string) => {
+              const r = (role || '').toLowerCase();
+              if (r.includes('postdoc')) return 1;
+              if (r.includes('phd')) return 2;
+              return 3;
+            };
+
+            // Sort the Students section
+            if (sectionKey === 'Students') {
+              items = [...items].sort((a: any, b: any) => {
+                const rankDiff = getRank(a.role) - getRank(b.role);
+                if (rankDiff !== 0) return rankDiff;
+                return (a.name || '').localeCompare(b.name || '');
+              });
+            }
 
             return (
               <div key={sectionKey} className="mb-20">
@@ -77,31 +94,64 @@ export const People = () => {
                   <div className="flex-1 h-px bg-gray-300"></div>
                 </div>
 
-                {/* Stripped the white boxes, just clean images and text */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
-                  {items.map((person: any) => (
-                    <div key={person.id || person.name} className="group flex flex-col items-center text-center">
-                      <div className="relative w-full aspect-square overflow-hidden rounded-lg mb-4 bg-gray-200 shadow-sm flex items-center justify-center text-gray-400">
-                        {/* If they don't have an image yet, the gray box serves as a placeholder */}
-                        {person.image ? (
-                           <ProgressiveImage lowResSrc={getLowResSrc(person.image)} highResSrc={person.image} alt={person.name} imageClass="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
-                        ) : (
-                           <svg className="w-16 h-16 opacity-30" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                  {items.map((person: any, idx: number) => {
+                    const Wrapper = person.website ? 'a' : 'div' as any;
+                    
+                    // NEW: Determine if we crossed a rank boundary (e.g. from Postdoc to PhD)
+                    let showDivider = false;
+                    if (sectionKey === 'Students' && idx > 0) {
+                      const currentRank = getRank(person.role);
+                      const previousRank = getRank(items[idx - 1].role);
+                      if (currentRank !== previousRank) showDivider = true;
+                    }
+                    
+                    return (
+                      // We use Fragment so the divider and the person are siblings in the CSS Grid
+                      <Fragment key={person.id || person.name}>
+                        
+                        {/* THE DIVIDER */}
+                        {showDivider && (
+                          <div className="col-span-2 md:col-span-3 lg:col-span-4 flex justify-center py-4 my-2">
+                            <div className="w-1/2 h-px bg-gradient-to-r from-transparent via-gray-400/60 to-transparent"></div>
+                          </div>
                         )}
-                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-1">{person.name}</h3>
-                      <p className="text-[#8C1515] font-semibold text-xs uppercase tracking-wider">
-                        {person.role}
-                        {/* Optional Mentor Tag */}
-                        {person.mentor && (
-                          <span className="block mt-1 text-gray-500 text-[10px] font-medium tracking-normal normal-case">
-                            Mentored by {person.mentor}
-                          </span>
-                        )}
-                      </p>
-                    </div>
-                  ))}
+
+                        <div className="group flex flex-col items-center text-center">
+                          <Wrapper 
+                            href={person.website || undefined}
+                            target={person.website ? "_blank" : undefined}
+                            rel={person.website ? "noopener noreferrer" : undefined}
+                            className={`relative w-full aspect-square overflow-hidden rounded-lg mb-4 bg-gray-200 shadow-sm flex items-center justify-center text-gray-400 ${person.website ? 'cursor-pointer hover:shadow-lg hover:ring-2 hover:ring-[#8C1515] hover:ring-offset-2 transition-all duration-300' : ''}`}
+                          >
+                            {person.image ? (
+                               <ProgressiveImage lowResSrc={getLowResSrc(person.image)} highResSrc={person.image} alt={person.name} imageClass="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
+                            ) : (
+                               <svg className="w-16 h-16 opacity-30 group-hover:scale-110 transition-transform duration-500 ease-out" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                            )}
+                            <div className={`absolute inset-0 bg-black transition-opacity duration-300 ${person.website ? 'opacity-0 group-hover:opacity-20' : 'opacity-0 group-hover:opacity-10'}`}></div>
+                          </Wrapper>
+
+                          <h3 className="text-lg font-bold text-gray-900 mb-1">{person.name}</h3>
+                          <p className="text-[#8C1515] font-semibold text-xs uppercase tracking-wider">
+                            {person.role}
+                            
+                            {person.coadvisor && (
+                              <span className="block mt-1 text-gray-500 text-[10px] font-medium tracking-normal normal-case">
+                                Co-advised with {person.coadvisor}
+                              </span>
+                            )}
+
+                            {person.mentor && (
+                              <span className="block mt-1 text-gray-500 text-[10px] font-medium tracking-normal normal-case">
+                                Mentored by {person.mentor}
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                      </Fragment>
+                    )
+                  })}
                 </div>
               </div>
             )

@@ -82,7 +82,27 @@ collections:
     format: "json"
     fields:
       - { label: "Name", name: "name", widget: "string" }
-      - { label: "Role", name: "role", widget: "string" }
+      - label: "Role"
+        name: "role"
+        widget: "select"
+        options:
+          - "Postdoc"
+          - "Visiting Postdoc"
+          - "PhD Student"
+          - "Visiting PhD Student"
+          - "PhD Student (Co-advised)"
+          - "Visiting PhD Student (Co-advised)"
+          - "Master's Student"
+          - "Visiting Master's Student"
+          - "Undergrad"
+          - "Coterm"
+          - "Principal Investigator"
+          - "Research Scientist"
+          - "Staff"
+      # --- NEW FIELDS ---
+      - { label: "Website", name: "website", widget: "string", required: false, hint: "Personal webpage URL (e.g., https://stanford.edu/~johndoe)" }
+      - { label: "Co-Advisor", name: "coadvisor", widget: "string", required: false, hint: "Enter the name of the co-advisor if 'Co-advised' is selected above" }
+      # ------------------
       - { label: "Mentor (Optional)", name: "mentor", widget: "string", required: false, hint: "For students/interns (e.g., 'Haochen')" }
       - { label: "Category", name: "category", widget: "select", options:["PI", "Students", "Alumni"] }
       - { label: "Image", name: "image", widget: "image", required: false }
