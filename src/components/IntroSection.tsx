@@ -128,7 +128,7 @@ export const IntroSection = () => {
     neonColor, neonIntensity, neonSize, neonOffset,
     showRobots, buttonScale, buttonX, buttonY, buttonGap,
   } = {
-    textPosition: new THREE.Vector3(-2.8, 0, 0), textSize: 0.4, textColor: '#ab2121', textRoughness: 0.8,
+    textPosition: new THREE.Vector3(-2.8, 0, 0), textSize: 0.4, textColor: '#ca2626', textRoughness: 0.1,
     showRobots: true, neonColor: '#e52b2b', neonIntensity: 7, neonSize: 0.12, neonOffset: new THREE.Vector3(2.5, -0.3, 0.1),
     buttonScale: 0.15, buttonX: 0.8, buttonY: 1.4, buttonGap: 1.6
   }

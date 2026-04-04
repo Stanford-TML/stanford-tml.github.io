@@ -1,8 +1,9 @@
 {
   "name": "Tyler Lum",
-  "role": "PhD Student w/ Jeannette Bohg",
+  "role": "PhD Student (Co-advised)",
   "mentor": "",
   "category": "Students",
   "image": "/assets/uploads/Tyler_Lum.jpg",
-  "bio": ""
+  "bio": "",
+  "coadvisor": "Jeannette Bohg"
 }
