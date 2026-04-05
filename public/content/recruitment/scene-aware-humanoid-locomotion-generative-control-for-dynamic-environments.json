@@ -1,0 +1,7 @@
+{
+  "title": "Scene-Aware Humanoid Locomotion: Generative Control for Dynamic Environments",
+  "date": "2026-04-04",
+  "contact": "Takara Truong",
+  "description": "Current state-of-the-art humanoids excel at specific, hard-coded tasks but often fail in the \"wild\"—specifically when navigating spaces shared with humans. The goal of this project is to develop a generalized locomotion policy that is both agile and safe. We will explore the intersection of Reinforcement Learning and Generative models to create a humanoid agent capable of perceiving its surroundings and adapting its gait to avoid collisions, ensuring safe interaction in human-populated environments.",
+  "link": ""
+}
