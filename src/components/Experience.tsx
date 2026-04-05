@@ -22,7 +22,7 @@ export const Experience = () => {
 
   const { debugOrbit } = { debugOrbit: false }
 
-  // --- NEW: DYNAMIC CAMERA SCALING ---
+  // --- DYNAMIC CAMERA SCALING ---
   const { camera, size } = useThree()
 
   useEffect(() => {

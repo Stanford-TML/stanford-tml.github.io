@@ -52,7 +52,6 @@ export const MobileHome = () => {
             <div className="w-full h-56 sm:h-[350px] bg-[#e0e0e0] relative shrink-0">
               <ProgressiveImage 
                 highResSrc="assets/cover_photo_wide.jpg"
-                lowResSrc="assets/cover_photo_wide_small.jpg"
                 alt="The Movement Lab" 
                 containerClass="w-full h-full" 
                 imageClass="w-full h-full object-bottom block"

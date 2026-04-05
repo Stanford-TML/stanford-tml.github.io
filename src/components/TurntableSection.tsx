@@ -202,7 +202,7 @@ export const TurntableSection = () => {
     return () => clearTimeout(timer)
   }, [gl, camera])
 
-  // NEW: A unified smart scroll handler that perfectly handles nested overflow divs
+  // A unified smart scroll handler that perfectly handles nested overflow divs
   const handleSmartScroll = (e: React.WheelEvent<HTMLDivElement>) => {
       const el = e.currentTarget;
       const isScrollable = el.scrollHeight > el.clientHeight;
@@ -218,7 +218,7 @@ export const TurntableSection = () => {
       scroll.el.scrollTop += e.deltaY;
   };
 
-  // NEW: Reusable Highlights Renderer (Injects Left or Right based on layout)
+  // Reusable Highlights Renderer (Injects Left or Right based on layout)
   const renderHighlightsCarousel = (isCompact: boolean) => {
       const align = isCompact ? 'left' : 'right';
       return (
@@ -338,7 +338,7 @@ export const TurntableSection = () => {
           onWheel={handleSmartScroll}
           style={{
               position: 'absolute', top: '10%', bottom: '5%', left: `${textRight}%`, width: '400px', 
-              background: 'rgba(20, 20, 20, 0.85)', padding: '40px', opacity: hasEnoughSpace ? 1 : 0, pointerEvents: 'none', 
+              background: 'rgba(20, 20, 20, 0.85)', padding: '40px', pointerEvents: 'none', 
               opacity: 0,
               transition: 'opacity 0.1s ease-out, border 0.3s ease, box-shadow 0.3s ease', backdropFilter: 'blur(10px)', 
               border: isHovered ? '1px solid rgba(175, 20, 20, 0.5)' : '1px solid rgba(255,255,255,0.1)',

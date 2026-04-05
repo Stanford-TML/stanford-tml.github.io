@@ -17,9 +17,7 @@ export const ProgressiveImage = ({
   imageClass = "" 
 }: ProgressiveImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false)
-  const[showLowRes, setShowLowRes] = useState(true)
-  
-  // NEW: Track if the low-res image throws a 404 error
+  const [showLowRes, setShowLowRes] = useState(true)
   const [lowResError, setLowResError] = useState(false)
 
   useEffect(() => {
@@ -33,12 +31,14 @@ export const ProgressiveImage = ({
   const hasObjectFit = fitClasses.some(cls => imageClass.includes(cls))
   const defaultFit = hasObjectFit ? '' : 'object-cover'
 
+  // Automatically calculate the low-res source if one wasn't explicitly provided!
+  const actualLowResSrc = lowResSrc || (highResSrc ? highResSrc.replace(/(\.[\w\d_-]+)$/i, '_small$1') : undefined);
+
   return (
     <div className={`relative overflow-hidden ${containerClass}`}>
       
       {/* Low Res Placeholder (Blurred) */}
-      {/* NEW: Only render if lowResError is false */}
-      {lowResSrc && showLowRes && !lowResError && (
+      {actualLowResSrc && showLowRes && !lowResError && (
         <div 
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -47,11 +47,10 @@ export const ProgressiveImage = ({
           }}
         >
           <img 
-            src={lowResSrc} 
+            src={actualLowResSrc} 
             alt={`Placeholder for ${alt}`} 
             className={`w-full h-full ${defaultFit} ${imageClass}`}
             style={{ filter: 'blur(10px)' }}
-            // NEW: If the image 404s, trigger the error state
             onError={() => setLowResError(true)} 
           />
         </div>

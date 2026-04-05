@@ -67,7 +67,7 @@ export const Courses = () => {
             </div>
             {/* Rendered Scene Image */}
             <div className="relative w-full mt-24 mb-8">
-                <ProgressiveImage highResSrc="/assets/scene_lecture.png" lowResSrc="/assets/scene_lecture_small.png" alt="Lecture Scene" imageClass="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
+                <ProgressiveImage highResSrc="/assets/scene_lecture.png" alt="Lecture Scene" imageClass="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
 
                 {/* Feathering Overlays */}
                 <div className="absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-[#e0e0e0] to-transparent pointer-events-none"></div>

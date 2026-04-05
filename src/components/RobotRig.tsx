@@ -277,7 +277,7 @@ export const RobotRig = () => {
               flexShrink: 0,
               backgroundColor: '#e0e0e0'
             }}>
-              <ProgressiveImage highResSrc="assets/cover_photo.jpg" lowResSrc="assets/cover_photo_small.jpg" alt={content.name} />
+              <ProgressiveImage highResSrc="assets/cover_photo.jpg" alt={content.name} />
             </div>
 
             {/* Right Side: Content Area */}

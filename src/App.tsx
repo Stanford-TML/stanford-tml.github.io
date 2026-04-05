@@ -37,7 +37,7 @@ const checkHardwareAcceleration = () => {
   }
 }
 
-// NEW: Robust Mobile Detection
+// Robust Mobile Detection
 const checkIsMobile = () => {
   // 1. Standard mobile width check
   if (window.innerWidth < 768) return true;
@@ -61,6 +61,11 @@ function App() {
   const [isMobile, setIsMobile] = useState(checkIsMobile())
   const[currentRoute, setCurrentRoute] = useState(window.location.hash || '#home')
 
+  // Scroll to top on route change to prevent weird scroll positions when navigating
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [currentRoute])
+
   useEffect(() => {
     // Re-evaluate on resize (e.g., if a desktop user resizes their window)
     const handleResize = () => setIsMobile(checkIsMobile())
@@ -75,13 +80,13 @@ function App() {
     }
   },[])
 
-  // NEW: Determine if we should show the Lite mode
+  // Determine if we should show the Lite mode
   const userPref = localStorage.getItem('experiencePref') // returns 'lite', '3d', or null
   
   // If the user picked a preference, honor it. Otherwise, auto-detect based on hardware/mobile.
   const isLiteMode = userPref ? userPref === 'lite' : (isMobile || !HAS_ACCELERATION)
 
-  // NEW: Toggle function that saves to local storage and reloads
+  // Toggle function that saves to local storage and reloads
   const toggleMode = () => {
     const newMode = isLiteMode ? '3d' : 'lite'
     localStorage.setItem('experiencePref', newMode)
@@ -90,22 +95,35 @@ function App() {
     window.location.reload()
   }
 
+  const validRoutes =['', '#', '#home', '#people', '#publications', '#courses', '#join'];
+
+  const currentPath = window.location.pathname;
+  const basePath = import.meta.env.BASE_URL;
+  
+  // A page is "Not Found" if the path is wrong, OR if the hash is not in our approved list
+  const isBadPath = currentPath !== basePath && currentPath !== `${basePath}index.html`;
+  const isBadHash = !validRoutes.includes(currentRoute);
+  
+  const isNotFound = isBadPath || isBadHash;
+
+  // Update isHomePage to require that we aren't on a 404 page
+  const isHomePage = !isNotFound && (currentRoute === '' || currentRoute === '#' || currentRoute === '#home');
+
   const renderPage = () => {
-    const currentPath = window.location.pathname
-    const basePath = import.meta.env.BASE_URL
-    
-    if (currentPath !== basePath && currentPath !== `${basePath}index.html`) {
-      return <NotFound />
+    // 1. If the path or hash is bad, instantly return NotFound
+    if (isNotFound) {
+      return <NotFound />;
     }
 
+    // 2. Normal Hash Routing
     if (currentRoute === '#people') return <People />
     if (currentRoute === '#publications') return <Publications />
     if (currentRoute === '#courses') return <Courses />
     if (currentRoute === '#join') return <Join />
     
+    // Explicitly check for Home
     if (currentRoute === '' || currentRoute === '#' || currentRoute === '#home') {
       
-      // Use our new consolidated boolean
       if (isLiteMode) {
         return <MobileHome />
       }
@@ -114,13 +132,8 @@ function App() {
         <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
           <LoadingScreen />
 
-          <Canvas
-            shadows
-            camera={{ position: [0, 0, 5], fov: 40 }}
-            gl={{ antialias: true }}
-          >
+          <Canvas shadows camera={{ position: [0, 0, 5], fov: 40 }} gl={{ antialias: true }}>
             <color attach="background" args={['#e0e0e0']} />
-            
             <Suspense fallback={null}>
               <ScrollControls pages={totalPages} damping={0.2}>
                 <SceneWarmup />
@@ -132,11 +145,9 @@ function App() {
       )
     }
 
-    return <NotFound />
+    // This is just a typescript fallback now, the `isNotFound` check catches all bad routes natively
+    return <NotFound /> 
   }
-
-    // Add this quick helper variable right above your return statement
-  const isHomePage = currentRoute === '' || currentRoute === '#' || currentRoute === '#home';
 
   return (
     <>
@@ -156,7 +167,7 @@ function App() {
             cursor: 'pointer',
             boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
             zIndex: 1000000,
-            width: '200px',
+            width: '180px',
             height: '50px',
             display: 'flex',
             justifyContent: 'center',
@@ -173,13 +184,13 @@ function App() {
             e.currentTarget.style.transform = 'scale(1)'
           }}
         >
-          {isLiteMode ? "✨ Try 3D Version" : "⚡ Lite Version"}
+          {isLiteMode ? "✨ 3D Mode" : "⚡ Lite Mode"}
         </button>
       )}
 
-      {(currentRoute !== '#home' || isLiteMode) && <StickyNav isVisible={true} />}
+      {!isNotFound && (currentRoute !== '#home' || isLiteMode) && <StickyNav isVisible={true} />}
       {renderPage()}
-      {(currentRoute !== '#home' || isLiteMode) && <GlobalBackToTop />}
+      {!isNotFound && (currentRoute !== '#home' || isLiteMode) && <GlobalBackToTop />}
     </>
   )
 }

@@ -3,12 +3,6 @@ import { useEffect, useState, Fragment } from 'react'
 import { fetchPeople } from '../services/cms'
 import { ProgressiveImage } from '../components/ProgressiveImage'
 
-// Helper to automatically map "/uploads/john.jpg" to "/uploads/john_small.jpg"
-const getLowResSrc = (src: string) => {
-  if (!src) return src;
-  return src.replace(/(\.[\w\d_-]+)$/i, '_small$1');
-};
-
 export const People = () => {
   const [data, setData] = useState<any>(null)
 
@@ -43,7 +37,6 @@ export const People = () => {
 
         {/* Full-width Banner */}
         <ProgressiveImage
-          lowResSrc="assets/group_photo_small.jpg"
           highResSrc="assets/group_photo.jpg"
           alt="The Movement Lab Group"
           containerClass="w-full mb-20 group bg-gray-200 h-[300px] md:h-[400px] lg:h-[500px]"
@@ -56,7 +49,7 @@ export const People = () => {
           {/* PI Section - Kept as a card to highlight hierarchy */}
           <div className="bg-white rounded-xl p-8 md:p-12 shadow-md mb-24 flex flex-col md:flex-row items-center gap-12 border-t-4 border-[#8C1515]">
             <div className="relative w-56 h-56 flex-shrink-0 rounded-full overflow-hidden shadow-inner border-4 border-gray-50">
-              <ProgressiveImage lowResSrc={getLowResSrc(data.pi.image)} highResSrc={data.pi.image} alt={data.pi.name} imageClass="w-full h-full object-cover" />
+              <ProgressiveImage highResSrc={data.pi.image} alt={data.pi.name} imageClass="w-full h-full object-cover" />
             </div>
             <div className="text-center md:text-left flex-1">
               <h2 className="text-4xl font-bold text-gray-900 mb-2">{data.pi.name}</h2>
@@ -98,7 +91,7 @@ export const People = () => {
                   {items.map((person: any, idx: number) => {
                     const Wrapper = person.website ? 'a' : 'div' as any;
                     
-                    // NEW: Determine if we crossed a rank boundary (e.g. from Postdoc to PhD)
+                    // Determine if we crossed a rank boundary (e.g. from Postdoc to PhD)
                     let showDivider = false;
                     if (sectionKey === 'Students' && idx > 0) {
                       const currentRank = getRank(person.role);
@@ -125,7 +118,7 @@ export const People = () => {
                             className={`relative w-full aspect-square overflow-hidden rounded-lg mb-4 bg-gray-200 shadow-sm flex items-center justify-center text-gray-400 ${person.website ? 'cursor-pointer hover:shadow-lg hover:ring-2 hover:ring-[#8C1515] hover:ring-offset-2 transition-all duration-300' : ''}`}
                           >
                             {person.image ? (
-                               <ProgressiveImage lowResSrc={getLowResSrc(person.image)} highResSrc={person.image} alt={person.name} imageClass="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
+                               <ProgressiveImage highResSrc={person.image} alt={person.name} imageClass="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
                             ) : (
                                <svg className="w-16 h-16 opacity-30 group-hover:scale-110 transition-transform duration-500 ease-out" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                             )}
@@ -188,7 +181,7 @@ export const People = () => {
 
           {/* Rendered Scene Image */}
           <div className="relative w-full mt-16 mb-8">
-            <ProgressiveImage highResSrc="assets/scene_group.png" lowResSrc="assets/scene_group_small.png" alt="Group Scene" imageClass="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
+            <ProgressiveImage highResSrc="assets/scene_group.png" alt="Group Scene" imageClass="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
 
             {/* Feathering Overlays */}
             <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#f4f4f4] to-transparent pointer-events-none"></div>

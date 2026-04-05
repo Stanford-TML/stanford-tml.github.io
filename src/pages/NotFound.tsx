@@ -7,7 +7,7 @@ export const NotFound = () => {
     {/* Rendered Scene Image */}
     {/* Change 'w-1/3' to 'w-full md:w-1/3' */}
     <div className="relative w-full md:w-1/3 mt-24 mb-8">
-        <ProgressiveImage highResSrc="/assets/404.png" lowResSrc="/assets/404_small.png" alt="404 Error" imageClass="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
+        <ProgressiveImage highResSrc="/assets/404.png" alt="404 Error" imageClass="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
 
         {/* Feathering Overlays */}
         <div className="absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-[#ddd] to-transparent pointer-events-none"></div>
@@ -34,7 +34,7 @@ export const NotFound = () => {
         </p>
         
         <button 
-          onClick={() => window.location.hash = '#home'}
+          onClick={() => window.location.href = import.meta.env.BASE_URL}
           className="bg-[#8C1515] text-white font-bold py-3 px-8 md:py-4 md:px-10 rounded-full hover:bg-red-800 transition-colors shadow-lg shadow-red-900/20 tracking-wide text-sm md:text-base"
         >
           RETURN TO BASE

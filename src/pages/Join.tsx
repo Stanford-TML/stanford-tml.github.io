@@ -180,11 +180,6 @@ export const Join = () => {
                                 <span className="bg-red-50 text-[#8C1515] px-3 py-1 rounded-md">Contact: {project.contact}</span>
                             </div>
                             <p className="text-gray-700 mb-6 leading-relaxed">{project.description}</p>
-                            {project.link && (
-                                <a href={project.link} target="_blank" rel="noreferrer" className="inline-block bg-[#8C1515] !text-white font-bold py-2 px-6 rounded hover:bg-red-800 transition-colors">
-                                    Apply for this project
-                                </a>
-                            )}
                         </div>
                     ))}
 
@@ -207,7 +202,7 @@ export const Join = () => {
             </div>
             {/* Rendered Scene Image */}
             <div className="relative w-full mt-24 mb-8">
-            <ProgressiveImage highResSrc="/assets/scene_run.png" lowResSrc="/assets/scene_run_small.png" alt="A rendered scene" imageClass="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
+            <ProgressiveImage highResSrc="/assets/scene_run.png" alt="A rendered scene" imageClass="w-full object-contain opacity-90 hover:opacity-100 transition-opacity duration-500" />
             
             {/* Feathering Overlays */}
             <div className="absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-[#e0e0e0] to-transparent pointer-events-none"></div>
