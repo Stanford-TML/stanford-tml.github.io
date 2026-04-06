@@ -1,6 +1,10 @@
 {
   "name": "Ruocheng Wang",
   "role": "PhD Student",
+  "website": "https://cs.stanford.edu/~rcwang/",
+  "coadvisor": "",
+  "mentor": "",
   "category": "Students",
-  "image": ""
+  "image": "/assets/uploads/ruocheng_full.jpg",
+  "bio": ""
 }
