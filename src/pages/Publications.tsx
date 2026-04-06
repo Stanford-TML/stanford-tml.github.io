@@ -55,10 +55,10 @@ export const Publications = () => {
                             {month} {group.year}
                           </span>
 
-                          {/* Renders pub.type OR pub.venue, but not both */}
-                          {(pub.type || pub.venue) && (
+                          {/* Renders pub.venue */}
+                          {pub.venue && (
                             <span className="text-sm font-bold text-[#8C1515] bg-red-50 px-4 py-1.5 rounded-full border border-red-100 uppercase tracking-wider">
-                              {pub.type ? pub.type : pub.venue}
+                              {pub.venue}
                             </span>
                           )}
                         </div>

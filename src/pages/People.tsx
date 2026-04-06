@@ -58,7 +58,7 @@ export const People = () => {
             </div>
           </div>
 
-                    {/* Reusable Grid Component for Staff, Fellows, Students */}
+          {/* Reusable Grid Component for Staff, Fellows, Students */}
           {['Staff', 'Fellows', 'Students'].map((sectionKey) => {
             let items = data[sectionKey.toLowerCase()]
             if (!items || items.length === 0) return null
@@ -68,7 +68,9 @@ export const People = () => {
               const r = (role || '').toLowerCase();
               if (r.includes('postdoc')) return 1;
               if (r.includes('phd')) return 2;
-              return 3;
+              if (r.includes('master') || r.includes('coterm')) return 3;
+              if (r.includes('undergrad')) return 4;
+              return 5;
             };
 
             // Sort the Students section
