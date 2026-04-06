@@ -1,7 +1,10 @@
 {
   "name": "Six Skov",
   "role": "PhD Student",
+  "website": "",
+  "coadvisor": "",
+  "mentor": "",
   "category": "Students",
-  "image": "",
+  "image": "/assets/uploads/six.png",
   "bio": ""
 }
