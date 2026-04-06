@@ -1,6 +1,10 @@
 {
   "name": "Keenon Werling",
   "role": "PhD Student",
+  "website": "",
+  "coadvisor": "",
+  "mentor": "",
   "category": "Students",
-  "image": ""
+  "image": "/assets/uploads/keenon.png",
+  "bio": ""
 }
