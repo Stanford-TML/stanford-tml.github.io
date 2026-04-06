@@ -3,6 +3,7 @@ backend:
   repo: Stanford-TML/stanford-tml.github.io
   branch: main
   base_url: https://sveltia-cms-auth.karenliu.workers.dev
+  auth_scope: public_repo
 
 # Save media (like profile pictures) to the public/assets folder
 media_folder: "public/assets/uploads"
