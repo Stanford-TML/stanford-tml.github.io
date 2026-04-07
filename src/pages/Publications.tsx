@@ -32,9 +32,6 @@ export const Publications = () => {
 
               <div className="flex flex-col gap-6">
                 {group.pubs.map((pub: any, idx: number) => {
-                  // Extract the short month (e.g., "Jan", "Feb")
-                  const dateObj = pub.date ? new Date(pub.date) : new Date();
-                  const month = dateObj.toLocaleString('default', { month: 'short' });
 
                   return (
                     <div key={idx} className="bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-[#8C1515] transform hover:-translate-y-1">
@@ -50,11 +47,6 @@ export const Publications = () => {
 
                       <div className="flex flex-wrap justify-between items-center mt-6 pt-4 border-t border-gray-100 gap-4">
                         <div className="flex flex-wrap items-center gap-3">
-                          {/* Month/Year Tag */}
-                          <span className="text-sm font-bold text-gray-500 bg-gray-100 px-4 py-1.5 rounded-full uppercase tracking-wider">
-                            {month} {group.year}
-                          </span>
-
                           {/* Renders pub.venue */}
                           {pub.venue && (
                             <span className="text-sm font-bold text-[#8C1515] bg-red-50 px-4 py-1.5 rounded-full border border-red-100 uppercase tracking-wider">
