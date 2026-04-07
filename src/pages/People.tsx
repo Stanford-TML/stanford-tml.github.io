@@ -120,7 +120,7 @@ export const People = () => {
                             className={`relative w-full aspect-square overflow-hidden rounded-lg mb-4 bg-gray-200 shadow-sm flex items-center justify-center text-gray-400 ${person.website ? 'cursor-pointer hover:shadow-lg hover:ring-2 hover:ring-[#8C1515] hover:ring-offset-2 transition-all duration-300' : ''}`}
                           >
                             {person.image ? (
-                               <ProgressiveImage highResSrc={person.image} alt={person.name} imageClass="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
+                               <ProgressiveImage highResSrc={person.image} alt={person.name} containerClass="w-full h-full" imageClass="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
                             ) : (
                                <svg className="w-16 h-16 opacity-30 group-hover:scale-110 transition-transform duration-500 ease-out" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                             )}
