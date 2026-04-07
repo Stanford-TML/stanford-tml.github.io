@@ -1,6 +1,10 @@
 {
   "name": "Will Sayler",
   "role": "Master's Student",
+  "website": "",
+  "coadvisor": "",
+  "mentor": "Keenon/Six/Jonathan",
   "category": "Students",
-  "mentor": "Keenon/Six/Jonathan"
+  "image": "/assets/uploads/will_sayler.png",
+  "bio": ""
 }
