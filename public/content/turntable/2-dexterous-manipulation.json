@@ -7,11 +7,11 @@
   "highlights": [
     {
       "title": "SimToolReal: An Object-Centric Policy for Zero-Shot Dexterous Tool Manipulation",
-      "description": "Sim-to-real for dexterous manipulation, simplified.",
+      "description": "A Generalist Policy for Zero-Shot Dexterous Tool Manipulation.",
       "link": "https://simtoolreal.github.io",
-      "videoType": "youtube",
-      "videoId": "N0SO7YFG5eU",
-      "videoUrl": ""
+      "videoType": "upload",
+      "videoId": "",
+      "videoUrl": "/assets/uploads/N0SO7YFG5eU.mp4"
     },
     {
       "title": "ARCap: Collecting High-quality Human Demonstrations for Robot Learning with Augmented Reality Feedback",
