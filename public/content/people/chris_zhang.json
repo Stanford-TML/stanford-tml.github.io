@@ -1,6 +1,10 @@
 {
   "name": "Chris Zhang",
   "role": "Master's Student",
+  "website": "https://zczhang0734.github.io",
+  "coadvisor": "Shuran Song",
+  "mentor": "Haochen",
   "category": "Students",
-  "mentor": "Haochen"
+  "image": "/assets/uploads/Chris Zhang.JPG",
+  "bio": ""
 }
