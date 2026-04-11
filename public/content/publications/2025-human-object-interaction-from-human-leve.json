@@ -1,8 +1,9 @@
 {
   "title": "Human-Object Interaction from Human-Level Instructions",
-  "authors": "Wu, Zhen, Jiaman Li, Pei Xu, and C. Karen Liu",
-  "venue": "",
+  "authors": "Zhen Wu, Jiaman Li, Pei Xu, C. Karen Liu",
   "date": "October 2025",
+  "venue": "ICCV 2025",
+  "award": "",
   "link": "https://hoifhli.github.io/",
   "fullCitation": "Wu, Zhen, Jiaman Li, Pei Xu, and C. Karen Liu.  “Human-Object Interaction from Human-Level Instructions” . Proceedings of the IEEE/CVF International Conference on Computer Vision, October 2025. https://hoifhli.github.io/."
 }
