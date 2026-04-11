@@ -7,7 +7,7 @@
   "highlights": [
     {
       "title": "Human-object interaction from human-level instructions",
-      "description": "Intelligent agents must autonomously interact with the environments to perform daily tasks based on human-level instructions. They need a foundational understanding of the world to accurately interpret these instructions, along with precise low-level movement and interaction skills to execute the derived actions. In this work published in ICCV 2025, we proposed the first complete system for synthesizing physically plausible, long-horizon human-object interactions for object manipulation in contextual environments, driven by human-level instructions.",
+      "description": "The first complete system for synthesizing physically plausible, long-horizon human-object interactions for object manipulation in contextual environments, driven by human-level instructions.",
       "link": "https://hoifhli.github.io",
       "videoType": "upload",
       "videoId": "ztTsMeIgIGk",
@@ -15,7 +15,7 @@
     },
     {
       "title": "Learning to Ball: Composing Policies for Long-Horizon Basketball Moves",
-      "description": "Learning a control policy for a multi-phase, long-horizon task, such as basketball maneuvers, remains challenging for reinforcement learning approaches due to the need for seamless policy composition and transitions between skills. In this paper published at the journal track of SIGGRAPH Asia 2025, we introduced a novel policy integration framework to enable the composition of drastically different motor skills in multi-phase long-horizon tasks with ill-defined intermediate states. Policies trained by our approach can effectively control the simulated character to interact with the ball and accomplish the long-horizon task specified by real-time user commands, without relying on ball trajectory references.",
+      "description": "Policy integration framework to enable the composition of drastically different motor skills in multi-phase long-horizon tasks.",
       "link": "https://pei-xu.github.io/basketball",
       "videoType": "upload",
       "videoId": "2RBFIjjmR2I",
