@@ -1,7 +1,10 @@
 {
   "name": "Dr. Karen Liu",
   "role": "Principal Investigator",
+  "website": "",
+  "coadvisor": "",
+  "mentor": "",
   "category": "PI",
   "image": "assets/karen.jpg",
-  "bio": "C. Karen Liu is a Professor of Computer Science at Stanford University and Director of The Movement Lab (TML). Her research lies at the intersection of computer graphics and robotics, focusing on physics-based animation, robot learning, and computational biomechanics. Her work on embodied intelligence — enabling humanoid robots and digital characters to perceive, move, and interact with the physical world — has fostered deep interdisciplinary collaboration across robotics, biomechanics, neuroscience, and biology.\n Liu is a recipient of the NSF CAREER Award, Alfred P. Sloan Fellowship, and MIT Technology Review's Young Innovators Under 35. She received the ACM SIGGRAPH Significant New Researcher Award, was inducted into the ACM SIGGRAPH Academy in 2021, and received the University of Washington Allen School Alumni Impact Award in 2024."
+  "bio": "C. Karen Liu is a Professor of Computer Science at Stanford University and Director of The Movement Lab (TML). Her research lies at the intersection of computer graphics and robotics, focusing on physics-based animation, robot learning, and computational biomechanics. Her work on embodied intelligence — enabling humanoid robots and digital characters to perceive, move, and interact with the physical world — has fostered deep interdisciplinary collaboration across robotics, biomechanics, neuroscience, and biology.\nLiu is a recipient of the NSF CAREER Award, Alfred P. Sloan Fellowship, and MIT Technology Review's Young Innovators Under 35. She received the ACM SIGGRAPH Significant New Researcher Award, was inducted into the ACM SIGGRAPH Academy in 2021. She also received the University of Washington Allen School Alumni Impact Award in 2024 and the the Distinguished Alumni Award from the Computer Science Department at National Taiwan University in 2026."
 }
