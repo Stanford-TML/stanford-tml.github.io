@@ -1,8 +1,9 @@
 {
   "title": "FürElise: Capturing and Physically Synthesizing Hand Motions of Piano Performance",
-  "authors": "Wang*, Ruocheng, Pei Xu*, Haochen Shi, Elizabeth Schumann, and C. Karen Liu",
-  "venue": "SIGGRAPH Asia 2024 Conference Papers",
+  "authors": "Ruocheng Wang*, Pei Xu*, Haochen Shi, Elizabeth Schumann, C. Karen Liu",
   "date": "December 2024",
+  "venue": "SIGGRAPH Asia 2024",
+  "award": "",
   "link": "https://for-elise.github.io/",
   "fullCitation": "Wang*, Ruocheng, Pei Xu*, Haochen Shi, Elizabeth Schumann, and C. Karen Liu.  “FürElise: Capturing and Physically Synthesizing Hand Motions of Piano Performance” ,  SIGGRAPH Asia 2024 Conference Papers , December 2024, 1-11. https://doi.org/10.1145/3680528.3687703."
 }
