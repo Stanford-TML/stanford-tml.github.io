@@ -1,8 +1,9 @@
 {
   "title": "A Linear-Time Variational Integrator for Multibody Systems",
-  "authors": "Lee, Jeongseok, C. Karen Liu, Frank Park, and Siddhartha Srinivasa",
-  "venue": "WAFR 2016",
+  "authors": "Jeongseok Lee, C. Karen Liu, Frank Park, Siddhartha Srinivasa",
   "date": "December 2016",
+  "venue": "WAFR 2016",
+  "award": "",
   "link": "https://arxiv.org/pdf/1609.02898.pdf",
   "fullCitation": "Lee, Jeongseok, C. Karen Liu, Frank Park, and Siddhartha Srinivasa.  “A Linear-Time Variational Integrator for Multibody Systems” ,  Workshop on the Algorithmic Foundations of Robotics (WAFR), 2016 , December 2016."
 }
