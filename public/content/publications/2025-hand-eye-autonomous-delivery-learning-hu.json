@@ -1,8 +1,9 @@
 {
   "title": "Hand-Eye Autonomous Delivery: Learning Humanoid Navigation, Locomotion and Reaching",
-  "authors": "Chen, Sirui, Yufei Ye, Zi-Ang Cao, Jennifer Lew, Pei Xu, and C. Karen Liu",
-  "venue": "CoRL 2025",
+  "authors": "Chen, Sirui, Yufei Ye, Zi-Ang Cao, Jennifer Lew, Pei Xu, C. Karen Liu",
   "date": "August 2025",
+  "venue": "CoRL 2025",
+  "award": "",
   "link": "https://stanford-tml.github.io/HEAD",
   "fullCitation": "Chen, Sirui, Yufei Ye, Zi-Ang Cao, Jennifer Lew, Pei Xu, and C. Karen Liu.  “Hand-Eye Autonomous Delivery: Learning Humanoid Navigation, Locomotion and Reaching” ,  Conference on Robot Learning (CoRL), 2025 , August 30, 2025. https://stanford-tml.github.io/HEAD."
 }
