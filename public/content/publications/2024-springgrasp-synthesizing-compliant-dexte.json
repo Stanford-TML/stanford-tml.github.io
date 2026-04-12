@@ -1,8 +1,9 @@
 {
   "title": "SpringGrasp: Synthesizing Compliant, Dexterous Grasps under Shape Uncertainty",
-  "authors": "Sirui Chen, Jeannette Bohg, C. Karen Liu",
-  "venue": "RSS 2024",
+  "authors": "Sirui Chen, Jeannette Bohg, and C. Karen Liu",
   "date": "July 2024",
+  "venue": "RSS 2024",
+  "award": "",
   "link": "https://stanford-tml.github.io/SpringGrasp/",
   "fullCitation": "Chen, Sirui, Jeannette Bohg, and C. Karen Liu.  “SpringGrasp: Synthesizing Compliant, Dexterous Grasps under Shape Uncertainty” ,  Robotics: Science and Systems (RSS), 2024 , July 2024. https://stanford-tml.github.io/SpringGrasp/."
 }
