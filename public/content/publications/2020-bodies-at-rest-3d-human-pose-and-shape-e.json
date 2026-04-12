@@ -1,6 +1,6 @@
 {
   "title": "Bodies at Rest: 3D Human Pose and Shape Estimation from a Pressure Image Using Synthetic Data",
-  "authors": "Clever, Henry, Zackory Erickson, Ariel Kapusta, Greg Turk, C. Karen Liu, and Charlie Kemp",
+  "authors": "Henry Clever, Zackory Erickson, Ariel Kapusta, Greg Turk, C. Karen Liu, Charlie Kemp",
   "venue": "CVPR 2020",
   "date": "June 2020",
   "link": "https://arxiv.org/pdf/2004.01166.pdf",
