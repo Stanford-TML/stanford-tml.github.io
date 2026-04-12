@@ -15,11 +15,11 @@
     },
     {
       "title": "CHIP: Adaptive Compliance for Humanoid Control through Hindsight Perturbation",
-      "description": "-",
+      "description": "A plug and play framework that enable adaptive compliance control in any humanoid tracking framework",
       "link": "https://arxiv.org/abs/2512.14689",
-      "videoType": "none",
+      "videoType": "upload",
       "videoId": "",
-      "videoUrl": ""
+      "videoUrl": "/assets/uploads/teaser_Feb10_X.mp4"
     },
     {
       "title": "TWIST2: Scalable, Portable, and Holistic Humanoid Data Collection System",
