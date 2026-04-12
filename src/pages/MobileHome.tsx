@@ -121,7 +121,7 @@ export const MobileHome = () => {
             </p>
             <button 
               onClick={() => window.location.hash = '#join'}
-              className="bg-[#8C1515] text-white font-bold py-4 px-8 rounded-full hover:bg-red-800 transition-colors w-full shadow-lg shadow-red-900/20 tracking-wide text-sm"
+              className="custom-button"
             >
               {joinUs.button}
             </button>
