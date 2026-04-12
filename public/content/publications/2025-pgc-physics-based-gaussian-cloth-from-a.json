@@ -1,6 +1,6 @@
 {
   "title": "PGC: Physics-Based Gaussian Cloth from a Single Pose",
-  "authors": "Guo, Michelle, Matt Chiang, Igor Santesteban, Nikolaos Sarafianos, Hsiao-yu Chen, Oshri Halimi, Aljaž Božič, Shunsuke Saito, Jiajun Wu, C. Karen Liu, Tuur Stuyck, and Egor Larionov",
+  "authors": "Michelle Guo, Matt Chiang, Igor Santesteban, Nikolaos Sarafianos, Hsiao-yu Chen, Oshri Halimi, Aljaž Božič, Shunsuke Saito, Jiajun Wu, C. Karen Liu, Tuur Stuyck, Egor Larionov",
   "venue": "CVPR 2025",
   "date": "June 2025",
   "link": "https://phys-gaussian-cloth.github.io/",
