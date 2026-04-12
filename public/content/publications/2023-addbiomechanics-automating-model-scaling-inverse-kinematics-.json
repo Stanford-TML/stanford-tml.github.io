@@ -1,6 +1,8 @@
 {
   "title": "AddBiomechanics: Automating model scaling, inverse kinematics, and inverse dynamics from human motion data through sequential optimization",
-  "authors": "K Werling, NA Bianco, M Raitor, J Stingel, JL Hicks, SH Collins, SL Delp et al.",
+  "authors": "Keenon Werling, Nicholas A. Bianco, Michael Raitor, Jon Stingel, Jennifer L. Hicks, Steven H. Collins, Scott L. Delp, C. Karen Liu",
   "date": "2023-01-01",
-  "venue": "Plos one 18 (11), e0295152, 2023"
+  "venue": "Plos one 18 (11), e0295152, 2023",
+  "award": "",
+  "link": "https://addbiomechanics.org/"
 }
