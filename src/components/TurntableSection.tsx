@@ -44,6 +44,7 @@ export const TurntableSection = () => {
   const [activeSlot, setActiveSlot] = useState(0)
   const [currentHighlightIndex, setCurrentHighlightIndex] = useState(0)
   const[isHovered, setIsHovered] = useState(false)
+  const [isSectionVisible, setIsSectionVisible] = useState(false)
 
   // Calculate space in the component body for React rendering
   const currentAspect = size.width / size.height;
@@ -164,6 +165,11 @@ export const TurntableSection = () => {
     const targetOpacity = (isActive || debugForceVisible) ? 1 : 0
     
     opacityRef.current = THREE.MathUtils.damp(opacityRef.current, targetOpacity, 10, delta)
+
+    const currentlyVisible = targetOpacity > 0 || opacityRef.current > 0.05
+    if (currentlyVisible !== isSectionVisible) {
+        setIsSectionVisible(currentlyVisible)
+    }
     
     if (uiRef.current) {
         uiRef.current.style.opacity = opacityRef.current.toString()
@@ -176,6 +182,7 @@ export const TurntableSection = () => {
         
         highlightsRef.current.style.opacity = highlightOpacity.toString()
         highlightsRef.current.style.pointerEvents = highlightOpacity > 0.1 ? 'auto' : 'none'
+        // highlightsRef.current.style.display = highlightOpacity > 0.01 ? 'auto' : 'none'
     }
   })
 
@@ -239,14 +246,34 @@ export const TurntableSection = () => {
                             
                             {hl.videoType === 'youtube' && hl.videoId && (
                                 <div style={{ marginTop: '15px', marginBottom: '15px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
-                                    <iframe width="100%" height="180" src={`https://www.youtube.com/embed/${hl.videoId}`} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                                    {isSectionVisible && (
+                                        <iframe width="100%" 
+                                        height="180" 
+                                        src={`https://www.youtube.com/embed/${hl.videoId}`} 
+                                        title="YouTube video player" 
+                                        frameBorder="0" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowFullScreen></iframe>
+                                    )}
                                 </div>
                             )}
                             {hl.videoType === 'upload' && hl.videoUrl && (
                                 <div style={{ marginTop: '15px', marginBottom: '15px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
-                                    <video width="100%" height="auto" style={{ maxHeight: '180px', objectFit: 'cover', borderRadius: '8px' }} controls autoPlay muted loop>
-                                        <source src={hl.videoUrl} type="video/mp4" />
-                                    </video>
+                                    {/* Only mount the video tag if the section is actually visible */}
+                                    {isSectionVisible && (
+                                        <video 
+                                            src={hl.videoUrl}
+                                            disablePictureInPicture 
+                                            controlsList="nodownload"
+                                            width="100%" 
+                                            height="auto" 
+                                            style={{ maxHeight: '180px', objectFit: 'cover', borderRadius: '8px' }} 
+                                            controls 
+                                            autoPlay 
+                                            muted 
+                                            loop
+                                        />
+                                    )}
                                 </div>
                             )}
                         </div>
