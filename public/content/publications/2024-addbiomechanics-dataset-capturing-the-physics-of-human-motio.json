@@ -1,6 +1,8 @@
 {
   "title": "Addbiomechanics dataset: Capturing the physics of human motion at scale",
-  "authors": "K Werling, J Kaneda, T Tan, R Agarwal, S Skov, T Van Wouwe, S Uhlrich et al.",
+  "authors": "Keenon Werling, Janelle Kaneda, Alan Tan, Rishi Agarwal, Six Skov, Tom Van Wouwe, Scott Uhlrich, Nicholas Bianco, Carmichael Ong, Antoine Falisse, Shardul Sapkota, Aidan Chandra, Joshua Carter, Ezio Preatoni, Benjamin Fregly, Jennifer Hicks, Scott Delp, C. Karen Liu",
   "date": "2024-01-01",
-  "venue": "European Conference on Computer Vision, 490-508, 2024"
+  "venue": "European Conference on Computer Vision, 490-508, 2024",
+  "award": "",
+  "link": "https://arxiv.org/abs/2406.18537"
 }
