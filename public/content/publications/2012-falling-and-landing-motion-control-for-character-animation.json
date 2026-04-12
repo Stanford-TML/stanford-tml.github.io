@@ -1,6 +1,8 @@
 {
   "title": "Falling and landing motion control for character animation",
-  "authors": "S Ha, Y Ye, CK Liu",
+  "authors": "Sehoon Ha, Yuting Ye, C. Karen Liu",
   "date": "2012-01-01",
-  "venue": "TOG 2012"
+  "venue": "TOG 2012",
+  "award": "",
+  "link": "https://dl.acm.org/doi/10.1145/2366145.2366174"
 }
