@@ -1,6 +1,6 @@
 {
   "title": "IGibson 2.0: Object-Centric Simulation for Robot Learning of Everyday Household Tasks",
-  "authors": "Li, Chengshu, Fei Xia, Roberto Martin-Martin, Michael Lingelbach, Sanjana Srivastava, Bokui Shen, Kent Vainio, Cem Gokmen, Gokul Dharan, Tanish Jain, Andrey Kurenkov, C. Karen Liu, Hyowon Gweon, Jiajun Wu, Li Fei-Fei, and Silvio Savarese",
+  "authors": "Chengshu Li, Fei Xia, Roberto Martin-Martin, Michael Lingelbach, Sanjana Srivastava, Bokui Shen, Kent Vainio, Cem Gokmen, Gokul Dharan, Tanish Jain, Andrey Kurenkov, C. Karen Liu, Hyowon Gweon, Jiajun Wu, Li Fei-Fei, Silvio Savarese",
   "venue": "CoRL 2021",
   "date": "November 2021",
   "link": "http://svl.stanford.edu/igibson/",
