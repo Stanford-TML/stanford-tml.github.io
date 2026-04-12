@@ -2,5 +2,7 @@
   "title": "HMD2: Environment-Aware Motion Generation from Single Egocentric Head-Mounted Device",
   "authors": "V Guzov, Y Jiang, F Hong, G Pons-Moll, R Newcombe, CK Liu, Y Ye, L Ma",
   "date": "2025-01-01",
-  "venue": "3DV 2025"
+  "venue": "3DV 2025",
+  "award": "",
+  "link": "https://hmdsquared.github.io/"
 }
