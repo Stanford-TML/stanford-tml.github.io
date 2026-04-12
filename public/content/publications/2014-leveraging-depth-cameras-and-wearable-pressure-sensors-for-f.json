@@ -1,6 +1,8 @@
 {
   "title": "Leveraging Depth Cameras and Wearable Pressure Sensors for Full-body Kinematics and Dynamics Capture",
-  "authors": "P Zhang, K Siu, J Zhang, CKL Liu, J Chai",
+  "authors": "P Zhang, K Siu, J Zhang, CK Liu, J Chai",
   "date": "2014-01-01",
-  "venue": ""
+  "venue": "SIGGRAPH Asia 2014",
+  "award": "",
+  "link": "https://dl.acm.org/doi/10.1145/2661229.2661286"
 }
