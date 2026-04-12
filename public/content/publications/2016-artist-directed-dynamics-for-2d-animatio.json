@@ -1,8 +1,9 @@
 {
   "title": "Artist-Directed Dynamics for 2D Animation",
-  "authors": "Yunfei Bai, Danny Kaufman, C. Karen Liu, Jovan Popovic",
-  "venue": "SIGGRAPH 2016",
+  "authors": "Yunfei Bai, Danny Kaufman, C. Karen Liu, and Jovan Popovic",
   "date": "August 2016",
+  "venue": "SIGGRAPH 2016",
+  "award": "",
   "link": "https://dl.acm.org/doi/pdf/10.1145/2897824.2925884",
   "fullCitation": "Bai, Yunfei, Danny Kaufman, C. Karen Liu, and Jovan Popovic.  “Artist-Directed Dynamics for 2D Animation” ,  ACM Transactions on Graphics (SIGGRAPH), 2016 , August 2016."
 }
