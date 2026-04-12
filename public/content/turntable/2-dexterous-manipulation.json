@@ -15,11 +15,11 @@
     },
     {
       "title": "ARCap: Collecting High-quality Human Demonstrations for Robot Learning with Augmented Reality Feedback",
-      "description": "ICRA 2025",
+      "description": "Collect high quality human demonstration with Augmented Reality feedback",
       "link": "https://stanford-tml.github.io/ARCap/",
-      "videoType": "none",
+      "videoType": "upload",
       "videoId": "",
-      "videoUrl": ""
+      "videoUrl": "/assets/uploads/teaser (2).mp4"
     }
   ]
 }
