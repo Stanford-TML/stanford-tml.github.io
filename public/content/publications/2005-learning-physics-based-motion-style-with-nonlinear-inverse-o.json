@@ -1,6 +1,8 @@
 {
   "title": "Learning physics-based motion style with nonlinear inverse optimization",
-  "authors": "CK Liu, A Hertzmann, Z Popovi",
+  "authors": "C. Karen Liu, Aaron Hertzmann, Zoran Popovic",
   "date": "2005-01-01",
-  "venue": "TOG 2005"
+  "venue": "SIGGRAPH 2005",
+  "award": "",
+  "link": "https://dl.acm.org/doi/abs/10.1145/1073204.1073314"
 }
