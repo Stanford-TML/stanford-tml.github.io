@@ -1,6 +1,8 @@
 {
   "title": "Performance-Based Control Interface for Character Animation",
-  "authors": "S Ishigaki, T White, V Zordan, CK Liu",
+  "authors": "Satoru Ishigaki, Timothy White, Victor Zordan, C. Karen Liu",
   "date": "2009-01-01",
-  "venue": ""
+  "venue": "SIGGRAPH 2009",
+  "award": "",
+  "link": "https://dl.acm.org/doi/abs/10.1145/1531326.1531367"
 }
