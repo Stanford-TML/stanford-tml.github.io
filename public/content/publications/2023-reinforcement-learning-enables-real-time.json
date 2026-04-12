@@ -1,9 +1,9 @@
 {
   "title": "Reinforcement Learning Enables Real-Time Planning and Control of Agile Maneuvers for Soft Robot Arms",
-  "authors": "Rianna Jitosho*, Tyler Lum*, Allison Okamura, and C. Karen Liu",
+  "authors": "Rianna Jitosho*, Tyler Lum*, Allison Okamura, C. Karen Liu",
   "date": "October 2023",
+  "venue": "CoRL 2023",
   "award": "",
   "link": "https://sites.google.com/view/rl-soft-robot",
-  "fullCitation": "Jitosho*, Rianna, Tyler Lum*, Allison Okamura, and C. Karen Liu.  “Reinforcement Learning Enables Real-Time Planning and Control of Agile Maneuvers for Soft Robot Arms” ,  Conference on Robot Learning (CoRL), 2023 , October 2023. https://sites.google.com/view/rl-soft-robot.",
-  "venue": "CoRL 2023"
+  "fullCitation": "Jitosho*, Rianna, Tyler Lum*, Allison Okamura, and C. Karen Liu.  “Reinforcement Learning Enables Real-Time Planning and Control of Agile Maneuvers for Soft Robot Arms” ,  Conference on Robot Learning (CoRL), 2023 , October 2023. https://sites.google.com/view/rl-soft-robot."
 }
