@@ -1,7 +1,8 @@
 {
   "title": "Diffusion inertial poser: Human motion reconstruction from arbitrary sparse imu configurations",
   "authors": "T Van Wouwe, S Lee, A Falisse, S Delp, CK Liu",
-  "date": "2023-01-01",
-  "venue": "arXiv Preprint 2023",
+  "date": "2024-06-01",
+  "venue": "CVPR 2024",
+  "award": "",
   "link": "https://arxiv.org/abs/2308.16682"
 }
