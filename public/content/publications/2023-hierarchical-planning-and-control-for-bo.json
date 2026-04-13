@@ -1,8 +1,9 @@
 {
   "title": "Hierarchical Planning and Control for Box Loco-Manipulation",
   "authors": "Zhaoming Xie, Jonathan Tseng, Sebastian Starke, Michiel van de Panne, C. Karen Liu",
+  "date": "2023-07-01",
   "venue": "SCA 2023",
-  "date": "2023",
-  "link": "",
+  "award": "",
+  "link": "https://dl.acm.org/doi/abs/10.1145/3606931",
   "fullCitation": "Xie, Zhaoming, Jonathan Tseng, Sebastian Starke, Michiel van de Panne, and C. Karen Liu.  “Hierarchical Planning and Control for Box Loco-Manipulation” ,  Symposium on Computer Animation (SCA) , 2023."
 }
