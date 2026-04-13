@@ -1,6 +1,8 @@
 {
   "title": "Chain-of-Modality: Learning Manipulation Programs from Multimodal Human Videos with Vision-Language-Models",
   "authors": "C Wang, F Xia, W Yu, T Zhang, R Zhang, CK Liu, L Fei-Fei, J Tan, J Liang",
-  "date": "2025-01-01",
-  "venue": "ICRA 2025"
+  "date": "2025-06-01",
+  "venue": "ICRA 2025",
+  "award": "",
+  "link": "https://chain-of-modality.github.io/"
 }
