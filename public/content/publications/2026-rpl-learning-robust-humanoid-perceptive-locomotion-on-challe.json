@@ -1,7 +1,8 @@
 {
   "title": "RPL: Learning Robust Humanoid Perceptive Locomotion on Challenging Terrains",
-  "authors": "Y Zhang, Y Seo, J Chen, Y Yuan, K Sreenath, P Abbeel, C Sferrazza et al.",
-  "date": "2026-01-01",
+  "authors": "Yuanhang Zhang, Younggyo Seo, Juyue Chen, Yifu Yuan, Koushil Sreenath, Pieter Abbeel, Carmelo Sferrazza, C. Karen Liu, Guanya Shi",
+  "date": "2026-02-01",
   "venue": "arXiv Preprint 2026",
-  "link": "https://arxiv.org/abs/2602.03002"
+  "award": "",
+  "link": "https://rpl-humanoid.github.io/"
 }
