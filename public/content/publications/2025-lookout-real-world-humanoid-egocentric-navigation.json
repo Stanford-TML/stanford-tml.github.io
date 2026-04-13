@@ -1,6 +1,8 @@
 {
   "title": "LookOut: Real-World Humanoid Egocentric Navigation",
-  "authors": "B Pan, AW Harley, CK Liu, LJ Guibas",
-  "date": "2025-01-01",
-  "venue": "ICCV 2025"
+  "authors": "Boxiao Pan, Adam Harley, C. Karen Liu*, Leonidas J. Guibas*",
+  "date": "2025-10-01",
+  "venue": "ICCV 2025",
+  "award": "",
+  "link": "https://sites.google.com/stanford.edu/lookout"
 }
