@@ -1,8 +1,9 @@
 {
   "title": "Ego-Body Pose Estimation via Ego-Head Pose Estimation",
   "authors": "Jiaman Li, C. Karen Liu†, Jiajun Wu†",
+  "date": "2023-06-01",
   "venue": "CVPR 2023",
-  "date": "2023",
+  "award": "",
   "link": "https://lijiaman.github.io/projects/egoego/",
   "fullCitation": "Li, Jiaman, C. Karen Liu†, and Jiajun Wu†.  “Ego-Body Pose Estimation via Ego-Head Pose Estimation” ,  Conference on Computer Vision and Pattern Recognition (CVPR), 2023 , 2023. https://lijiaman.github.io/projects/egoego/."
 }
