@@ -1,6 +1,8 @@
 {
   "title": "Diffusionposer: Real-time human motion reconstruction from arbitrary sparse sensors using autoregressive diffusion",
-  "authors": "T Van Wouwe, S Lee, A Falisse, S Delp, CK Liu",
-  "date": "2024-01-01",
-  "venue": "Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern ..., 2024"
+  "authors": "Tom Van Wouwe, Seunghwan Lee, Antoine Falisse, Scott Delp, C. Karen Liu",
+  "date": "2024-06-01",
+  "venue": "CVPR 2024",
+  "award": "",
+  "link": "https://openaccess.thecvf.com/content/CVPR2024/papers/Van_Wouwe_DiffusionPoser_Real-time_Human_Motion_Reconstruction_From_Arbitrary_Sparse_Sensors_Using_CVPR_2024_paper.pdf"
 }
