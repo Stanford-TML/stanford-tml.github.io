@@ -1,8 +1,9 @@
 {
   "title": "Constrained Diffusion With Trust Sampling",
   "authors": "William Huang, Yifeng Jiang, Tom Van Wouwe, C. Karen Liu",
-  "venue": "",
-  "date": "2024",
+  "date": "2024-06-01",
+  "venue": "NeurIPS 2024",
+  "award": "",
   "link": "https://will-s-h.github.io/trust-sampling-website/",
   "fullCitation": "Huang, William, Yifeng Jiang, Tom Van Wouwe, and C. Karen Liu.  “Constrained Diffusion With Trust Sampling” , 2024. https://will-s-h.github.io/trust-sampling-website/."
 }
