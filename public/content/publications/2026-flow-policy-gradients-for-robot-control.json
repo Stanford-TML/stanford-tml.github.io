@@ -1,7 +1,8 @@
 {
   "title": "Flow Policy Gradients for Robot Control",
-  "authors": "B Yi, H Choi, HG Singh, X Huang, TE Truong, C Sferrazza, Y Ma, R Duan et al.",
-  "date": "2026-01-01",
+  "authors": "Brent Yi*, Hongsuk Choi*, Himanshu Singh, Xiaoyu Huang, Takara E. Truong, Carmelo Sferrazza, Yi Ma, Rocky Duan†, Pieter Abbeel†, Guanya Shi†, C. Karen Liu†, Angjoo Kanazawa†",
+  "date": "2026-02-01",
   "venue": "arXiv Preprint 2026",
-  "link": "https://arxiv.org/abs/2602.02481"
+  "award": "",
+  "link": "https://hongsukchoi.github.io/fpo-control/"
 }
