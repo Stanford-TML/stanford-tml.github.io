@@ -1,6 +1,6 @@
 {
   "title": "Beyondmimic: From motion tracking to versatile humanoid control via guided diffusion",
-  "mediaType": "upload",
-  "media": "assets/uploads/RS_MtKVIAzY.mp4",
-  "link": "https://beyondmimic.github.io"
+  "media": "/assets/uploads/bm.mp4",
+  "link": "https://beyondmimic.github.io",
+  "mediaType": "upload"
 }
