@@ -1,8 +1,9 @@
 {
   "title": "Iterative Motion Editing With Natural Language",
   "authors": "Purvi Goel, Kuan-Chieh Wang, C. Karen Liu, Kayvon Fatahalian",
-  "venue": "ACM SIGGRAPH Conference Proceedings 2024",
   "date": "July 2024",
+  "venue": "SIGGRAPH 2024",
+  "award": "",
   "link": "https://purvigoel.github.io/iterative-motion-editing/",
   "fullCitation": "Goel, Purvi, Kuan-Chieh Wang, C. Karen Liu, and Kayvon Fatahalian.  “Iterative Motion Editing With Natural Language” ,   ACM SIGGRAPH Conference Proceedings 2024 , 71 (July 28, 2024): 9. https://purvigoel.github.io/iterative-motion-editing/."
 }
