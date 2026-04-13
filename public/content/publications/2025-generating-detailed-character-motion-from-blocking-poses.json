@@ -1,6 +1,8 @@
 {
   "title": "Generating Detailed Character Motion from Blocking Poses",
-  "authors": "P Goel, G Tevet, CK Liu, K Fatahalian",
-  "date": "2025-01-01",
-  "venue": "SIGGRAPH Asia 2025 Conference Papers, 152:1-152:7, 2025"
+  "authors": "Purvi Goel, Guy Tevet, C.Karen. Liu, Kayvon Fatahalian",
+  "date": "2025-12-01",
+  "venue": "SIGGRAPH Asia 2025",
+  "award": "",
+  "link": "https://dl.acm.org/doi/pdf/10.1145/3757377.3763874"
 }
