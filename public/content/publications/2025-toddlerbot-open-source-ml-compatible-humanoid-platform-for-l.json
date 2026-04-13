@@ -1,8 +1,8 @@
 {
   "title": "ToddlerBot: Open-Source ML-Compatible Humanoid Platform for Loco-Manipulation",
   "authors": "Haochen Shi*, Weizhuo Wang*, Shuran Song, C Karen Liu",
-  "date": "2025-02-02",
+  "date": "2025-11-02",
+  "venue": "CoRL 2025",
   "award": "",
-  "link": "https://toddlerbot.github.io",
-  "venue": "CoRL 2025"
+  "link": "https://toddlerbot.github.io"
 }
