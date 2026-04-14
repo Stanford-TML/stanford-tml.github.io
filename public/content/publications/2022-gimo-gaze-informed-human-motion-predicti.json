@@ -1,8 +1,9 @@
 {
   "title": "GIMO: Gaze-Informed Human Motion Prediction in Context",
   "authors": "Yang Zheng, Yanchao Yang, Kaichun Mo, Jiaman Li, Tao Yu, Yebin Liu, C. Karen Liu, Leonidas J. Guibas",
-  "venue": "ECCV 2022",
   "date": "October 2022",
-  "link": "https://arxiv.org/pdf/2204.09443.pdf",
+  "venue": "ECCV 2022",
+  "award": "",
+  "link": "https://github.com/y-zheng18/GIMO",
   "fullCitation": "Zheng, Yang, Yanchao Yang, Kaichun Mo, Jiaman Li, Tao Yu, Yebin Liu, C. Karen Liu, and Leonidas J. Guibas.  “GIMO: Gaze-Informed Human Motion Prediction in Context” ,  European Conference on Computer Vision (ECCV), 2022 , October 2022."
 }
