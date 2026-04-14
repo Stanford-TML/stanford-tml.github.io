@@ -1,8 +1,9 @@
 {
   "title": "COCOI: Contact-Aware Online Context Inference for Generalizable Non-Planar Pushing",
   "authors": "Zhuo Xu, Wenhao Yu, Alexander Herzog, Wenlong Lu, Chuyuan Fu, Masayoshi Tomizuka, Yunfei Bai, C. Karen Liu, Daniel Ho",
-  "venue": "IROS 2021",
   "date": "September 2021",
+  "venue": "IROS 2021",
+  "award": "",
   "link": "https://arxiv.org/pdf/2011.11270.pdf",
   "fullCitation": "Xu, Zhuo, Wenhao Yu, Alexander Herzog, Wenlong Lu, Chuyuan Fu, Masayoshi Tomizuka, Yunfei Bai, C. Karen Liu, and Daniel Ho.  “COCOI: Contact-Aware Online Context Inference for Generalizable Non-Planar Pushing” ,  IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2021 , September 2021."
 }
