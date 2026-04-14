@@ -1,8 +1,9 @@
 {
   "title": "DCL: Differential Contrastive Learning for Geometry-Aware Depth Synthesis",
   "authors": "Yanchao Yang, Yuefan Shen, Youzi Zheng, C. Karen Liu, Leonidas Guibas",
-  "venue": "RA-L and ICRA 2022",
   "date": "May 2022",
+  "venue": "ICRA 2022",
+  "award": "",
   "link": "https://arxiv.org/pdf/2107.13087.pdf",
   "fullCitation": "Yang, Yanchao, Yuefan Shen, Youzi Zheng, C. Karen Liu, and Leonidas Guibas.  “DCL: Differential Contrastive Learning for Geometry-Aware Depth Synthesis” ,  IEEE International Conference on Robotics and Automation (RA-L and ICRA), 2022 , May 2022."
 }
