@@ -1,8 +1,9 @@
 {
   "title": "ADeLA: Automatic Dense Labeling With Attention for Viewpoint Adaptation in Semantic Segmentation",
   "authors": "Yanchao Yang, Hanxiang Ren, He Wang, Bokui Shen, Qingnan Fan, Youzi Zheng, C. Karen Liu, Leonidas Guibas",
-  "venue": "CVPR 2022",
   "date": "June 2022",
-  "link": "",
+  "venue": "CVPR 2022",
+  "award": "",
+  "link": "https://github.com/ReNginx/ADeLA",
   "fullCitation": "Yang, Yanchao, Hanxiang Ren, He Wang, Bokui Shen, Qingnan Fan, Youzi Zheng, C. Karen Liu, and Leonidas Guibas.  Ã¢ÂÂADeLA: Automatic Dense Labeling With Attention for Viewpoint Adaptation in Semantic SegmentationÃ¢ÂÂ ,  Conference on Computer Vision and Pattern Recognition (CVPR), 2022 , June 2022."
 }
