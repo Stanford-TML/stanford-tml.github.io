@@ -1,0 +1,6 @@
+{
+  "title": "Reasoning and Planning for Long-Horizon Robotic Tasks",
+  "date": "2026-04-16",
+  "contact": "Guy Tevet",
+  "description": "Imagine asking your robot, “I lost my keys, please find them and bring them to me.” Executing this request requires cognitive skills across many levels: reasoning about where to search first, distinguishing your home keys from your car keys, and performing low-level skills such as opening drawers, grasping objects, and navigating back to you. In this project, we aim to develop an end-to-end controller that integrates high-level reasoning, scene understanding, and motor control to accomplish such complex, long-horizon tasks in the real world."
+}
