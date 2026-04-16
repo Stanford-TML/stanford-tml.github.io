@@ -85,26 +85,28 @@ export const MobileHome = () => {
           <h3 className="text-2xl font-extrabold mb-6 text-gray-900 tracking-tight">Research Areas</h3>
           <div className="flex flex-col gap-6">
             {turntableData.map((item, idx) => (
-              <div key={idx} className="bg-white rounded-2xl p-6 sm:p-8 shadow-md shadow-gray-200/40 border-l-4 border-[#8C1515] flex flex-col">
+              <div key={idx} className="bg-white rounded-2xl p-6 sm:p-8 shadow-md shadow-gray-200/40 border-l-4 border-[#8C1515] flex flex-col sm:flex-row gap-6">
                 
                 {item.image && (
                   <ProgressiveImage 
                     highResSrc={item.image} 
                     alt={item.title} 
-                    containerClass="w-full h-48 sm:h-64 mb-6 rounded-xl overflow-hidden shadow-sm"
+                    containerClass="w-full h-48 sm:h-auto sm:min-h-[16rem] sm:w-1/2 rounded-xl overflow-hidden shadow-sm shrink-0"
                     imageClass="w-full h-full object-cover bg-gray-100" 
                   />
                 )}
 
-                <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 font-bold">
-                  {item.label}
-                </p>
-                <h4 className="text-lg font-bold mb-2 text-gray-900 leading-tight">
-                  {item.title}
-                </h4>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  {item.description}
-                </p>
+                <div className="flex flex-col justify-center sm:w-1/2">
+                  <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-2 font-bold">
+                    {item.label}
+                  </p>
+                  <h4 className="text-lg font-bold mb-2 text-gray-900 leading-tight">
+                    {item.title}
+                  </h4>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
               </div>
             ))}
           </div>

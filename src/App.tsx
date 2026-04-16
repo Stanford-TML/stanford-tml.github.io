@@ -47,7 +47,6 @@ const checkIsMobile = () => {
   
   // 3. User Agent check (catches phones and tablets regardless of orientation)
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) return true;
-  console.log("User Agent:", navigator.userAgent);
   
   return false;
 }
