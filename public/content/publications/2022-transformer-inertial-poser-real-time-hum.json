@@ -1,7 +1,7 @@
 {
   "title": "Transformer Inertial Poser: Real-Time Human Motion Reconstruction from Sparse IMUs With Simultaneous Terrain Generation",
   "authors": "Yifeng Jiang, Yuting Ye, Deepak Gopinath, Jungdam Won, Alexander Winkler, C. Karen Liu",
-  "date": "December 2022",
+  "date": "2022-12-01",
   "venue": "SIGGRAPH Asia 2022",
   "award": "",
   "link": "https://github.com/jyf588/transformer-inertial-poser",
