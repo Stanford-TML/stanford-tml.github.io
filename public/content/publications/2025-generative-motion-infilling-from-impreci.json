@@ -1,8 +1,9 @@
 {
   "title": "Generative Motion Infilling from Imprecisely Timed Keyframes",
   "authors": "Purvi Goel, Haotian Zhang, C. Karen Liu, Kayvon Fatahalian",
-  "venue": "Eurographics, 2025",
   "date": "2025-05-01",
+  "venue": "Eurographics 2025",
+  "award": "",
   "link": "https://purvigoel.github.io/imprecise-timing/",
   "fullCitation": "Goel, Purvi, Haotian Zhang, C. Karen Liu, and Kayvon Fatahalian.  “ Generative Motion Infilling from Imprecisely Timed Keyframes” ,  Eurographics, 2025 , May 1, 2025. https://purvigoel.github.io/imprecise-timing/."
 }
