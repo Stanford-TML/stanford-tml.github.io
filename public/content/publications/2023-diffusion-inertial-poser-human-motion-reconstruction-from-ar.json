@@ -1,8 +1,0 @@
-{
-  "title": "Diffusion Inertial Poser: Human Motion Reconstruction from Arbitrary Sparse IMU Configurations",
-  "authors": "Tom Van Wouwe, Seunghwan Lee, Antoine Falisse, Scott Delp, C. Karen Liu",
-  "date": "2024-06-01",
-  "venue": "CVPR 2024",
-  "award": "",
-  "link": "https://openaccess.thecvf.com/content/CVPR2024/papers/Van_Wouwe_DiffusionPoser_Real-time_Human_Motion_Reconstruction_From_Arbitrary_Sparse_Sensors_Using_CVPR_2024_paper.pdf"
-}
