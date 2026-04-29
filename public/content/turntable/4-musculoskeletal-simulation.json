@@ -6,6 +6,14 @@
   "description": "Understanding natural movement requires modeling the complex dynamics of the musculoskeletal system. Our research develops physics-based muscle-driven models that reveal the mechanics of human motion and open new possibilities for injury prevention and rehabilitation.",
   "highlights": [
     {
+      "title": "MUSIC: Learning Muscle-Driven Dexterous Hand Control",
+      "description": "We present a data-driven approach for physics-based, muscle-driven dexterous control that enables musculoskeletal hands to perform precise piano playing for novel pieces of music outside the reference dataset.",
+      "link": "https://pei-xu.github.io/MUSIC",
+      "videoType": "none",
+      "videoId": "",
+      "videoUrl": ""
+    },
+    {
       "title": "GaitDynamics: A generative foundation model for analyzing human walking and running",
       "description": "Understanding the dynamics of human gait, including both motions and forces, is vital to promote human mobility. While deep learning models may have advantages over costly laboratory-based experiments and physics-based simulations, existing models have been trained on small datasets with homogeneous demographics and focus on predicting a single output. We developed GaitDynamics, a generative foundation model trained on a large dataset of diverse gait patterns, which allows for flexible inputs, outputs and clinical applications.",
       "link": "https://www.nature.com/articles/s41551-025-01565-8",
