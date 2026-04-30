@@ -9,9 +9,9 @@
       "title": "MUSIC: Learning Muscle-Driven Dexterous Hand Control",
       "description": "We present a data-driven approach for physics-based, muscle-driven dexterous control that enables musculoskeletal hands to perform precise piano playing for novel pieces of music outside the reference dataset.",
       "link": "https://pei-xu.github.io/MUSIC",
-      "videoType": "none",
+      "videoType": "upload",
       "videoId": "",
-      "videoUrl": ""
+      "videoUrl": "/assets/uploads/MUSIC_teaser.mp4"
     },
     {
       "title": "GaitDynamics: A generative foundation model for analyzing human walking and running",
