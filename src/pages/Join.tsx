@@ -1,7 +1,24 @@
 // FILE: src/pages/Join.tsx
 import { useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkBreaks from 'remark-breaks'
 import { fetchRecruitment, fetchHighlights, fetchJoinContent } from '../services/cms'
 import { ProgressiveImage } from '../components/ProgressiveImage'
+
+// Renders a markdown string (links, bold, lists) with single newlines kept as
+// line breaks via remark-breaks. Styling is scoped here to match the Join page.
+const markdownComponents = {
+    a: ({ href, children }: { href?: string; children?: React.ReactNode }) => (
+        <a href={href} target="_blank" rel="noreferrer" className="text-[#8C1515] font-semibold hover:underline">{children}</a>
+    ),
+    p: ({ children }: { children?: React.ReactNode }) => <p className="mb-4 last:mb-0">{children}</p>,
+    ul: ({ children }: { children?: React.ReactNode }) => <ul className="list-disc pl-6 mb-4 space-y-1 marker:text-[#8C1515]">{children}</ul>,
+    ol: ({ children }: { children?: React.ReactNode }) => <ol className="list-decimal pl-6 mb-4 space-y-1">{children}</ol>,
+    strong: ({ children }: { children?: React.ReactNode }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+    // Montserrat ships no italic face and the site sets `font-synthesis: none`,
+    // so re-enable style synthesis here to get faux italics for emphasis.
+    em: ({ children }: { children?: React.ReactNode }) => <em className="italic" style={{ fontSynthesis: 'style' }}>{children}</em>,
+}
 
 export const Join = () => {
     const [projects, setProjects] = useState<any[] | null>(null)
@@ -179,7 +196,11 @@ export const Join = () => {
                                 <span className="bg-gray-100 px-3 py-1 rounded-md">Posted: {project.date}</span>
                                 <span className="bg-red-50 text-[#8C1515] px-3 py-1 rounded-md">Contact: {project.contact}</span>
                             </div>
-                            <p className="text-gray-700 mb-6 leading-relaxed">{project.description}</p>
+                            <div className="text-gray-700 mb-6 leading-relaxed">
+                                <ReactMarkdown remarkPlugins={[remarkBreaks]} components={markdownComponents}>
+                                    {project.description}
+                                </ReactMarkdown>
+                            </div>
                         </div>
                     ))}
 
