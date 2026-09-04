@@ -15,7 +15,7 @@
     },
     {
       "title": "CHIP: Adaptive Compliance for Humanoid Control through Hindsight Perturbation",
-      "description": "A plug and play framework that enable adaptive compliance control in any humanoid tracking framework",
+      "description": "A plug and play framework that enable adaptive compliance control in any humanoid tracking framework (Science Robotics 2026)",
       "link": "https://arxiv.org/abs/2512.14689",
       "videoType": "upload",
       "videoId": "",
