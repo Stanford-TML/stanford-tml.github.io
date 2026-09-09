@@ -1,4 +1,5 @@
 // FILE: src/services/cms.ts
+import { getCanonicalVenue } from '../utils/venue';
 
 const extractYouTubeId = (input: string | undefined): string | undefined => {
   if (!input) return input;
@@ -32,49 +33,30 @@ const parseSafeDate = (dateStr: string | undefined): Date => {
 
 export const fetchPublications = async () => {
   const modules = import.meta.glob('/public/content/publications/*.json', { eager: true });
-  const publications = Object.values(modules).map((mod: any) => mod.default || mod);
-
-  // 1. Sort all publications by date descending using the safe parser
-  publications.sort((a, b) => {
-    const timeA = parseSafeDate(a.date).getTime();
-    const timeB = parseSafeDate(b.date).getTime();
-    // Fallback to 0 if NaN to avoid breaking the sort completely
-    return (isNaN(timeB) ? 0 : timeB) - (isNaN(timeA) ? 0 : timeA);
-  });
-
-  // 2. Group by year
-  const grouped: { [year: string]: any[] } = {};
-  
-  publications.forEach(pub => {
+  const publications = Object.values(modules).map((mod: any) => {
+    const pub = { ...(mod.default || mod) };
     const dateObj = parseSafeDate(pub.date);
-    
     let year = "Unknown";
     
     if (!isNaN(dateObj.getTime())) {
       year = dateObj.getFullYear().toString();
     } else {
-      // Ultimate fallback: Try to regex out any 4-digit year from the corrupt string
       const match = String(pub.date).match(/\b(19|20)\d{2}\b/);
       if (match) {
         year = match[0];
       }
     }
-    
-    if (!grouped[year]) {
-      grouped[year] =[];
-    }
-    grouped[year].push(pub);
+
+    pub.year = year;
+    pub.dateTimestamp = isNaN(dateObj.getTime()) ? 0 : dateObj.getTime();
+    pub.canonicalVenue = getCanonicalVenue(pub.venue);
+    return pub;
   });
 
-  // 3. Convert the grouped object into an array sorted by year descending
-  return Object.entries(grouped)
-    .map(([year, pubs]) => ({ year, pubs }))
-    // If year is "Unknown", push it to the bottom
-    .sort((a, b) => {
-      if (a.year === "Unknown") return 1;
-      if (b.year === "Unknown") return -1;
-      return Number(b.year) - Number(a.year);
-    });
+  // Default sort by date descending
+  publications.sort((a, b) => b.dateTimestamp - a.dateTimestamp);
+
+  return publications;
 }
 
 export const fetchPeople = async () => {
