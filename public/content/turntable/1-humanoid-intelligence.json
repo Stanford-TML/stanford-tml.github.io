@@ -7,7 +7,7 @@
   "highlights": [
     {
       "title": "Beyondmimic: From motion tracking to versatile humanoid control via guided diffusion",
-      "description": "A real-world framework to learn from human motions for versatile and naturalistic humanoid control via guided diffusion.",
+      "description": "A real-world framework to learn from human motions for versatile and naturalistic humanoid control via guided diffusion (Science Robotics 2026)",
       "link": "https://beyondmimic.github.io",
       "videoType": "upload",
       "videoId": "",
@@ -15,7 +15,7 @@
     },
     {
       "title": "CHIP: Adaptive Compliance for Humanoid Control through Hindsight Perturbation",
-      "description": "A plug and play framework that enable adaptive compliance control in any humanoid tracking framework (Science Robotics 2026)",
+      "description": "A plug and play framework that enable adaptive compliance control in any humanoid tracking framework (CoRL 2026)",
       "link": "https://arxiv.org/abs/2512.14689",
       "videoType": "upload",
       "videoId": "",
@@ -23,7 +23,7 @@
     },
     {
       "title": "TWIST2: Scalable, Portable, and Holistic Humanoid Data Collection System",
-      "description": "ICRA 2026",
+      "description": "A humanoid data collection system that combines portability and scalability for collecting long-horizon, whole-body humanoid loco-manipulation data (.ICRA 2026)",
       "link": "https://yanjieze.com/TWIST2/",
       "videoType": "youtube",
       "videoId": "lTtEvI0kUfo",
