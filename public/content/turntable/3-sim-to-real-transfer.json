@@ -7,7 +7,7 @@
   "highlights": [
     {
       "title": "Retargeting Matters: General Motion Retargeting for Humanoid Motion Tracking",
-      "description": "Open-source automatic retargeting for humanoid robots (Best Paper at ICRA 2026).",
+      "description": "Open-source automatic retargeting for humanoid robots",
       "link": "https://github.com/YanjieZe/GMR",
       "videoType": "upload",
       "videoId": "kr3I_g1GLYw",
@@ -15,7 +15,7 @@
     },
     {
       "title": "Omniretarget: Interaction-preserving data generation for humanoid whole-body loco-manipulation and scene interaction",
-      "description": "ICRA 2026",
+      "description": "An interaction-preserving data generation engine based on an interaction mesh that explicitly models and preserves the crucial spatial and contact relationships between an agent, the terrain, and manipulated objects (Best Paper at ICRA 2026)",
       "link": "https://omniretarget.github.io",
       "videoType": "upload",
       "videoId": "",
