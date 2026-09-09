@@ -12,6 +12,14 @@
       "videoType": "none",
       "videoId": "",
       "videoUrl": ""
+    },
+    {
+      "title": "Empirical Learning of Effective Assistance Torques in Wearable Exoskeletons via Velocity-Constrained Data Collection",
+      "description": "The human-exoskeleton system is subject to complex soft-tissue interactions that aren't well-modeled with traditional methods, and further worsened by hysteretic interactions with high-power actuation. We efficiently learn gravity assistance torques for these dynamic systems by harvesting real-world interaction data from the exoskeleton itself.",
+      "link": "https://tml.stanford.edu/exo-gravcomp/",
+      "videoType": "none",
+      "videoId": "",
+      "videoUrl": ""
     }
   ]
 }
