@@ -35,50 +35,16 @@ jobs:
       - name: Install dependencies
         run: npm ci # Or yarn install / pnpm install
 
-      - name: Install ImageMagick
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y imagemagick
+      # Safety net for anything committed without going through the CMS upload resize.
+      # The deployed copy is shrunk here; the repo itself is not changed.
+      - name: Shrink oversized images
+        run: npm run assets:optimize
 
-      - name: Optimize images and generate placeholders
-        run: |
-          if [ -d "public/assets" ]; then
-            cd public/assets
-            
-            # globstar = allows **/* to search recursively through all subfolders
-            # nullglob = prevents errors if no images are found
-            # nocaseglob = catches both .jpg and .JPG extensions
-            shopt -s globstar nullglob nocaseglob
-            
-            # Check if magick command is available, fallback to convert
-            if command -v magick >/dev/null 2>&1; then
-              IM_CMD="magick"
-            else
-              IM_CMD="convert"
-            fi
-            
-            for img in **/*.{jpg,jpeg,png,webp}; do
-              # Ensure we aren't re-processing an already generated _small image
-              if [[ "$img" != *_small.* ]]; then
-                filename="${img%.*}"
-                extension="${img##*.}"
-                small_img="${filename}_small.${extension}"
-                
-                # 1. OPTIMIZE THE HIGH-RES IMAGE
-                echo "Optimizing high-res image: $img using $IM_CMD"
-                "$IM_CMD" "$img" -resize "2000x2000>" -strip -quality 85 "$img"
-                
-                # 2. GENERATE LOW-RES PLACEHOLDER
-                if [ ! -f "$small_img" ]; then
-                  echo "Generating low-res placeholder for $img"
-                  "$IM_CMD" "$img" -resize "50x50>" -strip -quality 50 "$small_img"
-                fi
-              fi
-            done
-          else
-            echo "Directory public/assets not found, skipping."
-          fi
-        
+      # Lists files over the limits as warnings on the workflow run (does not block the deploy).
+      - name: Check asset sizes
+        run: npm run assets:check
+
+      # `prebuild` generates the responsive image variants used by ProgressiveImage.
       - name: Build project
         run: npm run build
       

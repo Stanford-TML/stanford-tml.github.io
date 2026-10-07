@@ -1,12 +1,6 @@
 // FILE: src/App.tsx
-import { Canvas } from '@react-three/fiber'
-import { ScrollControls } from '@react-three/drei'
-import { Suspense, useState, useEffect } from 'react'
-import { Experience } from './components/Experience'
-import { getTotalPages } from './ScrollManager'
-import { LoadingScreen } from './components/LoadingScreen'
+import { Suspense, lazy, useState, useEffect } from 'react'
 import "./App.css";
-import { SceneWarmup } from './components/SceneWarmup'
 import { MobileHome } from './pages/MobileHome'
 import { People } from './pages/People'
 import { Join } from './pages/Join'
@@ -15,6 +9,10 @@ import { Publications } from './pages/Publications'
 import { StickyNav } from './components/StickyNav'
 import { GlobalBackToTop } from './components/GlobalBackToTop'
 import { NotFound } from './pages/NotFound'
+
+// Loaded on demand: importing the 3D scene starts downloading all of its models,
+// so it must not be part of the main bundle that every page and device loads.
+const Home3D = lazy(() => import('./components/Home3D'))
 
 const checkHardwareAcceleration = () => {
   try {
@@ -54,8 +52,6 @@ const checkIsMobile = () => {
 const HAS_ACCELERATION = checkHardwareAcceleration()
 
 function App() {
-  const totalPages = getTotalPages()
-  
   // Use the new robust check for our initial state
   const [isMobile, setIsMobile] = useState(checkIsMobile())
   const[currentRoute, setCurrentRoute] = useState(window.location.hash || '#home')
@@ -128,19 +124,10 @@ function App() {
       }
 
       return (
-        <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
-          <LoadingScreen />
-
-          <Canvas shadows camera={{ position: [0, 0, 5], fov: 40 }} gl={{ antialias: true }}>
-            <color attach="background" args={['#e0e0e0']} />
-            <Suspense fallback={null}>
-              <ScrollControls pages={totalPages} damping={0.2}>
-                <SceneWarmup />
-                <Experience />
-              </ScrollControls>
-            </Suspense>
-          </Canvas>
-        </div>
+        // The fallback matches the loading screen's background while the 3D chunk downloads
+        <Suspense fallback={<div style={{ position: 'fixed', inset: 0, background: '#e0e0e0' }} />}>
+          <Home3D />
+        </Suspense>
       )
     }
 

@@ -4,10 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "node scripts/assets.mjs variants",
     "dev": "vite",
+    "prebuild": "node scripts/assets.mjs variants",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "assets:optimize": "node scripts/assets.mjs optimize",
+    "assets:variants": "node scripts/assets.mjs variants",
+    "assets:check": "node scripts/assets.mjs check",
+    "assets:videos": "node scripts/assets.mjs videos"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -20,7 +26,8 @@
     "react-markdown": "^10.1.0",
     "remark-breaks": "^4.0.0",
     "three": "^0.182.0",
-    "three-stdlib": "^2.36.1"
+    "three-stdlib": "^2.36.1",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -33,6 +40,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "sharp": "^0.35.5",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4"

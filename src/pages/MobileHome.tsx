@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { getHomeContentSync, fetchTurntable } from '../services/cms'
 import { ProgressiveImage } from '../components/ProgressiveImage'
+import { getResponsiveImage } from '../utils/images'
 
 export const MobileHome = () => {
   const[turntableData, setTurntableData] = useState<any[]>([])
@@ -39,6 +40,8 @@ export const MobileHome = () => {
           {/* MOVED STANFORD WORDMARK HERE */}
           <img 
             src="/assets/SUSig-red.png" 
+            srcSet={getResponsiveImage('/assets/SUSig-red.png').srcSet}
+            sizes="230px"
             alt="Stanford University" 
             className="h-6 sm:h-7 object-contain" 
           />
@@ -53,6 +56,8 @@ export const MobileHome = () => {
               <ProgressiveImage 
                 highResSrc="assets/cover_photo_wide.jpg"
                 alt="The Movement Lab" 
+                sizes="(min-width: 896px) 830px, 100vw"
+                loading="eager"
                 containerClass="w-full h-full" 
                 imageClass="w-full h-full object-bottom block"
               />
@@ -91,6 +96,7 @@ export const MobileHome = () => {
                   <ProgressiveImage 
                     highResSrc={item.image} 
                     alt={item.title} 
+                    sizes="(min-width: 896px) 400px, (min-width: 640px) 45vw, 90vw"
                     containerClass="w-full h-48 sm:h-auto sm:min-h-[16rem] sm:w-1/2 rounded-xl overflow-hidden shadow-sm shrink-0"
                     imageClass="w-full h-full object-cover bg-gray-100" 
                   />

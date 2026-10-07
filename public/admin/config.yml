@@ -10,6 +10,21 @@ media_folder: "public/assets/uploads"
 public_folder: "assets/uploads"
 local_backend: true
 
+# Upload limits. Keep in sync with LIMITS in scripts/assets.mjs.
+# Photos are resized to fit 2048x2048 and converted to WebP in the browser before they are
+# uploaded, and the size limit is checked after that, so in practice it only blocks videos
+# and unusual images. GIFs are left alone so animations survive.
+media_libraries:
+  default:
+    config:
+      max_file_size: 5000000 # bytes (5 MB)
+      transformations:
+        jpeg: { format: webp, quality: 85, width: 2048, height: 2048 }
+        png: { format: webp, quality: 85, width: 2048, height: 2048 }
+        webp: { format: webp, quality: 85, width: 2048, height: 2048 }
+        heic: { format: webp, quality: 85, width: 2048, height: 2048 }
+        avif: { format: webp, quality: 85, width: 2048, height: 2048 }
+
 collections:
   - name: "pages"
     label: "Pages"
@@ -103,8 +118,9 @@ collections:
       # ------------------
       - { label: "Mentor (Optional)", name: "mentor", widget: "string", required: false, hint: "For students/interns (e.g., 'Haochen')" }
       - { label: "Category", name: "category", widget: "select", options:["PI", "Students", "Alumni"] }
-      - { label: "Image", name: "image", widget: "image", required: false }
+      - { label: "Image", name: "image", widget: "image", required: false, hint: "Max file size 5 MB. Photos are automatically resized (max 2048px) and converted to WebP when uploaded." }
       - { label: "Bio (PI Only)", name: "bio", widget: "text", required: false }
+      - { label: "Display Order (Optional)", name: "order", widget: "number", value_type: "int", required: false, hint: "Within the same role group, people are listed by this number first (lower first, default 0), then alphabetically. Use 1 to place someone after the others." }
 
   - name: "courses"
     label: "Courses"
@@ -116,7 +132,7 @@ collections:
       - { label: "Course Code", name: "code", widget: "string", hint: "e.g., CS 348E" }
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Description", name: "description", widget: "text" }
-      - { label: "Image", name: "image", widget: "image" }
+      - { label: "Image", name: "image", widget: "image", hint: "Max file size 5 MB. Photos are automatically resized (max 2048px) and converted to WebP when uploaded." }
       - { label: "Link", name: "link", widget: "string", required: false }
       - { label: "Currently Active", name: "active", widget: "boolean", default: true }
       - { label: "Last Offered (if inactive)", name: "last_offered", widget: "string", required: false, hint: "e.g., Spring 2023" }
@@ -142,7 +158,7 @@ collections:
     fields:
       - { label: "Title", name: "title", widget: "string" }
       # Enforce native uploads, remove mediaType and youtubeId
-      - { label: "Media (Image or Video)", name: "media", widget: "file", required: true, hint: "Upload an image or a short, looping mp4/webm video (Keep under 3MB for best performance)" }
+      - { label: "Media (Image or Video)", name: "media", widget: "file", required: true, accept: "image/*,video/mp4,video/webm", hint: "Max file size 5 MB. Upload an image or a short, looping mp4/webm video. Images are resized automatically, but videos are not: compress them to 720p and under ~30 seconds before uploading (aim for 2-4 MB)." }
       - { label: "Link", name: "link", widget: "string", required: false }
 
   - name: "turntable"
@@ -156,7 +172,7 @@ collections:
       - { label: "Order", name: "order", widget: "number", value_type: "int", hint: "Determines the slot order (0, 1, 2...)" }
       - { label: "Label", name: "label", widget: "string" }
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Image", name: "image", widget: "image", required: false }
+      - { label: "Image", name: "image", widget: "image", required: false, hint: "Max file size 5 MB. Images are automatically resized (max 2048px) and converted to WebP when uploaded." }
       - { label: "Description", name: "description", widget: "text" }
       - label: "Highlights"
         name: "highlights"
@@ -168,4 +184,4 @@ collections:
           - { label: "Link URL", name: "link", widget: "string", required: false, hint: "Optional link for a 'Read More' button" }
           - { label: "Video Type", name: "videoType", widget: "select", options: ["none", "youtube", "upload"], default: "none" }
           - { label: "YouTube Video ID", name: "videoId", widget: "string", required: false, hint: "Only used if Video Type is 'youtube' (e.g. dQw4w9WgXcQ)" }
-          - { label: "Video File", name: "videoUrl", widget: "file", required: false, hint: "Only used if Video Type is 'upload'" }
+          - { label: "Video File", name: "videoUrl", widget: "file", required: false, accept: "video/mp4,video/webm", hint: "Only used if Video Type is 'upload'. Max file size 5 MB: compress to 720p and under ~30 seconds before uploading (aim for 2-4 MB)." }

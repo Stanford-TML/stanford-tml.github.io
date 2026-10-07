@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
 import { fetchRecruitment, fetchHighlights, fetchJoinContent } from '../services/cms'
 import { ProgressiveImage } from '../components/ProgressiveImage'
+import { LazyVideo } from '../components/LazyVideo'
 
 // Renders a markdown string (links, bold, lists) with single newlines kept as
 // line breaks via remark-breaks. Styling is scoped here to match the Join page.
@@ -130,15 +131,9 @@ export const Join = () => {
                                         className="highlight-card relative block h-64 w-96 flex-shrink-0 rounded-xl overflow-hidden shadow-lg border-2 border-gray-700 transition-colors duration-300 hover:border-[#8C1515] bg-gray-800 mr-6"
                                     >
                                         {isVideo ? (
-                                            /* Highly Optimized Native Video */
-                                            <video
+                                            /* Only plays while on screen */
+                                            <LazyVideo
                                                 src={mediaSrc}
-                                                autoPlay
-                                                loop
-                                                muted
-                                                playsInline
-                                                disablePictureInPicture
-                                                disableRemotePlayback
                                                 className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0 hover:scale-105 transition-transform duration-500"
                                             />
                                         ) : (
@@ -146,6 +141,7 @@ export const Join = () => {
                                             <ProgressiveImage
                                                 highResSrc={mediaSrc}
                                                 alt={item.title}
+                                                sizes="384px"
                                                 imageClass="absolute inset-0 w-full h-full object-cover pointer-events-none z-0 hover:scale-105 transition-transform duration-500"
                                             />
                                         )}

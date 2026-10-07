@@ -34,7 +34,7 @@ export const Courses = () => {
                     {courses.map((course, idx) => (
                         <div key={idx} className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col">
                             <div className="h-48 w-full overflow-hidden bg-gray-100">
-                                <ProgressiveImage highResSrc={course.image || 'https://via.placeholder.com/600x400?text=Course+Image'} alt={course.title} imageClass="w-full h-full object-cover" />
+                                <ProgressiveImage highResSrc={course.image || 'https://via.placeholder.com/600x400?text=Course+Image'} alt={course.title} sizes="(min-width: 1152px) 560px, (min-width: 768px) 50vw, 100vw" imageClass="w-full h-full object-cover" />
                             </div>
                             <div className="p-8 flex flex-col flex-grow">
                                 <h3 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">

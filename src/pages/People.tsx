@@ -39,6 +39,8 @@ export const People = () => {
         <ProgressiveImage
           highResSrc="assets/group_photo.jpg"
           alt="The Movement Lab Group"
+          sizes="(min-width: 1152px) 1152px, 100vw"
+          loading="eager"
           containerClass="w-full mb-20 group bg-gray-200 h-[300px] md:h-[400px] lg:h-[500px]"
           imageClass="object-bottom transform transition-all duration-700 ease-out group-hover:scale-105"
         />
@@ -49,7 +51,7 @@ export const People = () => {
           {/* PI Section - Kept as a card to highlight hierarchy */}
           <div className="bg-white rounded-xl p-8 md:p-12 shadow-md mb-24 flex flex-col md:flex-row items-center gap-12 border-t-4 border-[#8C1515]">
             <div className="relative w-56 h-56 flex-shrink-0 rounded-full overflow-hidden shadow-inner border-4 border-gray-50">
-              <ProgressiveImage highResSrc={data.pi.image} alt={data.pi.name} imageClass="w-full h-full object-cover" />
+              <ProgressiveImage highResSrc={data.pi.image} alt={data.pi.name} sizes="224px" imageClass="w-full h-full object-cover" />
             </div>
             <div className="text-center md:text-left flex-1">
               <h2 className="text-4xl font-bold text-gray-900 mb-2">{data.pi.name}</h2>
@@ -78,6 +80,9 @@ export const People = () => {
               items = [...items].sort((a: any, b: any) => {
                 const rankDiff = getRank(a.role) - getRank(b.role);
                 if (rankDiff !== 0) return rankDiff;
+                // Optional "order" field: higher numbers are listed later within the same role group
+                const orderDiff = (Number(a.order) || 0) - (Number(b.order) || 0);
+                if (orderDiff !== 0) return orderDiff;
                 return (a.name || '').localeCompare(b.name || '');
               });
             }
@@ -120,7 +125,7 @@ export const People = () => {
                             className={`relative w-full aspect-square overflow-hidden rounded-lg mb-4 bg-gray-200 shadow-sm flex items-center justify-center text-gray-400 ${person.website ? 'cursor-pointer hover:shadow-lg hover:ring-2 hover:ring-[#8C1515] hover:ring-offset-2 transition-all duration-300' : ''}`}
                           >
                             {person.image ? (
-                               <ProgressiveImage highResSrc={person.image} alt={person.name} containerClass="w-full h-full" imageClass="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
+                               <ProgressiveImage highResSrc={person.image} alt={person.name} sizes="(min-width: 1024px) 250px, (min-width: 768px) 30vw, 45vw" containerClass="w-full h-full" imageClass="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
                             ) : (
                                <svg className="w-16 h-16 opacity-30 group-hover:scale-110 transition-transform duration-500 ease-out" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                             )}

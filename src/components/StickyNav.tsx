@@ -1,5 +1,8 @@
 // FILE: src/components/StickyNav.tsx
 import { useRef, useState, useEffect } from 'react'
+import { getResponsiveImage } from '../utils/images'
+
+const LOGO = getResponsiveImage('assets/logo.png')
 
 interface StickyNavProps {
   isVisible: boolean
@@ -61,6 +64,8 @@ export const StickyNav = ({ isVisible }: StickyNavProps) => {
         {/* LOGO IMAGE */}
         <img 
           src="assets/logo.png" 
+          srcSet={LOGO.srcSet}
+          sizes="86px"
           alt="TML Logo"
           onClick={() => {
             window.location.hash = '#home'
