@@ -1,6 +1,8 @@
 // FILE: src/components/StickyNav.tsx
 import { useRef, useState, useEffect } from 'react'
 import { getResponsiveImage } from '../utils/images'
+import { useHoliday } from '../utils/holiday'
+import { NavNeonYearBadge } from './MobileHolidayOverlay'
 
 const LOGO = getResponsiveImage('assets/logo.png')
 
@@ -12,6 +14,7 @@ export const StickyNav = ({ isVisible }: StickyNavProps) => {
   const navRef = useRef<HTMLElement>(null)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { holiday } = useHoliday()
   
   const links = ['Home', 'People', 'Publications', 'Courses', 'Join']
 
@@ -61,24 +64,27 @@ export const StickyNav = ({ isVisible }: StickyNavProps) => {
           boxSizing: 'border-box'
         }}
       >
-        {/* LOGO IMAGE */}
-        <img 
-          src="assets/logo.png" 
-          srcSet={LOGO.srcSet}
-          sizes="86px"
-          alt="TML Logo"
-          onClick={() => {
-            window.location.hash = '#home'
-            setIsMenuOpen(false)
-          }}
-          style={{
-              height: '50px',
-              width: 'auto',
-              objectFit: 'contain',
-              display: 'block',
-              cursor: 'pointer'
-          }}
-        />
+        {/* LOGO & OPTIONAL HOLIDAY BADGE */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '10px' : '14px' }}>
+          <img 
+            src="assets/logo.png" 
+            srcSet={LOGO.srcSet}
+            sizes="86px"
+            alt="TML Logo"
+            onClick={() => {
+              window.location.hash = '#home'
+              setIsMenuOpen(false)
+            }}
+            style={{
+                height: isMobile ? '42px' : '50px',
+                width: 'auto',
+                objectFit: 'contain',
+                display: 'block',
+                cursor: 'pointer'
+            }}
+          />
+          {holiday === 'newyear' && <NavNeonYearBadge isMobile={isMobile} />}
+        </div>
         
         {isMobile ? (
           /* HAMBURGER BUTTON */

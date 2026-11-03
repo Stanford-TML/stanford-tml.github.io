@@ -23,6 +23,7 @@ import { fetchHomeContent } from '../services/cms'
 import * as THREE from 'three'
 import type { GLTF } from 'three-stdlib'
 import { ProgressiveImage } from '../components/ProgressiveImage'
+import { CharacterHat } from './HolidayHat'
 
 type GLTFResult = GLTF & {
   nodes: { [key: string]: THREE.SkinnedMesh | THREE.Bone }
@@ -89,6 +90,8 @@ export const RobotRig = () => {
     const mixer = action.getMixer()
 
     // Measure Stride
+    group.current.position.set(0, 0, 0)
+    group.current.updateMatrixWorld(true)
     action.reset().play().paused = true
 
     action.time = 0
@@ -212,6 +215,7 @@ export const RobotRig = () => {
       <group scale={responsiveScale}>
         <group ref={group} dispose={null}>
           <primitive object={scene} />
+          <CharacterHat scene={scene} />
         </group>
       </group>
 

@@ -9,9 +9,13 @@ import { TurntableSection } from './TurntableSection.tsx'
 import { JoinUsSection } from './JoinUsSection.tsx' 
 import { IntroSection } from './IntroSection.tsx'
 import { StickyNav } from './StickyNav.tsx'
+import { ProceduralSnowGround, HolidayParticles } from './HolidayEffects.tsx'
 import { getTotalPages, SECTION_ORDER, SECTIONS, getSectionOffsets } from '../ScrollManager'
+import { useHoliday } from '../utils/holiday'
 
 export const Experience = () => {
+  const { holiday } = useHoliday()
+  const isNewYear = holiday === 'newyear'
   const [isNavVisible, setIsNavVisible] = useState(false)
   const scroll = useScroll()
   const totalPages = getTotalPages()
@@ -50,8 +54,17 @@ export const Experience = () => {
     ambientColor, ambientIntensity, dirLightColor, dirLightIntensity, dirLightPosition, envIntensity,
     darknessLevel, spotPos, spotTarget, spotIntensity, spotColor, spotAngle, spotPenumbra
   } = {
-    bgColor: '#c7c7c7', fogColor: '#9d9d9d', floorColor: '#a0a0a0', gridColor: '#af1414', gridSectionColor: '#767676',
-    ambientColor: '#ffffff', ambientIntensity: 0.4, dirLightColor: '#ffffff', dirLightIntensity: 1.5, dirLightPosition: new THREE.Vector3(5.0, 10.0, 5.0), envIntensity: 0.5,
+    bgColor: isNewYear ? '#090b14' : '#c7c7c7',
+    fogColor: isNewYear ? '#070810' : '#9d9d9d',
+    floorColor: isNewYear ? '#1f222e' : '#a0a0a0',
+    gridColor: '#af1414',
+    gridSectionColor: isNewYear ? '#3d4256' : '#767676',
+    ambientColor: '#ffffff',
+    ambientIntensity: isNewYear ? 0.16 : 0.4,
+    dirLightColor: isNewYear ? '#dce6ff' : '#ffffff',
+    dirLightIntensity: isNewYear ? 0.45 : 1.5,
+    dirLightPosition: new THREE.Vector3(5.0, 10.0, 5.0),
+    envIntensity: isNewYear ? 0.18 : 0.5,
     darknessLevel: 0.95, spotPos: new THREE.Vector3(0, 10, 8), spotTarget:new THREE.Vector3(-2.0, 2.0, -1.0), spotIntensity: 1500, spotColor: '#ffddbc', spotAngle: 0.35, spotPenumbra: 0.9
   }
 
@@ -150,6 +163,8 @@ export const Experience = () => {
            angle={spotAngle}
            penumbra={spotPenumbra}
            castShadow 
+           shadow-normalBias={0.04}
+           shadow-bias={-0.0002}
            decay={2}
            distance={50}
        />
@@ -196,6 +211,8 @@ export const Experience = () => {
       </group>
 
       {/* SECTIONS */}
+      <ProceduralSnowGround floorHeight={floorHeight} />
+      <HolidayParticles />
       <IntroSection />
       <RobotRig />
       <TurntableSection />

@@ -4,6 +4,9 @@ import { useGLTF, useAnimations, useTexture, Text3D, Grid } from '@react-three/d
 import * as THREE from 'three'
 import { SkeletonUtils } from 'three-stdlib'
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js'
+import { CharacterHat } from './HolidayHat'
+import { SnowCapOverlay } from './HolidayEffects'
+import { applyHoloShader } from '../utils/holoShader'
 
 // --- ASSET PATHS ---
 const PATHS = {
@@ -32,67 +35,6 @@ useGLTF.preload(PATHS.exo)
 useLoader.preload(OBJLoader, PATHS.tree)
 
 // --- SHARED UTILS & SHADERS ---
-
-const applyHoloShader = (mesh: THREE.Mesh, colorHex: string) => {
-    const colorObj = new THREE.Color(colorHex)
-    const holoMat = new THREE.MeshStandardMaterial({
-        color: colorHex,
-        transparent: true,
-        opacity: 1.0, 
-        roughness: 1.0,
-        metalness: 0.0,
-        side: THREE.FrontSide 
-    })
-
-    holoMat.onBeforeCompile = (shader) => {
-        shader.uniforms.uTime = { value: 0 }
-        shader.uniforms.uHoloColor = { value: colorObj }
-
-        // Inject uniforms and varyings safely via <common>
-        shader.vertexShader = shader.vertexShader.replace(
-            '#include <common>',
-            `#include <common>
-             varying vec3 vWorldPos;`
-        )
-        
-        shader.vertexShader = shader.vertexShader.replace(
-            '#include <worldpos_vertex>',
-            `#include <worldpos_vertex>
-             vWorldPos = worldPosition.xyz;`
-        )
-
-        shader.fragmentShader = shader.fragmentShader.replace(
-            '#include <common>',
-            `#include <common>
-             uniform float uTime;
-             uniform vec3 uHoloColor;
-             varying vec3 vWorldPos;`
-        )
-
-        shader.fragmentShader = shader.fragmentShader.replace(
-            '#include <dithering_fragment>',
-            `#include <dithering_fragment>
-            vec3 viewDir = normalize(cameraPosition - vWorldPos);
-            float dotProduct = dot(viewDir, vNormal);
-            float fresnel = pow(1.0 - abs(dotProduct), 2.0); 
-            
-            float noise = fract(sin(dot(vWorldPos.xy, vec2(12.9898, 78.233))) * 43758.5453);
-            float scanRaw = sin(vWorldPos.y * 200.0 - uTime * 3.0 + (noise * 0.2));
-            float scanLine = pow(max(0.0, scanRaw), 0.01 + (noise * 0.04)); 
-            
-            vec3 intensity = uHoloColor * 0.1; 
-            intensity += uHoloColor * scanLine * (2.0 + noise * 2.0); 
-            intensity += uHoloColor * fresnel * 3.0; 
-            
-            float alphaNoise = (noise > 0.5) ? 0.0 : 1.0;
-            float alpha = 0.1 + (fresnel * 0.5) + (scanLine * 0.1 * alphaNoise);
-            
-            gl_FragColor = vec4(intensity, clamp(alpha, 0.0, 1.0));`
-        )
-        mesh.userData.shader = shader
-    }
-    mesh.material = holoMat
-}
 
 const applyIgnitionShader = (material: THREE.MeshStandardMaterial, color: string) => {
     material.color.set('white')
@@ -200,6 +142,7 @@ const HoloGrass = ({ color = "#00ff44", opacity = 1 }) => {
 
 const NeonLetter = ({ char, position, rotation, isActive, color, intensity, size, isFallen }: any) => {
   const [emissiveIntensity, setEmissiveIntensity] = useState(0)
+  const letterRef = useRef<THREE.Mesh>(null)
   useFrame((state) => {
     if (!isActive || isFallen) {
        setEmissiveIntensity(THREE.MathUtils.lerp(emissiveIntensity, 0, 0.2))
@@ -212,9 +155,15 @@ const NeonLetter = ({ char, position, rotation, isActive, color, intensity, size
   return (
     <group position={position} rotation={rotation}>
       <pointLight position={[0.5, 0.5, 1]} intensity={emissiveIntensity} color={color} distance={5} decay={2}/>
-      <Text3D font={PATHS.font} size={size} height={size/5} bevelEnabled bevelSize={0.05} bevelThickness={0.05} castShadow>
+      <Text3D ref={letterRef as any} font={PATHS.font} size={size} height={size/5} bevelEnabled bevelSize={0.05} bevelThickness={0.05} castShadow>
         {char}<meshStandardMaterial color="#111111" roughness={0.2} metalness={0.8} />
       </Text3D>
+      {!isFallen && (
+        <SnowCapOverlay
+          targetRef={letterRef}
+          options={{ minNormalY: 0.72, minHeightFraction: 0.58, thickness: 0.09, droop: 0.04, noiseScale: 3.0, overhangCells: 2 }}
+        />
+      )}
       <group position={[0, 0, 0.2]}> 
         <Text3D font={PATHS.font} size={size} height={size/6}>
             {char}<meshStandardMaterial color={(isActive && !isFallen) ? "black" : "#111"} emissive={color} emissiveIntensity={emissiveIntensity} toneMapped={false} />
@@ -357,7 +306,7 @@ export const SceneDynamicMotion = ({ progress, isActive }: any) => {
     }
   })
 
-  return <group ref={group} position={pos} rotation={rot}><primitive object={scene} /></group>
+  return <group ref={group} position={pos} rotation={rot}><primitive object={scene} /><CharacterHat scene={scene} /></group>
 }
 
 // --- SCENE 2: RETARGETING (Sim2Real) ---
@@ -400,7 +349,12 @@ export const SceneRetargeting = ({ isActive }: any) => {
     }
   })
 
-  return <group ref={group} position={pos} rotation={rot} scale={scale}><primitive object={clonedScene} /></group>
+  return (
+    <group ref={group} position={pos} rotation={rot} scale={scale}>
+      <primitive object={clonedScene} />
+      <CharacterHat scene={clonedScene} isHolographic holoColor={holoColor} />
+    </group>
+  )
 }
 
 // --- SCENE 3: PHYSICAL CONSISTENCY (Fall) ---
@@ -467,7 +421,7 @@ export const ScenePhysicalConsistency = ({ isActive, progress }: any) => {
 
   return (
     <group position={pos} rotation={rot}>
-        <group ref={group}><primitive object={scene} /></group>
+        <group ref={group}><primitive object={scene} /><CharacterHat scene={scene} /></group>
         {showBall && <mesh ref={ballRef} castShadow receiveShadow><sphereGeometry args={[ballSize, 32, 32]} /><meshStandardMaterial map={soccerTexture} /></mesh>}
     </group>
   )
@@ -560,8 +514,8 @@ export const SceneRobotSafety = ({ isActive, progress }: any) => {
 
     return (
         <group>
-             <group ref={kickGroup} position={kickPos} rotation={kickRot}><primitive object={kickGltf.scene} /></group>
-             <group ref={defeatGroup} position={defeatPos} rotation={defeatRot}><primitive object={defeatGltf.scene} /></group>
+             <group ref={kickGroup} position={kickPos} rotation={kickRot}><primitive object={kickGltf.scene} /><CharacterHat scene={kickGltf.scene} /></group>
+             <group ref={defeatGroup} position={defeatPos} rotation={defeatRot}><primitive object={defeatGltf.scene} /><CharacterHat scene={defeatGltf.scene} /></group>
              <group position={signPos} scale={1.1}>
                 <group ref={tGroup}>
                     <NeonLetter char="T" position={[0.4, 0, 0]} isActive={true} isFallen={tFallen} color={neonColor} intensity={6} size={1} />
@@ -633,7 +587,7 @@ export const SceneInteraction = ({ isActive }: any) => {
 
     return (
         <group ref={group}>
-            <group position={robotPos} rotation={robotRot}><primitive object={scene} /></group>
+            <group position={robotPos} rotation={robotRot}><primitive object={scene} /><CharacterHat scene={scene} /></group>
             <primitive object={treeClone} position={treePos} scale={treeScale} />
             <group position={grassPos} scale={grassScale}><HoloGrass color="#00ff44" opacity={0.6} /></group>
         </group>

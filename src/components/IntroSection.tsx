@@ -4,47 +4,12 @@ import { Text3D, useScroll, useGLTF, useAnimations, Text } from '@react-three/dr
 import * as THREE from 'three'
 import { getSectionOffsets } from '../ScrollManager'
 import { getHomeContentSync } from '../services/cms'
+import { CharacterHat } from './HolidayHat'
+import { SnowCapOverlay, HolidaySceneProps, NeonSign } from './HolidayEffects'
+import { useHoliday } from '../utils/holiday'
 
 const FONT_URL = '/fonts/Montserrat_Regular.json'
 const BUTTON_FONT_URL = '/fonts/Montserrat-Regular.ttf' 
-
-// --- NEON SIGN COMPONENT ---
-const NeonSign = ({ text, position, color, intensity, size }: any) => {
-  return (
-    <group position={position}>
-      {/* 1. The Black Backing */}
-      <Text3D 
-        font={FONT_URL} 
-        size={size} 
-        height={size/5} 
-        bevelEnabled 
-        bevelSize={0.01} 
-        bevelThickness={0.01}
-        castShadow
-      >
-        {text}
-        <meshStandardMaterial color="#111111" roughness={0.2} metalness={0.8} />
-      </Text3D>
-      
-      {/* 2. The Emissive Front Layer (slightly offset forward) */}
-      <group position={[0, 0, 0.02]}> 
-        <Text3D 
-          font={FONT_URL} 
-          size={size} 
-          height={size/6}   
-        >
-            {text}
-            <meshStandardMaterial 
-                color="black" 
-                emissive={color} 
-                emissiveIntensity={intensity} 
-                toneMapped={false} 
-            />
-        </Text3D>
-      </group>
-    </group>
-  )
-}
 
 // --- HELPER COMPONENT FOR INDIVIDUAL ROBOTS ---
 const IntroRobot = ({ path, name, defaultPos, defaultRot, defaultScale }: any) => {
@@ -71,8 +36,9 @@ const IntroRobot = ({ path, name, defaultPos, defaultRot, defaultScale }: any) =
   }, [scene, actions])
 
   return (
-    <group ref={group} position={position} rotation={rotation} scale={scale}>
+    <group ref={group} position={position} rotation={rotation} scale={scale} name={name}>
       <primitive object={scene} />
+      <CharacterHat scene={scene} />
     </group>
   )
 }
@@ -80,6 +46,8 @@ const IntroRobot = ({ path, name, defaultPos, defaultRot, defaultScale }: any) =
 // --- 3D BUTTON COMPONENT ---
 const IntroButton = ({ text, index, gap, yPos, scale }: any) => {
     const [hovered, setHovered] = useState(false)
+    const { holiday } = useHoliday()
+    const isDarkTheme = holiday === 'newyear'
     const xPos = (index - 2) * gap 
 
     const handlePointerOver = () => {
@@ -97,7 +65,7 @@ const IntroButton = ({ text, index, gap, yPos, scale }: any) => {
             <Text
                 font={BUTTON_FONT_URL}
                 fontSize={scale}
-                color={hovered ? "#a30d0e" : "#333333"}
+                color={hovered ? (isDarkTheme ? "#ffd700" : "#a30d0e") : (isDarkTheme ? "#e6e8f0" : "#333333")}
                 anchorX="center"
                 anchorY="middle"
                 onPointerOver={handlePointerOver}
@@ -119,6 +87,7 @@ const IntroButton = ({ text, index, gap, yPos, scale }: any) => {
 
 export const IntroSection = () => {
   const group = useRef<THREE.Group>(null)
+  const titleMeshRef = useRef<THREE.Mesh>(null)
   const scroll = useScroll()
   const { viewport } = useThree()
   const { duration } = getSectionOffsets('intro')
@@ -164,6 +133,7 @@ export const IntroSection = () => {
       {/* 3D TITLE */}
       <group position={textPosition}>
         <Text3D 
+          ref={titleMeshRef as any}
           font={FONT_URL} 
           size={textSize} 
           height={0.2} 
@@ -183,6 +153,17 @@ export const IntroSection = () => {
             roughness={textRoughness} 
           />
         </Text3D>
+        <SnowCapOverlay
+          targetRef={titleMeshRef}
+          options={{
+            minNormalY: 0.72,
+            minHeightFraction: 0.58,
+            thickness: 0.06,
+            droop: 0.024,
+            noiseScale: 4.5,
+            overhangCells: 2
+          }}
+        />
         
         <NeonSign 
           text={content.subtitle}
@@ -248,6 +229,9 @@ export const IntroSection = () => {
              />
          ))}
       </group>
+
+      {/* HOLIDAY SCENE PROPS */}
+      <HolidaySceneProps />
 
     </group>
   )

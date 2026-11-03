@@ -4,6 +4,8 @@ import { useGLTF, useAnimations, useScroll, Text3D, Html, MeshReflectorMaterial 
 import { getSectionOffsets, getTotalPages } from '../ScrollManager'
 import * as THREE from 'three'
 import { fetchHomeContent } from '../services/cms'
+import { CharacterHat } from './HolidayHat'
+import { SnowCapOverlay } from './HolidayEffects'
 
 const ROBOT_PATH = '/gltf/run_small/run_small.gltf'
 const FONT_URL = '/fonts/Concert One_Regular.json'
@@ -224,7 +226,8 @@ export const JoinUsSection = () => {
   const letterSize = 1.5
 
   return (
-    <group ref={group} scale={mainScale * responsiveScale} position={[0, -9999, 0]}>
+    <>
+      <group ref={group} scale={mainScale * responsiveScale} position={[0, -9999, 0]}>
 
       {/* 1. Fallen T (Off state only) */}
       <group position={fallenTPosition} rotation={fallenTRotation}>
@@ -234,6 +237,7 @@ export const JoinUsSection = () => {
       {/* 2. Robot */}
       <group position={robotPosition} rotation={robotRotation}>
         <primitive object={scene} />
+        <CharacterHat scene={scene} spawnChance={1.0} />
       </group>
 
       {/* 3. Standing Letters (M & L) with Active Lights */}
@@ -351,35 +355,57 @@ export const JoinUsSection = () => {
 
           </div>
         </div>
+      </Html>
+    </group>
 
-        {/* STATIC CREDITS FOOTER */}
+    {/* 6. True Viewport Fixed Credits Footer */}
+    <group position={[0, 0, 0]}>
+      <Html
+        fullscreen
+        portal={{ current: gl.domElement.parentNode as HTMLElement }}
+        zIndexRange={[12, 0]}
+        style={{ pointerEvents: 'none' }}
+      >
         <div
           ref={footerRef}
           style={{
             position: 'absolute',
-            bottom: '15%',
-            left: '15%',
-            width: '100%',
+            bottom: '24px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '92%',
+            maxWidth: '920px',
             textAlign: 'center',
-            fontSize: '0.75rem',
-            color: '#ffffff',
+            fontSize: '0.72rem',
+            lineHeight: 1.6,
+            color: 'rgba(255, 255, 255, 0.72)',
             fontFamily: 'Montserrat, sans-serif',
-            letterSpacing: '1px',
-            pointerEvents: 'auto',
+            letterSpacing: '0.5px',
+            pointerEvents: 'none',
             opacity: 0, // Starts hidden, driven by useFrame
-            willChange: 'opacity'
+            willChange: 'opacity',
+            userSelect: 'none'
           }}
         >
-          © 2026 The Movement Lab. Site by Jonathan Tseng.
-          Additional assets by Mittergen (Sketchfab), neverworks (Thingiverse), and Mixamo.
+          <div style={{ color: '#ffffff', fontWeight: 600, marginBottom: '2px' }}>
+            © 2026 The Movement Lab · Site by Jonathan Tseng
+          </div>
+          <div>
+            Assets via Mixamo · neverworks (Thingiverse) · Astral-3D (CGTrader)
+          </div>
+          <div style={{ opacity: 0.85, fontSize: '0.68rem' }}>
+            Sketchfab: Bharad · itspiao · Josean_3dev · misfit410 · Mittergen · rhcreations
+          </div>
         </div>
       </Html>
     </group>
+  </>
   )
 }
 
 const Neon3DLetter = ({ char, position, isOn, color, intensity, size }: any) => {
   const [emissiveIntensity, setEmissiveIntensity] = useState(0)
+  const letterRef = useRef<THREE.Mesh>(null)
 
   useFrame((state) => {
     if (!isOn) {
@@ -402,6 +428,7 @@ const Neon3DLetter = ({ char, position, isOn, color, intensity, size }: any) => 
         decay={2}
       />
       <Text3D
+        ref={letterRef as any}
         font={FONT_URL}
         size={size}
         height={size / 5}
@@ -413,6 +440,12 @@ const Neon3DLetter = ({ char, position, isOn, color, intensity, size }: any) => 
         {char}
         <meshStandardMaterial color="#111111" roughness={0.2} metalness={0.8} />
       </Text3D>
+      {char !== 'T' && (
+        <SnowCapOverlay
+          targetRef={letterRef}
+          options={{ minNormalY: 0.72, minHeightFraction: 0.58, thickness: 0.12, droop: 0.05, noiseScale: 2.5, overhangCells: 2 }}
+        />
+      )}
       <group position={[0, 0, 0.2]}>
         <Text3D
           font={FONT_URL}

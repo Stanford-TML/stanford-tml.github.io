@@ -3,9 +3,17 @@ import { useEffect, useState } from 'react'
 import { getHomeContentSync, fetchTurntable } from '../services/cms'
 import { ProgressiveImage } from '../components/ProgressiveImage'
 import { getResponsiveImage } from '../utils/images'
+import { useHoliday } from '../utils/holiday'
+import {
+  getMobileHolidayMarginStyle,
+  MobileHolidayCanvas,
+  MobileMarginStickers,
+  MobileTitleHatSticker
+} from '../components/MobileHolidayOverlay'
 
 export const MobileHome = () => {
   const[turntableData, setTurntableData] = useState<any[]>([])
+  const { holiday } = useHoliday()
   
   // Fetch home content synchronously
   const homeData = getHomeContentSync() || {}
@@ -28,13 +36,19 @@ export const MobileHome = () => {
   },[])
 
   return (
-    <div className="absolute top-0 left-0 w-full min-h-screen bg-[#e0e0e0] flex justify-center font-sans text-gray-900 z-0">
+    <div
+      className="absolute top-0 left-0 w-full min-h-screen bg-[#e0e0e0] flex justify-center font-sans text-gray-900 z-0"
+      style={getMobileHolidayMarginStyle(holiday)}
+    >
+      <MobileMarginStickers holiday={holiday} />
+      <MobileHolidayCanvas holiday={holiday} />
       
-      <div className="w-full max-w-4xl bg-[#f4f4f4] shadow-2xl min-h-screen flex flex-col pb-12">
+      <div className="w-full max-w-4xl bg-[#f4f4f4] shadow-2xl min-h-screen flex flex-col pb-12 relative z-10">
         
         {/* Header Page Title */}
         <div className="pt-28 pb-8 px-6 sm:px-10 relative z-10 flex flex-col items-start">
-          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 mb-3">
+          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 mb-3 relative inline-block">
+            <MobileTitleHatSticker holiday={holiday} />
             {intro.title}
           </h1>
           {/* MOVED STANFORD WORDMARK HERE */}
@@ -134,6 +148,19 @@ export const MobileHome = () => {
               {joinUs.button}
             </button>
           </div>
+        </div>
+
+        {/* Footer Attributions */}
+        <div className="px-6 sm:px-10 pt-4 pb-2 text-center text-xs text-gray-500 font-sans leading-relaxed border-t border-gray-200 mt-2">
+          <p className="font-semibold text-gray-700 mb-1">
+            © 2026 The Movement Lab · Site by Jonathan Tseng
+          </p>
+          <p className="text-gray-400 text-[11px]">
+            Assets via Mixamo · neverworks (Thingiverse) · Astral-3D (CGTrader)
+          </p>
+          <p className="text-gray-400 text-[11px]">
+            Sketchfab: Bharad · itspiao · Josean_3dev · misfit410 · Mittergen · rhcreations
+          </p>
         </div>
 
       </div>
