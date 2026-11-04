@@ -2,7 +2,7 @@ import { useMemo, useRef, useEffect, useState, useLayoutEffect, Suspense } from 
 import { useFrame } from '@react-three/fiber'
 import { useGLTF, useAnimations, useFont, Text3D } from '@react-three/drei'
 import * as THREE from 'three'
-import { useHoliday, getUpcomingYear } from '../../utils/holiday'
+import { useHoliday, getUpcomingYear, getActiveHoliday } from '../../utils/holiday'
 import { computeLocalBoundingBox } from '../HolidayHat'
 import { NewYearFireworks } from './HolidayFireworks'
 import { mix, clamp } from './holidayMath'
@@ -168,19 +168,27 @@ const registerSpecGlossExtension = (loader: any) => {
   }))
 }
 
-// Preload all holiday prop assets & fonts at module load time so switching themes
-// via the theme bar never triggers a late Suspense that disrupts scene calibration.
-useGLTF.preload(CHRISTMAS_TREE_PATH, true, true, registerSpecGlossExtension)
-useGLTF.preload(SNOWMAN_PATH, true, true, registerSpecGlossExtension)
-useGLTF.preload(SLEIGH_PATH, true, true)
-useGLTF.preload(JACK_OLANTERN_PATH, true, true, registerSpecGlossExtension)
-useGLTF.preload(GRAVESTONE_PATH, true, true, registerSpecGlossExtension)
-useGLTF.preload(EASTER_EGGS_PATH, true, true, registerSpecGlossExtension)
-useGLTF.preload(POT_OF_GOLD_PATH, true, true, registerSpecGlossExtension)
-useGLTF.preload(ROSE_PATH, true, true, registerSpecGlossExtension)
-useGLTF.preload(HEARTBOX_PATH, true, true, registerSpecGlossExtension)
-useGLTF.preload(CORNUCOPIA_PATH, true, true, registerSpecGlossExtension)
-useFont.preload(NEON_FONT_URL)
+// Preload only the active holiday's assets (if any) to prevent downloading ~140MB of 3D models on normal days.
+const activeHoliday = getActiveHoliday()
+if (activeHoliday === 'winter') {
+  useGLTF.preload(CHRISTMAS_TREE_PATH, true, true, registerSpecGlossExtension)
+  useGLTF.preload(SNOWMAN_PATH, true, true, registerSpecGlossExtension)
+  useGLTF.preload(SLEIGH_PATH, true, true)
+} else if (activeHoliday === 'halloween') {
+  useGLTF.preload(JACK_OLANTERN_PATH, true, true, registerSpecGlossExtension)
+  useGLTF.preload(GRAVESTONE_PATH, true, true, registerSpecGlossExtension)
+} else if (activeHoliday === 'easter') {
+  useGLTF.preload(EASTER_EGGS_PATH, true, true, registerSpecGlossExtension)
+} else if (activeHoliday === 'valentines') {
+  useGLTF.preload(HEARTBOX_PATH, true, true, registerSpecGlossExtension)
+  useGLTF.preload(ROSE_PATH, true, true, registerSpecGlossExtension)
+} else if (activeHoliday === 'stpatricks') {
+  useGLTF.preload(POT_OF_GOLD_PATH, true, true, registerSpecGlossExtension)
+} else if (activeHoliday === 'thanksgiving') {
+  useGLTF.preload(CORNUCOPIA_PATH, true, true, registerSpecGlossExtension)
+} else if (activeHoliday === 'newyear') {
+  useFont.preload(NEON_FONT_URL)
+}
 
 /**
  * Helper hook that clones a loaded GLTF scene, enables shadows, and computes

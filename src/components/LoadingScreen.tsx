@@ -5,8 +5,17 @@ export const LoadingScreen = () => {
   const { progress, active } = useProgress()
   const [shown, setShown] = useState(true)
   const [isFadingOut, setIsFadingOut] = useState(false)
+  const [spriteReady, setSpriteReady] = useState(false)
   
-  // Animation loop removed to prevent JS thread blocking. Using CSS keyframes instead!
+  useEffect(() => {
+    const img = new Image()
+    img.src = '/assets/loading_spritesheet.webp'
+    if (img.complete) {
+      setSpriteReady(true)
+    } else {
+      img.onload = () => setSpriteReady(true)
+    }
+  }, [])
   
   useEffect(() => {
     // Wait until loading is fully complete
@@ -24,8 +33,6 @@ export const LoadingScreen = () => {
 
   if (!shown) return null
 
-  const frames = Array.from({ length: 22 }, (_, i) => i + 1)
-
   return (
     <div style={{
       position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
@@ -37,41 +44,37 @@ export const LoadingScreen = () => {
     }}>
       
       <style>{`
-        @keyframes loadingFrame {
-          0%, 4.544% { opacity: 1; }
-          4.545%, 100% { opacity: 0; }
+        @keyframes loadingRunnerSprite {
+          from { background-position: 0px 0px; }
+          to { background-position: -5500px 0px; }
         }
       `}</style>
 
-      {/* PNG SEQUENCE */}
+      {/* ATOMIC SPRITESHEET ANIMATION (No scanline decodes or frame flickering) */}
       <div style={{ 
           marginBottom: '0px', 
-          transform: `translateY(${-20}px)`,
-          width: `${250}px`,
-          height: `${250}px`,
+          transform: 'translateY(-20px)',
+          width: '250px',
+          height: '250px',
           position: 'relative',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
       }}>
-         {frames.map((frame, index) => (
-             <img 
-                key={frame}
-                src={`/assets/loading/${frame.toString().padStart(4, '0')}.png`} 
-                style={{ 
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'contain',
-                    opacity: 0,
-                    animation: `loadingFrame ${22 * (1000/30)}ms infinite`,
-                    animationDelay: `${index * (1000/30)}ms`
-                }}
-                alt="loading"
-             />
-         ))}
+         <div
+            style={{
+              width: '250px',
+              height: '141px',
+              backgroundImage: "url('/assets/loading_spritesheet.webp')",
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '5500px 141px',
+              animation: 'loadingRunnerSprite 733.33ms steps(22) infinite',
+              opacity: spriteReady ? 1 : 0,
+              transition: 'opacity 0.2s ease',
+              willChange: 'background-position',
+              transform: 'translateZ(0)'
+            }}
+         />
       </div>
       
       <div style={{ width: '300px', height: '2px', background: '#ccc', borderRadius: '4px', overflow: 'hidden' }}>

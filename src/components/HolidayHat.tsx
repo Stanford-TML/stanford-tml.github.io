@@ -3,7 +3,7 @@ import { useMemo, useRef, useLayoutEffect, Suspense, Fragment } from 'react'
 import { createPortal, useFrame } from '@react-three/fiber'
 import { useFBX, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
-import { useHoliday, type HolidayType, isMajorHoliday } from '../utils/holiday'
+import { useHoliday, type HolidayType, isMajorHoliday, getActiveHoliday } from '../utils/holiday'
 import { applyHoloShader } from '../utils/holoShader'
 
 const SANTA_HAT_PATH = '/assets/misc/santahat.fbx'
@@ -19,9 +19,13 @@ const FBX_UNIT_NORMALIZATION = 1 / 69.34
 const SANTA_REF_BASE_CENTER: [number, number, number] = [-0.076, 0.0, -0.001]
 const SANTA_REF_HEIGHT = 1.0
 
-// Preload the hat assets so they are ready with the scene
-useFBX.preload(SANTA_HAT_PATH)
-useGLTF.preload(BUNNY_EARS_PATH, true, true)
+// Preload only the active holiday's hat asset (if any)
+const activeHoliday = getActiveHoliday()
+if (activeHoliday === 'winter') {
+  useFBX.preload(SANTA_HAT_PATH)
+} else if (activeHoliday === 'easter') {
+  useGLTF.preload(BUNNY_EARS_PATH, true, true)
+}
 
 export type RigKind = 'ybot' | 'g1'
 
