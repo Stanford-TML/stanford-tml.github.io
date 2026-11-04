@@ -39,6 +39,8 @@ const VIDEO_EXT = new Set(['.mp4', '.mov', '.webm'])
 const extOf = (file) => path.extname(file).toLowerCase()
 const isRaster = (file) => RASTER_EXT.has(extOf(file))
 const isVideo = (file) => VIDEO_EXT.has(extOf(file))
+// Spritesheets and procedural UI animations must not be resized or treated as responsive content images.
+const isExcluded = (file) => /spritesheet/i.test(file) || /loading[\\/]/i.test(file)
 const rel = (file) => path.relative(ROOT, file)
 const mb = (bytes) => `${(bytes / 1e6).toFixed(2)} MB`
 
@@ -77,7 +79,7 @@ async function encodeLikeSource(pipeline, ext, originalBytes) {
 async function optimize() {
   let saved = 0
   for (const file of await walk(ASSETS_DIR)) {
-    if (!isRaster(file)) continue
+    if (isExcluded(file) || !isRaster(file)) continue
     const before = (await stat(file)).size
     const { width, height } = await orientedSize(file)
     const tooLarge = Math.max(width, height) > LIMITS.imageMaxEdge
@@ -115,7 +117,7 @@ async function variants() {
   let generated = 0
 
   for (const file of await walk(ASSETS_DIR)) {
-    if (!isRaster(file)) continue
+    if (isExcluded(file) || !isRaster(file)) continue
     const key = path.relative(PUBLIC_DIR, file).split(path.sep).join('/') // e.g. assets/uploads/foo.jpg
     const outBase = path.join(VARIANTS_DIR, key.replace(/\.[^./]+$/, ''))
     const { size, mtimeMs } = await stat(file)
@@ -167,6 +169,7 @@ async function variants() {
 async function check({ strict }) {
   const problems = []
   for (const file of await walk(ASSETS_DIR)) {
+    if (isExcluded(file)) continue
     const { size } = await stat(file)
     if (isRaster(file)) {
       const { width, height } = await orientedSize(file)
