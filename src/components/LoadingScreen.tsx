@@ -69,6 +69,7 @@ export const LoadingScreen = () => {
   const totalExpectedMB = useRef(getTotalExpectedMB())
   const currentProgressRef = useRef(0)
   const targetProgressRef = useRef(0)
+  const fadeTriggeredRef = useRef(false)
   const activeRef = useRef(active)
   activeRef.current = active
 
@@ -149,7 +150,17 @@ export const LoadingScreen = () => {
       if (isComplete) {
         // Smoothly accelerate into 100%
         const distance = 100 - curr
-        currentProgressRef.current = Math.min(100, curr + Math.max(distance * dt * 3.5, dt * 18))
+        const speed = Math.max(distance * 3.5, 25)
+        currentProgressRef.current = Math.min(100, curr + speed * dt)
+
+        if (currentProgressRef.current >= 100 && !fadeTriggeredRef.current) {
+          fadeTriggeredRef.current = true
+          // Hold at 100% briefly so user clearly sees full completion, then fade out smoothly
+          setTimeout(() => {
+            setIsFadingOut(true)
+            setTimeout(() => setShown(false), 500)
+          }, 350)
+        }
       } else if (curr < target) {
         // Smooth acceleration toward target milestone
         const distance = target - curr
@@ -192,15 +203,17 @@ export const LoadingScreen = () => {
     return () => cancelAnimationFrame(animId)
   }, [shown])
 
-  // Fade out once fully complete
+  // Safety fallback: if downloads finish but animation loop stalls, ensure fade out still triggers
   useEffect(() => {
     if (!active && rawPercent === 100) {
-      // 1.5s delay allows ThreeJS to compile initial shaders completely hidden
-      const delay = setTimeout(() => {
-        setIsFadingOut(true)
-        setTimeout(() => setShown(false), 500)
-      }, 1500)
-      return () => clearTimeout(delay)
+      const fallback = setTimeout(() => {
+        if (!fadeTriggeredRef.current) {
+          fadeTriggeredRef.current = true
+          setIsFadingOut(true)
+          setTimeout(() => setShown(false), 500)
+        }
+      }, 4000)
+      return () => clearTimeout(fallback)
     }
   }, [active, rawPercent])
 

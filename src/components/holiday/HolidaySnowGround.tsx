@@ -192,7 +192,7 @@ const build3DSnowCapGeometry = (
     return new THREE.BufferGeometry()
   }
 
-  const cellSize = clamp(heightY * 0.022, 0.006, 0.03)
+  const cellSize = clamp(heightY * 0.032, 0.010, 0.035)
   const pad = cellSize * (overhangCells + 3)
   const originX = bb.min.x - pad
   const originZ = bb.min.z - pad
@@ -640,7 +640,7 @@ export const ProceduralSnowGround = ({ floorHeight = -2 }: { floorHeight?: numbe
 
   const snowTerrainGeo = useMemo(() => {
     const size = 68
-    const segs = 180
+    const segs = 120
     const geo = new THREE.PlaneGeometry(size, size, segs, segs)
     geo.rotateX(-Math.PI / 2)
 
