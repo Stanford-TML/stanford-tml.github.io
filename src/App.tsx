@@ -2,17 +2,17 @@
 import { Suspense, lazy, useState, useEffect } from 'react'
 import "./App.css";
 import { MobileHome } from './pages/MobileHome'
-import { People } from './pages/People'
-import { Join } from './pages/Join'
-import { Courses } from './pages/Courses'
-import { Publications } from './pages/Publications'
 import { StickyNav } from './components/StickyNav'
 import { GlobalBackToTop } from './components/GlobalBackToTop'
 import { NotFound } from './pages/NotFound'
 
-// Loaded on demand: importing the 3D scene starts downloading all of its models,
-// so it must not be part of the main bundle that every page and device loads.
+// Loaded on demand: subpages and the 3D scene are code-split so the initial bundle
+// is minimal and doesn't download markdown parsers, heavy publications, or 3D models.
 const Home3D = lazy(() => import('./components/Home3D'))
+const People = lazy(() => import('./pages/People').then(m => ({ default: m.People })))
+const Join = lazy(() => import('./pages/Join').then(m => ({ default: m.Join })))
+const Courses = lazy(() => import('./pages/Courses').then(m => ({ default: m.Courses })))
+const Publications = lazy(() => import('./pages/Publications').then(m => ({ default: m.Publications })))
 
 const checkHardwareAcceleration = () => {
   try {
@@ -50,6 +50,51 @@ const checkIsMobile = () => {
 }
 
 const HAS_ACCELERATION = checkHardwareAcceleration()
+
+const InitialLoadingFallback = () => (
+  <div style={{
+    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+    background: '#e0e0e0', display: 'flex', flexDirection: 'column',
+    alignItems: 'center', justifyContent: 'center', zIndex: 9999999,
+    pointerEvents: 'none'
+  }}>
+    <style>{`
+      @keyframes loadingRunnerSprite {
+        from { background-position: 0px 0px; }
+        to { background-position: -5500px 0px; }
+      }
+    `}</style>
+    <div style={{ 
+      marginBottom: '0px', 
+      transform: 'translateY(-20px)',
+      width: '250px',
+      height: '250px',
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}>
+      <div
+        style={{
+          width: '250px',
+          height: '141px',
+          backgroundImage: "url('/assets/loading_spritesheet.webp')",
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '5500px 141px',
+          animation: 'loadingRunnerSprite 733.33ms steps(22) infinite',
+          willChange: 'background-position',
+          transform: 'translateZ(0)'
+        }}
+      />
+    </div>
+    <div style={{ width: '300px', height: '2px', background: '#ccc', borderRadius: '4px', overflow: 'hidden' }}>
+      <div style={{ width: '5%', height: '100%', background: '#af1414' }} />
+    </div>
+    <p style={{ margin: 0, marginTop: '20px', lineHeight: 1, fontFamily: 'Montserrat, sans-serif', fontSize: '0.7rem', color: '#888', letterSpacing: '2px', textTransform: 'uppercase' }}>
+      INITIALIZING EXPERIENCE...
+    </p>
+  </div>
+)
 
 function App() {
   // Use the new robust check for our initial state
@@ -111,10 +156,10 @@ function App() {
     }
 
     // 2. Normal Hash Routing
-    if (currentRoute === '#people') return <People />
-    if (currentRoute === '#publications') return <Publications />
-    if (currentRoute === '#courses') return <Courses />
-    if (currentRoute === '#join') return <Join />
+    if (currentRoute === '#people') return <Suspense fallback={<div style={{ minHeight: '80vh', background: '#e0e0e0' }} />}><People /></Suspense>
+    if (currentRoute === '#publications') return <Suspense fallback={<div style={{ minHeight: '80vh', background: '#e0e0e0' }} />}><Publications /></Suspense>
+    if (currentRoute === '#courses') return <Suspense fallback={<div style={{ minHeight: '80vh', background: '#e0e0e0' }} />}><Courses /></Suspense>
+    if (currentRoute === '#join') return <Suspense fallback={<div style={{ minHeight: '80vh', background: '#e0e0e0' }} />}><Join /></Suspense>
     
     // Explicitly check for Home
     if (currentRoute === '' || currentRoute === '#' || currentRoute === '#home') {
@@ -124,8 +169,8 @@ function App() {
       }
 
       return (
-        // The fallback matches the loading screen's background while the 3D chunk downloads
-        <Suspense fallback={<div style={{ position: 'fixed', inset: 0, background: '#e0e0e0' }} />}>
+        // The fallback renders the runner loading screen while the 3D chunk downloads
+        <Suspense fallback={<InitialLoadingFallback />}>
           <Home3D />
         </Suspense>
       )
@@ -141,6 +186,7 @@ function App() {
       {isHomePage && !isMobile && (
         <button
           onClick={toggleMode}
+          className="lite-mode-btn"
           style={{
             position: 'fixed',
             bottom: '40px',
@@ -150,9 +196,10 @@ function App() {
             background: '#af1414',
             color: 'white',
             border: 'none',
+            borderRadius: '8px',
             cursor: 'pointer',
             boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
-            zIndex: 1000000,
+            zIndex: 10000000,
             width: '180px',
             height: '50px',
             display: 'flex',
