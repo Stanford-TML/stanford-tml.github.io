@@ -8,7 +8,7 @@ const ANIMATION_CONFIG = {
   endDelay: 0.05,
   loopCount: 3,
   boxSize: [7, 4, 1],
-  boxColor: '#ffffffca',
+  boxColor: '#ffffff',
   cornerRadius: 0.1,
   handOffset: [-0.05, -0.4, 1.2],
   strideTweak: 0,

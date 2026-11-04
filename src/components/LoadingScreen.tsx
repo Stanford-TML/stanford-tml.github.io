@@ -10,6 +10,9 @@ const ASSET_WEIGHTS: [RegExp, number][] = [
   [/kick_sign.*buffer\.bin/i, 18.36],
   [/sim2real.*buffer\.bin/i, 17.64],
   [/jacks.*buffer\.bin/i, 16.01],
+  [/g1_lay.*buffer\.bin/i, 14.93],
+  [/g1_sit_loop.*buffer\.bin/i, 15.09],
+  [/g1_.*buffer\.bin/i, 15.0],
   [/exo\.glb/i, 13.19],
   [/muscle.*\.glb/i, 10.85],
   [/pick.*\.bin/i, 4.94],
@@ -20,21 +23,21 @@ const ASSET_WEIGHTS: [RegExp, number][] = [
   [/push.*buffer\.bin/i, 2.43],
   [/sit_loop.*buffer\.bin/i, 2.43],
   [/run_pose.*buffer\.bin/i, 2.32],
-  [/g1_.*buffer\.bin/i, 15.0],
   // Holiday assets
   [/sleigh\.glb/i, 28.0],
   [/santahat\.fbx/i, 20.6],
+  [/christmas_tree.*\.glb/i, 8.3],
+  [/snowman.*\.glb/i, 0.6],
   [/pot_of_gold\.glb/i, 19.8],
   [/cornucopia\.glb/i, 16.8],
   [/halloween_gravestone\.glb/i, 27.5],
-  [/rose\.glb/i, 12.1],
-  [/heartbox\.glb/i, 6.0],
-  [/easter_eggs.*\.glb/i, 4.0],
-  [/christmas_tree.*\.glb/i, 8.3],
   [/jack_olantern\.glb/i, 3.5],
+  [/rose\.glb/i, 12.1],
+  [/heartbox\.glb/i, 1.1],
+  [/easter_eggs.*\.glb/i, 1.4],
   // Fallbacks
   [/\.(glb|fbx|bin)/i, 2.5],
-  [/\.(gltf|json|obj|png|jpg|hdr|ttf)/i, 0.3],
+  [/\.(gltf|json|obj|png|jpg|hdr|ttf|wasm)/i, 0.3],
 ]
 
 function getAssetWeightMB(url: string): number {
@@ -46,13 +49,13 @@ function getAssetWeightMB(url: string): number {
 
 function getTotalExpectedMB(): number {
   const holiday = getActiveHoliday()
-  let total = 103 // base non-holiday scene ~103 MB
-  if (holiday === 'winter') total += 57
-  else if (holiday === 'halloween') total += 31
-  else if (holiday === 'stpatricks') total += 20
-  else if (holiday === 'thanksgiving') total += 17
-  else if (holiday === 'valentines') total += 18
-  else if (holiday === 'easter') total += 8
+  let total = 140 // base non-holiday scene ~140 MB
+  if (holiday === 'winter') total += 68 // 140 + 68 = 208 MB
+  else if (holiday === 'halloween') total += 31 // 140 + 31 = 171 MB
+  else if (holiday === 'stpatricks') total += 20 // 140 + 20 = 160 MB
+  else if (holiday === 'thanksgiving') total += 17 // 140 + 17 = 157 MB
+  else if (holiday === 'valentines') total += 13 // 140 + 13 = 153 MB
+  else if (holiday === 'easter') total += 8 // 140 + 8 = 148 MB
   return total
 }
 
@@ -117,6 +120,7 @@ export const LoadingScreen = () => {
     const startTime = performance.now()
     let lastTraceTime = performance.now()
     let lastReportedInt = -1
+    let downloadsDoneTime: number | null = null
 
     const updateLoop = (now: number) => {
       const dt = Math.min((now - lastTime) / 1000, 0.1) // clamp max dt to 100ms
@@ -124,33 +128,45 @@ export const LoadingScreen = () => {
       const elapsed = Math.max(0.1, (now - startTime) / 1000)
 
       const isComplete = rawCompleteRef.current
+      if (isComplete && downloadsDoneTime === null) {
+        downloadsDoneTime = now
+      }
+
+      // Check whether Three.js has rendered its initial frames to the canvas
+      const isSceneReady =
+        (typeof window !== 'undefined' && !!(window as any).__TML_SCENE_READY) ||
+        (downloadsDoneTime !== null && now - downloadsDoneTime > 3000)
+
       let target: number
 
-      if (isComplete) {
-        // Downloads complete: smoothly bridge the shader warmup window to 100%
-        target = 100
-      } else {
+      if (!isComplete) {
         // Real byte-based milestone (0 to 92%)
         const byteRatio = loadedBytesRef.current / totalExpectedMB.current
         const byteTarget = Math.min(92, byteRatio * 92)
 
         // Steady in-flight progression:
-        // Assume active streaming across connections.
-        // Advance at a steady, noticeable rate (e.g. ~3% per sec) rather than stalling.
+        // Advance at a steady, noticeable rate rather than stalling
         const effectiveSpeed = Math.max(8, loadedBytesRef.current / elapsed)
-        const estimatedInFlightMB = Math.min(35, effectiveSpeed * 1.0)
+        const estimatedInFlightMB = Math.min(30, effectiveSpeed * 1.0)
         const inFlightTarget = Math.min(90, ((loadedBytesRef.current + estimatedInFlightMB) / totalExpectedMB.current) * 92)
 
         target = Math.max(byteTarget, inFlightTarget)
+      } else if (!isSceneReady) {
+        // Downloads complete; WebGL is compiling initial shaders behind the scenes
+        // Hold smoothly at 95% while the GPU warms up
+        target = 95
+      } else {
+        // Initial frames rendered; smoothly glide home to 100%
+        target = 100
       }
 
       targetProgressRef.current = target
       const curr = currentProgressRef.current
 
-      if (isComplete) {
-        // Smoothly accelerate into 100%
+      if (isSceneReady && isComplete) {
+        // Smoothly accelerate from 95% through to 100%
         const distance = 100 - curr
-        const speed = Math.max(distance * 3.5, 25)
+        const speed = Math.max(distance * 4.0, 25)
         currentProgressRef.current = Math.min(100, curr + speed * dt)
 
         if (currentProgressRef.current >= 100 && !fadeTriggeredRef.current) {
@@ -158,22 +174,22 @@ export const LoadingScreen = () => {
           // Hold at 100% briefly so user clearly sees full completion, then fade out smoothly
           setTimeout(() => {
             setIsFadingOut(true)
-            setTimeout(() => setShown(false), 500)
+            setTimeout(() => setShown(false), 550)
           }, 350)
         }
       } else if (curr < target) {
         // Smooth acceleration toward target milestone
         const distance = target - curr
-        const speed = Math.max(2.0, distance * 0.25)
+        const speed = isComplete ? 2.5 : Math.max(2.5, distance * 0.3)
         currentProgressRef.current = Math.min(target, curr + distance * Math.min(1, dt * speed))
       } else if (curr < 92) {
-        // Maintain continuous perceptible motion (at least ~1.2% per second) so it never freezes
+        // Maintain continuous perceptible motion (at least ~1.5% per second) so it never freezes
         const headroom = 92 - curr
-        const minVelocity = Math.max(1.2, headroom * 0.08)
+        const minVelocity = Math.max(1.5, headroom * 0.1)
         currentProgressRef.current = Math.min(92, curr + dt * minVelocity)
       }
 
-      // Directly update the DOM bar width with CSS transition on GPU compositor thread
+      // Directly update the DOM bar width on animation frame (no CSS transition lag)
       if (barRef.current) {
         barRef.current.style.width = `${currentProgressRef.current.toFixed(1)}%`
       }
@@ -203,23 +219,30 @@ export const LoadingScreen = () => {
     return () => cancelAnimationFrame(animId)
   }, [shown])
 
-  // Safety fallback: if downloads finish but animation loop stalls, ensure fade out still triggers
+  // Safety fallback: only if animation loop stalls indefinitely
   useEffect(() => {
     if (!active && rawPercent === 100) {
       const fallback = setTimeout(() => {
         if (!fadeTriggeredRef.current) {
           fadeTriggeredRef.current = true
           setIsFadingOut(true)
-          setTimeout(() => setShown(false), 500)
+          setTimeout(() => setShown(false), 600)
         }
-      }, 4000)
+      }, 15000)
       return () => clearTimeout(fallback)
     }
   }, [active, rawPercent])
 
   if (!shown) return null
 
-  const stageIndex = Math.min(5, Math.floor(displayPercent / 20))
+  const getStageText = (percent: number) => {
+    if (percent < 20) return "Wrangling Robots..."
+    if (percent < 40) return "Compiling Code..."
+    if (percent < 60) return "Calibrating Sensors..."
+    if (percent < 80) return "Optimizing Algorithms..."
+    if (percent < 92) return "Training Models..."
+    return "Simulating Environments..."
+  }
 
   return (
     <div style={{
@@ -272,20 +295,12 @@ export const LoadingScreen = () => {
             width: `${displayPercent}%`, 
             height: '100%', 
             background: '#af1414',
-            transition: 'width 0.15s linear',
             willChange: 'width'
           }} 
         />
       </div>
       <p style={{ margin: 0, marginTop: '20px', lineHeight: 1, fontFamily: 'Montserrat, sans-serif', fontSize: '0.7rem', color: '#888', letterSpacing: '2px', textTransform: 'uppercase' }}>
-        {[
-        "Wrangling Robots...",
-        "Compiling Code...",
-        "Calibrating Sensors...",
-        "Optimizing Algorithms...",
-        "Training Models...",
-        "Simulating Environments..."
-      ][stageIndex]} {displayPercent}%
+        {getStageText(displayPercent)} {displayPercent}%
       </p>
     </div>
   )
