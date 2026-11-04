@@ -3,7 +3,7 @@ import { useMemo, useRef, useEffect, useState, useLayoutEffect, Suspense } from 
 import { useFrame } from '@react-three/fiber'
 import { useScroll, useGLTF, useAnimations, useFont, Text3D } from '@react-three/drei'
 import * as THREE from 'three'
-import { useHoliday, getUpcomingYear } from '../utils/holiday'
+import { useHoliday, getUpcomingYear, isMajorHoliday, isMinorHoliday } from '../utils/holiday'
 import { getSectionOffsets, getTotalPages } from '../ScrollManager'
 import { computeLocalBoundingBox } from './HolidayHat'
 
@@ -750,8 +750,18 @@ export const ProceduralSnowGround = ({ floorHeight = -2 }: { floorHeight?: numbe
 export const HolidayParticles = ({ count = 900 }: { count?: number }) => {
   const { holiday } = useHoliday()
   const pointsRef = useRef<THREE.Points>(null)
+  const isMajor = isMajorHoliday(holiday)
 
   const { positions, phases, speeds, colors } = useMemo(() => {
+    if (!isMajor) {
+      return {
+        positions: new Float32Array(0),
+        phases: new Float32Array(0),
+        speeds: new Float32Array(0),
+        colors: new Float32Array(0)
+      }
+    }
+
     const pos = new Float32Array(count * 3)
     const ph = new Float32Array(count)
     const sp = new Float32Array(count)
@@ -767,6 +777,9 @@ export const HolidayParticles = ({ count = 900 }: { count?: number }) => {
     } else if (holiday === 'newyear') {
       c1.set('#ffd700')
       c2.set('#fff6cc')
+    } else if (holiday === 'easter') {
+      c1.set('#ffb7d5') // Sakura pink
+      c2.set('#bbf2c0') // Spring mint
     } else {
       c1.set('#ffffff')
       c2.set('#dceeff')
@@ -790,14 +803,18 @@ export const HolidayParticles = ({ count = 900 }: { count?: number }) => {
   }, [count, holiday])
 
   const shaderMaterial = useMemo(() => {
+    const isWinter = holiday === 'winter'
+    const isEaster = holiday === 'easter'
+    const uMode = isEaster ? 2.0 : isWinter ? 1.0 : 0.0
+
     return new THREE.ShaderMaterial({
       transparent: true,
       depthWrite: false,
       blending: holiday === 'winter' ? THREE.NormalBlending : THREE.AdditiveBlending,
       uniforms: {
         uTime: { value: 0 },
-        uSize: { value: holiday === 'winter' ? 22.0 : 26.0 },
-        uIsWinter: { value: holiday === 'winter' ? 1.0 : 0.0 }
+        uSize: { value: holiday === 'winter' ? 22.0 : holiday === 'easter' ? 24.0 : 26.0 },
+        uMode: { value: uMode }
       },
       vertexShader: /* glsl */ `
         attribute float aPhase;
@@ -805,7 +822,7 @@ export const HolidayParticles = ({ count = 900 }: { count?: number }) => {
         attribute vec3 aColor;
         uniform float uTime;
         uniform float uSize;
-        uniform float uIsWinter;
+        uniform float uMode;
         varying vec3 vColor;
         varying float vAlpha;
 
@@ -816,13 +833,22 @@ export const HolidayParticles = ({ count = 900 }: { count?: number }) => {
           float heightRange = 16.0;
           float minY = -3.0;
 
-          if (uIsWinter > 0.5) {
+          if (uMode > 1.5) {
+            // Easter: gentle blossom petal drift downward with soft horizontal flutter
+            float yOffset = mod(p.y - minY - uTime * aSpeed * 0.55, heightRange);
+            p.y = minY + yOffset;
+            p.x += sin(uTime * 1.1 + aPhase) * 0.65 + cos(uTime * 0.4 + aPhase * 2.0) * 0.25;
+            p.z += cos(uTime * 0.85 + aPhase * 1.4) * 0.45;
+            vAlpha = 0.75 + 0.25 * sin(uTime * 2.5 + aPhase * 2.0);
+          } else if (uMode > 0.5) {
+            // Winter snowfall
             float yOffset = mod(p.y - minY - uTime * aSpeed * 1.1, heightRange);
             p.y = minY + yOffset;
             p.x += sin(uTime * 0.8 + aPhase) * 0.45;
             p.z += cos(uTime * 0.65 + aPhase * 1.3) * 0.35;
             vAlpha = 0.85;
           } else {
+            // Halloween embers / New Year sparkles rising
             float yOffset = mod(p.y - minY + uTime * aSpeed * 0.75, heightRange);
             p.y = minY + yOffset;
             p.x += sin(uTime * 1.1 + aPhase) * 0.35;
@@ -861,7 +887,7 @@ export const HolidayParticles = ({ count = 900 }: { count?: number }) => {
     shaderMaterial.uniforms.uTime.value = state.clock.elapsedTime
   })
 
-  if (!holiday) return null
+  if (!holiday || !isMajor) return null
 
   return (
     <points ref={pointsRef} material={shaderMaterial} frustumCulled={false}>
@@ -2203,6 +2229,489 @@ export const NewYearFireworks = () => {
 }
 
 // ---------------------------------------------------------------------------
+// EASTER 3D PROPS: Procedural Spring Lawn Patch & Hidden Egg Hunt
+// ---------------------------------------------------------------------------
+
+const EGG_COLORS = [
+  { base: '#ff80ab', stripe: '#ffffba' }, // Rose pink & lemon
+  { base: '#70d6ff', stripe: '#ffffff' }, // Sky blue & crisp white
+  { base: '#ffd166', stripe: '#ff80ab' }, // Sunshine yellow & pink
+  { base: '#bbf2c0', stripe: '#70d6ff' }, // Mint & sky blue
+  { base: '#c77dff', stripe: '#ffffba' }, // Lavender & soft gold
+  { base: '#ff9ebb', stripe: '#bbf2c0' }, // Baby pink & mint
+  { base: '#90e0ef', stripe: '#ffd166' }, // Aqua & yellow
+  { base: '#e0aaff', stripe: '#ffffff' }  // Lilac & white
+]
+
+const EasterEgg = ({
+  position,
+  rotation = [0, 0, 0],
+  scale = 1,
+  color,
+  stripeColor
+}: {
+  position: [number, number, number]
+  rotation?: [number, number, number]
+  scale?: number
+  color: string
+  stripeColor: string
+}) => {
+  return (
+    <group position={position} rotation={rotation} scale={scale}>
+      {/* Egg Body */}
+      <mesh position={[0, 0.14, 0]} scale={[1, 1.38, 1]} castShadow receiveShadow>
+        <sphereGeometry args={[0.13, 16, 16]} />
+        <meshStandardMaterial color={color} roughness={0.35} metalness={0.05} />
+      </mesh>
+      {/* Decorative middle band */}
+      <mesh position={[0, 0.14, 0]} scale={[1.02, 0.28, 1.02]}>
+        <cylinderGeometry args={[0.13, 0.13, 0.1, 16]} />
+        <meshStandardMaterial color={stripeColor} roughness={0.4} />
+      </mesh>
+    </group>
+  )
+}
+
+const EasterProps = ({
+  position,
+  rotationY,
+  scale
+}: {
+  position: [number, number, number]
+  rotationY: number
+  scale: number
+}) => {
+  // Generate grass blades and hidden eggs deterministically
+  const { grassBlades, hiddenEggs } = useMemo(() => {
+    const blades: { x: number; z: number; rotY: number; lean: number; height: number; col: string }[] = []
+    const bladeColors = ['#4caf50', '#66bb6a', '#388e3c', '#81c784', '#2e7d32']
+
+    for (let i = 0; i < 90; i++) {
+      const r = 0.35 + Math.sqrt(Math.random()) * 2.1
+      const theta = Math.random() * Math.PI * 2
+      blades.push({
+        x: Math.cos(theta) * r,
+        z: Math.sin(theta) * r,
+        rotY: Math.random() * Math.PI,
+        lean: 0.1 + Math.random() * 0.22,
+        height: 0.28 + Math.random() * 0.22,
+        col: bladeColors[Math.floor(Math.random() * bladeColors.length)]
+      })
+    }
+
+    const eggs: { pos: [number, number, number]; rot: [number, number, number]; s: number; c: string; sc: string }[] = [
+      { pos: [-1.45, 0.0, 0.85], rot: [0.35, 0.4, 0.2], s: 0.95, c: EGG_COLORS[0].base, sc: EGG_COLORS[0].stripe },
+      { pos: [1.3, 0.0, -0.65], rot: [-0.25, 0.8, -0.3], s: 1.05, c: EGG_COLORS[1].base, sc: EGG_COLORS[1].stripe },
+      { pos: [-0.95, 0.0, -1.2], rot: [0.4, -0.5, 0.15], s: 0.9, c: EGG_COLORS[2].base, sc: EGG_COLORS[2].stripe },
+      { pos: [0.85, 0.0, 1.25], rot: [-0.3, 0.2, 0.35], s: 1.0, c: EGG_COLORS[3].base, sc: EGG_COLORS[3].stripe },
+      { pos: [-1.65, 0.0, -0.35], rot: [0.2, 1.1, -0.2], s: 0.92, c: EGG_COLORS[4].base, sc: EGG_COLORS[4].stripe },
+      { pos: [1.5, 0.0, 0.75], rot: [-0.35, -0.6, 0.25], s: 0.98, c: EGG_COLORS[5].base, sc: EGG_COLORS[5].stripe },
+      { pos: [-0.4, 0.0, 1.55], rot: [0.45, 0.3, -0.3], s: 1.02, c: EGG_COLORS[6].base, sc: EGG_COLORS[6].stripe },
+      { pos: [0.35, 0.0, -1.45], rot: [-0.2, -0.9, 0.3], s: 0.88, c: EGG_COLORS[7].base, sc: EGG_COLORS[7].stripe }
+    ]
+
+    return { grassBlades: blades, hiddenEggs: eggs }
+  }, [])
+
+  return (
+    <group position={position} rotation={[0, rotationY, 0]} scale={scale}>
+      {/* Spring lawn disc */}
+      <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <circleGeometry args={[2.5, 36]} />
+        <meshStandardMaterial color="#439b38" roughness={0.78} />
+      </mesh>
+      {/* Inner raised meadow mound */}
+      <mesh position={[0, -0.05, 0]} scale={[1.8, 0.2, 1.8]} receiveShadow>
+        <sphereGeometry args={[1.2, 24, 16]} />
+        <meshStandardMaterial color="#3b8b30" roughness={0.72} />
+      </mesh>
+
+      {/* Procedural grass tufts */}
+      {grassBlades.map((b, i) => (
+        <group key={i} position={[b.x, 0, b.z]} rotation={[b.lean, b.rotY, 0]}>
+          <mesh position={[0, b.height * 0.5, 0]}>
+            <coneGeometry args={[0.035, b.height, 4]} />
+            <meshStandardMaterial color={b.col} roughness={0.65} />
+          </mesh>
+        </group>
+      ))}
+
+      {/* Woven Wicker Easter Basket in center */}
+      <group position={[0, 0.02, 0]}>
+        {/* Basket Bowl */}
+        <mesh position={[0, 0.32, 0]} castShadow receiveShadow>
+          <cylinderGeometry args={[0.65, 0.44, 0.58, 20, 1, true]} />
+          <meshStandardMaterial color="#a76d38" roughness={0.78} />
+        </mesh>
+        {/* Basket base plate */}
+        <mesh position={[0, 0.04, 0]}>
+          <cylinderGeometry args={[0.45, 0.45, 0.08, 20]} />
+          <meshStandardMaterial color="#8a5323" roughness={0.8} />
+        </mesh>
+        {/* Braided rim */}
+        <mesh position={[0, 0.61, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.65, 0.06, 12, 24]} />
+          <meshStandardMaterial color="#8a5323" roughness={0.7} />
+        </mesh>
+        {/* Basket handle */}
+        <mesh position={[0, 0.72, 0]} rotation={[0, 0, 0]}>
+          <torusGeometry args={[0.64, 0.05, 12, 28, Math.PI]} />
+          <meshStandardMaterial color="#8a5323" roughness={0.7} />
+        </mesh>
+        {/* Handle top bow */}
+        <mesh position={[0, 1.37, 0]} scale={[1, 0.6, 0.5]}>
+          <sphereGeometry args={[0.12, 12, 12]} />
+          <meshStandardMaterial color="#ff80ab" roughness={0.5} />
+        </mesh>
+
+        {/* Shredded Easter grass nest inside */}
+        <mesh position={[0, 0.42, 0]}>
+          <cylinderGeometry args={[0.58, 0.42, 0.32, 18]} />
+          <meshStandardMaterial color="#bbf2c0" roughness={0.85} />
+        </mesh>
+
+        {/* Eggs in basket */}
+        <EasterEgg position={[-0.22, 0.44, 0.08]} rotation={[0.2, 0.4, 0.3]} scale={1.1} color={EGG_COLORS[0].base} stripeColor={EGG_COLORS[0].stripe} />
+        <EasterEgg position={[0.22, 0.44, -0.05]} rotation={[-0.2, -0.4, -0.25]} scale={1.1} color={EGG_COLORS[1].base} stripeColor={EGG_COLORS[1].stripe} />
+        <EasterEgg position={[0.02, 0.48, 0.22]} rotation={[0.3, 0.1, -0.2]} scale={1.05} color={EGG_COLORS[2].base} stripeColor={EGG_COLORS[2].stripe} />
+        <EasterEgg position={[0.0, 0.52, -0.16]} rotation={[-0.25, 0.3, 0.2]} scale={1.08} color={EGG_COLORS[4].base} stripeColor={EGG_COLORS[4].stripe} />
+      </group>
+
+      {/* Hidden eggs around lawn */}
+      {hiddenEggs.map((egg, i) => (
+        <EasterEgg
+          key={i}
+          position={egg.pos}
+          rotation={egg.rot}
+          scale={egg.s}
+          color={egg.c}
+          stripeColor={egg.sc}
+        />
+      ))}
+
+      <pointLight position={[0, 1.6, 0]} color="#fff9db" intensity={2.2} distance={6} decay={2} />
+    </group>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// VALENTINE'S 3D PROPS: Ruby Velvet Heart Chocolate Box & Long-Stem Rose
+// ---------------------------------------------------------------------------
+
+const ValentinesProps = ({
+  position,
+  rotationY,
+  scale
+}: {
+  position: [number, number, number]
+  rotationY: number
+  scale: number
+}) => {
+  const heartExtrudeGeo = useMemo(() => {
+    const shape = new THREE.Shape()
+    const d = 0.65
+    shape.moveTo(0, d * 0.32)
+    shape.bezierCurveTo(d * 0.2, d * 0.82, d * 0.92, d * 0.72, d * 0.92, d * 0.2)
+    shape.bezierCurveTo(d * 0.92, -d * 0.32, d * 0.42, -d * 0.62, 0, -d * 0.95)
+    shape.bezierCurveTo(-d * 0.42, -d * 0.62, -d * 0.92, -d * 0.32, -d * 0.92, d * 0.2)
+    shape.bezierCurveTo(-d * 0.92, d * 0.72, -d * 0.2, d * 0.82, 0, d * 0.32)
+
+    const extrudeSettings = {
+      depth: 0.28,
+      bevelEnabled: true,
+      bevelSegments: 4,
+      steps: 1,
+      bevelSize: 0.04,
+      bevelThickness: 0.04
+    }
+    const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings)
+    geo.center()
+    return geo
+  }, [])
+
+  return (
+    <group position={position} rotation={[0, rotationY, 0]} scale={scale}>
+      {/* Velvet Heart Box */}
+      <group position={[0, 0.16, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh geometry={heartExtrudeGeo} castShadow receiveShadow>
+          <meshStandardMaterial
+            color="#b91c1c"
+            roughness={0.35}
+            metalness={0.12}
+          />
+        </mesh>
+        {/* Gold cross ribbon */}
+        <mesh position={[0, 0, 0.15]} scale={[0.12, 1.25, 0.02]}>
+          <boxGeometry />
+          <meshStandardMaterial color="#ffd700" metalness={0.75} roughness={0.3} />
+        </mesh>
+        <mesh position={[0, 0, 0.15]} scale={[1.25, 0.12, 0.02]}>
+          <boxGeometry />
+          <meshStandardMaterial color="#ffd700" metalness={0.75} roughness={0.3} />
+        </mesh>
+        {/* Ribbon Bow in center */}
+        <mesh position={[0, 0, 0.18]} scale={[0.2, 0.2, 0.1]}>
+          <sphereGeometry args={[0.5, 12, 12]} />
+          <meshStandardMaterial color="#ffd700" metalness={0.75} roughness={0.3} />
+        </mesh>
+      </group>
+
+      {/* Long-stem red rose lying next to the heart box */}
+      <group position={[0.7, 0.06, 0.35]} rotation={[0, 0.6, 0]}>
+        {/* Stem */}
+        <mesh position={[0, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.02, 0.02, 1.1, 8]} />
+          <meshStandardMaterial color="#2d6a4f" roughness={0.7} />
+        </mesh>
+        {/* Leaves */}
+        <mesh position={[-0.15, 0.02, 0.06]} rotation={[0.4, 0.2, 0.5]} scale={[0.18, 0.02, 0.09]}>
+          <sphereGeometry />
+          <meshStandardMaterial color="#38b000" roughness={0.6} />
+        </mesh>
+        <mesh position={[0.15, 0.02, -0.06]} rotation={[-0.3, -0.2, -0.5]} scale={[0.18, 0.02, 0.09]}>
+          <sphereGeometry />
+          <meshStandardMaterial color="#38b000" roughness={0.6} />
+        </mesh>
+        {/* Rose bloom */}
+        <group position={[0.58, 0.08, 0]}>
+          <mesh scale={[0.16, 0.14, 0.16]}>
+            <sphereGeometry args={[1, 16, 16]} />
+            <meshStandardMaterial color="#d90429" roughness={0.35} />
+          </mesh>
+          <mesh position={[0, 0.04, 0]} scale={[0.12, 0.12, 0.12]}>
+            <sphereGeometry args={[1, 14, 14]} />
+            <meshStandardMaterial color="#9b2226" roughness={0.4} />
+          </mesh>
+        </group>
+      </group>
+
+      {/* Delicious chocolate truffles */}
+      <group position={[-0.65, 0.05, 0.45]}>
+        <mesh scale={[0.08, 0.07, 0.08]}>
+          <sphereGeometry />
+          <meshStandardMaterial color="#3d1e11" roughness={0.4} />
+        </mesh>
+        <mesh position={[0.15, 0, 0.1]} scale={[0.08, 0.07, 0.08]}>
+          <sphereGeometry />
+          <meshStandardMaterial color="#221109" roughness={0.4} />
+        </mesh>
+      </group>
+
+      <pointLight position={[0, 0.8, 0.2]} color="#ff4d6d" intensity={2.8} distance={5} decay={2} />
+    </group>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// ST. PATRICK'S 3D PROPS: Cast-Iron Pot of Gold, Shamrock & Golden Horseshoe
+// ---------------------------------------------------------------------------
+
+const StPatricksProps = ({
+  position,
+  rotationY,
+  scale
+}: {
+  position: [number, number, number]
+  rotationY: number
+  scale: number
+}) => {
+  return (
+    <group position={position} rotation={[0, rotationY, 0]} scale={scale}>
+      {/* Cast-iron Cauldron */}
+      <group position={[0, 0.45, 0]}>
+        {/* Pot belly */}
+        <mesh scale={[0.65, 0.52, 0.65]} castShadow receiveShadow>
+          <sphereGeometry args={[1, 24, 20]} />
+          <meshStandardMaterial color="#1a1c20" roughness={0.55} metalness={0.35} />
+        </mesh>
+        {/* Rim */}
+        <mesh position={[0, 0.44, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.55, 0.065, 12, 28]} />
+          <meshStandardMaterial color="#22252a" roughness={0.5} metalness={0.4} />
+        </mesh>
+        {/* 3 Legs */}
+        {[-0.35, 0, 0.35].map((x, i) => (
+          <mesh key={i} position={[x * 0.8, -0.42, (i === 1 ? -0.32 : 0.25)]}>
+            <cylinderGeometry args={[0.05, 0.07, 0.2, 10]} />
+            <meshStandardMaterial color="#141618" roughness={0.6} metalness={0.4} />
+          </mesh>
+        ))}
+
+        {/* Mounded shimmering gold coins filling pot */}
+        <mesh position={[0, 0.38, 0]} scale={[0.52, 0.22, 0.52]}>
+          <sphereGeometry args={[1, 20, 16]} />
+          <meshStandardMaterial color="#ffd700" metalness={0.88} roughness={0.2} />
+        </mesh>
+        {/* Individual coins on top & spilling */}
+        <mesh position={[0.1, 0.52, 0.05]} rotation={[0.2, 0.3, 0.15]}>
+          <cylinderGeometry args={[0.1, 0.1, 0.02, 16]} />
+          <meshStandardMaterial color="#ffc107" metalness={0.9} roughness={0.18} />
+        </mesh>
+        <mesh position={[-0.15, 0.51, -0.08]} rotation={[-0.2, -0.4, 0.3]}>
+          <cylinderGeometry args={[0.1, 0.1, 0.02, 16]} />
+          <meshStandardMaterial color="#ffd700" metalness={0.9} roughness={0.18} />
+        </mesh>
+        <mesh position={[0.42, 0.38, 0.18]} rotation={[0.8, 0.2, -0.5]}>
+          <cylinderGeometry args={[0.09, 0.09, 0.02, 16]} />
+          <meshStandardMaterial color="#ffd700" metalness={0.9} roughness={0.18} />
+        </mesh>
+      </group>
+
+      {/* Spilled gold coins on ground */}
+      <group position={[0.55, 0.02, 0.25]}>
+        <mesh rotation={[0, 0.4, 0]}>
+          <cylinderGeometry args={[0.1, 0.1, 0.02, 16]} />
+          <meshStandardMaterial color="#ffd700" metalness={0.9} roughness={0.18} />
+        </mesh>
+        <mesh position={[0.16, 0.01, 0.08]} rotation={[0.1, 0.8, 0]}>
+          <cylinderGeometry args={[0.1, 0.1, 0.02, 16]} />
+          <meshStandardMaterial color="#ffc107" metalness={0.9} roughness={0.18} />
+        </mesh>
+        <mesh position={[0.08, 0.02, -0.15]} rotation={[-0.1, 0.2, 0.15]}>
+          <cylinderGeometry args={[0.09, 0.09, 0.02, 16]} />
+          <meshStandardMaterial color="#ffd700" metalness={0.9} roughness={0.18} />
+        </mesh>
+      </group>
+
+      {/* Lucky 4-Leaf Shamrock sprig */}
+      <group position={[-0.55, 0.04, 0.3]} rotation={[0, 0.4, 0]}>
+        {/* Stem */}
+        <mesh position={[-0.1, 0, 0.1]} rotation={[0, 0.5, Math.PI / 2.3]}>
+          <cylinderGeometry args={[0.015, 0.015, 0.35, 8]} />
+          <meshStandardMaterial color="#1b4332" roughness={0.6} />
+        </mesh>
+        {/* 4 Clover leaflets */}
+        {[0, Math.PI / 2, Math.PI, (Math.PI * 3) / 2].map((angle, idx) => (
+          <mesh
+            key={idx}
+            position={[Math.cos(angle) * 0.09, 0.02, Math.sin(angle) * 0.09]}
+            rotation={[-Math.PI / 2, 0, angle]}
+            scale={[0.08, 0.08, 0.01]}
+          >
+            <sphereGeometry args={[1, 12, 12]} />
+            <meshStandardMaterial color="#00a86b" roughness={0.45} />
+          </mesh>
+        ))}
+      </group>
+
+      {/* Golden Horseshoe */}
+      <group position={[-0.45, 0.02, -0.35]} rotation={[-Math.PI / 2, 0, 0.7]}>
+        <mesh scale={[0.26, 0.3, 0.04]}>
+          <torusGeometry args={[0.7, 0.16, 12, 24, Math.PI * 1.35]} />
+          <meshStandardMaterial color="#ffd700" metalness={0.85} roughness={0.25} />
+        </mesh>
+      </group>
+
+      <pointLight position={[0, 1.0, 0]} color="#4ade80" intensity={2.6} distance={6} decay={2} />
+    </group>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// THANKSGIVING 3D PROPS: Wicker Cornucopia, Harvest Pumpkins & Pumpkin Pie
+// ---------------------------------------------------------------------------
+
+const ThanksgivingProps = ({
+  position,
+  rotationY,
+  scale
+}: {
+  position: [number, number, number]
+  rotationY: number
+  scale: number
+}) => {
+  const hornGeo = useMemo(() => {
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-0.55, 0.35, 0),
+      new THREE.Vector3(-0.25, 0.18, 0.15),
+      new THREE.Vector3(0.12, 0.08, 0.05),
+      new THREE.Vector3(0.55, 0.12, -0.15),
+      new THREE.Vector3(0.85, 0.32, -0.22)
+    ])
+    return new THREE.TubeGeometry(curve, 32, 0.28, 16, false)
+  }, [])
+
+  return (
+    <group position={position} rotation={[0, rotationY, 0]} scale={scale}>
+      {/* Cornucopia Horn */}
+      <mesh geometry={hornGeo} castShadow receiveShadow>
+        <meshStandardMaterial color="#99582a" roughness={0.82} />
+      </mesh>
+      {/* Flared mouth rim */}
+      <mesh position={[-0.55, 0.35, 0]} rotation={[0, -0.5, 0]}>
+        <torusGeometry args={[0.34, 0.05, 12, 24]} />
+        <meshStandardMaterial color="#7f4f24" roughness={0.78} />
+      </mesh>
+
+      {/* Harvest bounty spilling from cornucopia */}
+      {/* Mini pumpkin */}
+      <group position={[-0.72, 0.14, 0.15]} scale={0.24}>
+        <mesh scale={[1, 0.8, 1]}>
+          <sphereGeometry args={[1, 16, 16]} />
+          <meshStandardMaterial color="#ea580c" roughness={0.45} />
+        </mesh>
+        <mesh position={[0, 0.85, 0]}>
+          <cylinderGeometry args={[0.08, 0.1, 0.3, 8]} />
+          <meshStandardMaterial color="#2d6a4f" roughness={0.7} />
+        </mesh>
+      </group>
+
+      {/* Golden acorn squash / gourd */}
+      <group position={[-0.85, 0.12, -0.18]} scale={0.22} rotation={[0.4, 0.2, 0.6]}>
+        <mesh scale={[0.8, 1.4, 0.8]}>
+          <sphereGeometry args={[1, 14, 14]} />
+          <meshStandardMaterial color="#eab308" roughness={0.5} />
+        </mesh>
+      </group>
+
+      {/* Red autumn apples */}
+      <group position={[-0.52, 0.08, 0.42]} scale={0.12}>
+        <mesh>
+          <sphereGeometry args={[1, 14, 14]} />
+          <meshStandardMaterial color="#b91c1c" roughness={0.35} />
+        </mesh>
+        <mesh position={[0, 0.95, 0]}>
+          <cylinderGeometry args={[0.05, 0.06, 0.3, 6]} />
+          <meshStandardMaterial color="#4a2810" roughness={0.8} />
+        </mesh>
+      </group>
+      <group position={[-0.42, 0.08, -0.32]} scale={0.11}>
+        <mesh>
+          <sphereGeometry args={[1, 14, 14]} />
+          <meshStandardMaterial color="#c1121f" roughness={0.35} />
+        </mesh>
+      </group>
+
+      {/* Freshly baked Pumpkin Pie on rustic plate */}
+      <group position={[0.45, 0.04, 0.45]} rotation={[0, -0.4, 0]}>
+        {/* Plate */}
+        <mesh position={[0, 0.02, 0]}>
+          <cylinderGeometry args={[0.46, 0.4, 0.04, 24]} />
+          <meshStandardMaterial color="#e5e7eb" roughness={0.3} />
+        </mesh>
+        {/* Pie Crust rim */}
+        <mesh position={[0, 0.07, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.4, 0.04, 12, 24]} />
+          <meshStandardMaterial color="#d4a373" roughness={0.75} />
+        </mesh>
+        {/* Spiced Pumpkin Filling */}
+        <mesh position={[0, 0.06, 0]}>
+          <cylinderGeometry args={[0.4, 0.4, 0.06, 24]} />
+          <meshStandardMaterial color="#bc6c25" roughness={0.6} />
+        </mesh>
+        {/* Whipped cream swirl */}
+        <mesh position={[0, 0.12, 0]} scale={[0.12, 0.1, 0.12]}>
+          <sphereGeometry args={[1, 14, 14]} />
+          <meshStandardMaterial color="#fffdf0" roughness={0.25} />
+        </mesh>
+      </group>
+
+      <pointLight position={[-0.4, 0.9, 0.1]} color="#f59e0b" intensity={2.6} distance={6} decay={2} />
+    </group>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // BAKED HOLIDAY SCENE PROP TRANSFORMS
 // ---------------------------------------------------------------------------
 
@@ -2228,6 +2737,26 @@ const SCENE_PROP_PARAMS = {
     scale: 0.95,
     color: '#ffd700',
     intensity: 2.50
+  },
+  easter: {
+    position: [-3.80, -2.00, -2.80] as [number, number, number],
+    rotationY: 0.25,
+    scale: 0.85
+  },
+  valentines: {
+    position: [-3.60, -1.98, -2.50] as [number, number, number],
+    rotationY: 0.35,
+    scale: 1.15
+  },
+  stpatricks: {
+    position: [-3.60, -1.98, -2.50] as [number, number, number],
+    rotationY: 0.15,
+    scale: 1.10
+  },
+  thanksgiving: {
+    position: [-3.60, -1.98, -2.50] as [number, number, number],
+    rotationY: -0.20,
+    scale: 1.05
   }
 } as const
 
@@ -2276,6 +2805,38 @@ export const HolidaySceneProps = () => {
             />
             <NewYearFireworks />
           </>
+        )}
+
+        {holiday === 'easter' && (
+          <EasterProps
+            position={SCENE_PROP_PARAMS.easter.position}
+            rotationY={SCENE_PROP_PARAMS.easter.rotationY}
+            scale={SCENE_PROP_PARAMS.easter.scale}
+          />
+        )}
+
+        {holiday === 'valentines' && (
+          <ValentinesProps
+            position={SCENE_PROP_PARAMS.valentines.position}
+            rotationY={SCENE_PROP_PARAMS.valentines.rotationY}
+            scale={SCENE_PROP_PARAMS.valentines.scale}
+          />
+        )}
+
+        {holiday === 'stpatricks' && (
+          <StPatricksProps
+            position={SCENE_PROP_PARAMS.stpatricks.position}
+            rotationY={SCENE_PROP_PARAMS.stpatricks.rotationY}
+            scale={SCENE_PROP_PARAMS.stpatricks.scale}
+          />
+        )}
+
+        {holiday === 'thanksgiving' && (
+          <ThanksgivingProps
+            position={SCENE_PROP_PARAMS.thanksgiving.position}
+            rotationY={SCENE_PROP_PARAMS.thanksgiving.rotationY}
+            scale={SCENE_PROP_PARAMS.thanksgiving.scale}
+          />
         )}
       </group>
     </Suspense>

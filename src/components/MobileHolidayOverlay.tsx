@@ -1,7 +1,7 @@
 // FILE: src/components/MobileHolidayOverlay.tsx
 // Pure 2D holiday overlay (zero Three.js dependencies) for Mobile / Lite Mode (`MobileHome.tsx`).
 import { useEffect, useRef, useMemo } from 'react'
-import { type HolidayType, getUpcomingYear, useHoliday } from '../utils/holiday'
+import { type HolidayType, getUpcomingYear, useHoliday, isMajorHoliday } from '../utils/holiday'
 
 // ---------------------------------------------------------------------------
 // 1. MARGIN BACKGROUND PALETTES
@@ -28,6 +28,34 @@ export const getMobileHolidayMarginStyle = (
     return {
       background:
         'linear-gradient(180deg, #070912 0%, #0e1324 55%, #171d36 100%)',
+      transition: 'background 0.4s ease'
+    }
+  }
+  if (holiday === 'easter') {
+    return {
+      background:
+        'linear-gradient(180deg, #e8f5e9 0%, #fff9c4 45%, #fce4ec 100%)',
+      transition: 'background 0.4s ease'
+    }
+  }
+  if (holiday === 'valentines') {
+    return {
+      background:
+        'linear-gradient(180deg, #fff0f3 0%, #ffccd5 55%, #ffb3c1 100%)',
+      transition: 'background 0.4s ease'
+    }
+  }
+  if (holiday === 'stpatricks') {
+    return {
+      background:
+        'linear-gradient(180deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%)',
+      transition: 'background 0.4s ease'
+    }
+  }
+  if (holiday === 'thanksgiving') {
+    return {
+      background:
+        'linear-gradient(180deg, #fff3e0 0%, #ffe0b2 50%, #ffcc80 100%)',
       transition: 'background 0.4s ease'
     }
   }
@@ -90,7 +118,7 @@ export const MobileHolidayCanvas = ({ holiday }: { holiday: HolidayType }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    if (!holiday) return
+    if (!holiday || !isMajorHoliday(holiday)) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -110,13 +138,20 @@ export const MobileHolidayCanvas = ({ holiday }: { holiday: HolidayType }) => {
     resize()
     window.addEventListener('resize', resize)
 
-    // Initialize ambient particles
-    const count = holiday === 'winter' ? 95 : 65
+    // Initialize ambient particles for major holidays
+    const count = holiday === 'winter' ? 95 : holiday === 'easter' ? 70 : 65
     const particles: Particle2D[] = []
 
     const pickColor = () => {
       if (holiday === 'winter') {
         return Math.random() < 0.75 ? '#ffffff' : '#d8ecff'
+      }
+      if (holiday === 'easter') {
+        const r = Math.random()
+        if (r < 0.45) return '#ffb7d5' // Sakura petal
+        if (r < 0.75) return '#ffccd5' // Soft blush
+        if (r < 0.9) return '#cbf3f0'  // Spring mint
+        return '#ffe484'               // Golden pollen
       }
       if (holiday === 'halloween') {
         const r = Math.random()
@@ -132,17 +167,22 @@ export const MobileHolidayCanvas = ({ holiday }: { holiday: HolidayType }) => {
     }
 
     for (let i = 0; i < count; i++) {
+      const isDownward = holiday === 'winter' || holiday === 'easter'
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 22,
+        vx: (Math.random() - 0.5) * (holiday === 'easter' ? 26 : 22),
         vy:
           holiday === 'winter'
             ? 28 + Math.random() * 45
+            : holiday === 'easter'
+            ? 20 + Math.random() * 32
             : -(20 + Math.random() * 38),
         r:
           holiday === 'winter'
             ? 1.8 + Math.random() * 3.2
+            : holiday === 'easter'
+            ? 2.2 + Math.random() * 2.8
             : 1.6 + Math.random() * 2.8,
         alpha: 0.35 + Math.random() * 0.55,
         phase: Math.random() * Math.PI * 2,
@@ -240,7 +280,7 @@ export const MobileHolidayCanvas = ({ holiday }: { holiday: HolidayType }) => {
         p.x += (p.vx + Math.sin(t * p.speed + p.phase) * 18) * dt
         p.y += p.vy * dt
 
-        if (holiday === 'winter') {
+        if (holiday === 'winter' || holiday === 'easter') {
           if (p.y > height + 12) {
             p.y = -10
             p.x = Math.random() * width
@@ -255,7 +295,7 @@ export const MobileHolidayCanvas = ({ holiday }: { holiday: HolidayType }) => {
         if (p.x > width + 12) p.x = -10
 
         const twinkle =
-          holiday === 'winter'
+          holiday === 'winter' || holiday === 'easter'
             ? 0.75 + 0.25 * Math.sin(t * 2.5 + p.phase)
             : 0.55 + 0.45 * Math.sin(t * 4.5 + p.phase)
 
@@ -263,7 +303,7 @@ export const MobileHolidayCanvas = ({ holiday }: { holiday: HolidayType }) => {
         ctx.globalAlpha = p.alpha * twinkle
         ctx.fillStyle = p.color
         ctx.shadowColor = p.color
-        ctx.shadowBlur = holiday === 'winter' ? 6 : 10
+        ctx.shadowBlur = holiday === 'winter' || holiday === 'easter' ? 6 : 10
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
         ctx.fill()
@@ -344,7 +384,7 @@ export const MobileHolidayCanvas = ({ holiday }: { holiday: HolidayType }) => {
     }
   }, [holiday])
 
-  if (!holiday) return null
+  if (!holiday || !isMajorHoliday(holiday)) return null
 
   return (
     <canvas
@@ -447,29 +487,178 @@ export const MobileTitleHatSticker = ({ holiday }: { holiday: HolidayType }) => 
     )
   }
 
-  // newyear top hat
-  return (
-    <svg
-      width="48"
-      height="46"
-      viewBox="0 0 64 60"
-      style={{
-        position: 'absolute',
-        top: '-27px',
-        left: '-15px',
-        transform: 'rotate(-14deg)',
-        filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.35))',
-        pointerEvents: 'none'
-      }}
-    >
-      <g stroke="#ffffff" strokeWidth="3.5" strokeLinejoin="round">
-        <rect x="16" y="10" width="32" height="36" rx="4" fill="#181920" />
-        <ellipse cx="32" cy="46" rx="26" ry="6" fill="#181920" />
-      </g>
-      <rect x="17.5" y="36" width="29" height="7" fill="#ffd700" />
-      <polygon points="32,20 34.5,25.5 40.5,26.2 36,30.2 37.2,36 32,33 26.8,36 28,30.2 23.5,26.2 29.5,25.5" fill="#ffd700" />
-    </svg>
-  )
+  if (holiday === 'easter') {
+    return (
+      <svg
+        width="50"
+        height="50"
+        viewBox="0 0 64 64"
+        style={{
+          position: 'absolute',
+          top: '-30px',
+          left: '-14px',
+          transform: 'rotate(-10deg)',
+          filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.22))',
+          pointerEvents: 'none'
+        }}
+      >
+        {/* Die-cut white backing */}
+        <g stroke="#ffffff" strokeWidth="4" strokeLinejoin="round" strokeLinecap="round">
+          {/* Headband */}
+          <path d="M12 48 Q32 38 52 48" fill="none" stroke="#ffffff" strokeWidth="7" />
+          {/* Left ear */}
+          <path d="M22 46 C16 32, 14 14, 23 8 C30 14, 30 32, 27 46 Z" fill="#ffffff" />
+          {/* Right ear (floppy tip) */}
+          <path d="M37 46 C36 30, 42 16, 52 14 C56 18, 54 26, 48 30 C44 34, 43 40, 42 46 Z" fill="#ffffff" />
+        </g>
+        {/* Headband base */}
+        <path d="M14 48 Q32 39 50 48" fill="none" stroke="#f48fb1" strokeWidth="4" strokeLinecap="round" />
+        {/* Left ear outer & inner pad */}
+        <path d="M22 46 C16 32, 14 14, 23 8 C30 14, 30 32, 27 46 Z" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="1.5" />
+        <path d="M22 42 C18 30, 17 18, 23 12 C27 18, 27 30, 25 42 Z" fill="#ffb7d5" />
+        {/* Right flopped ear outer & inner pad */}
+        <path d="M37 46 C36 30, 42 16, 52 14 C56 18, 54 26, 48 30 C44 34, 43 40, 42 46 Z" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="1.5" />
+        <path d="M39 42 C38 31, 43 20, 50 18 C52 22, 50 25, 46 28 C42 32, 42 38, 41 42 Z" fill="#ffb7d5" />
+        {/* Daisy flower at headband base */}
+        <g transform="translate(18, 44)">
+          <circle cx="0" cy="0" r="4.5" fill="#ffffff" />
+          <circle cx="0" cy="0" r="2.2" fill="#ffd166" />
+        </g>
+      </svg>
+    )
+  }
+
+  if (holiday === 'valentines') {
+    return (
+      <svg
+        width="54"
+        height="46"
+        viewBox="0 0 68 56"
+        style={{
+          position: 'absolute',
+          top: '-26px',
+          left: '-16px',
+          transform: 'rotate(-12deg)',
+          filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.25))',
+          pointerEvents: 'none'
+        }}
+      >
+        {/* Golden Halo */}
+        <ellipse cx="34" cy="14" rx="22" ry="7" fill="none" stroke="#ffffff" strokeWidth="6" />
+        <ellipse cx="34" cy="14" rx="22" ry="7" fill="none" stroke="#ffd700" strokeWidth="3" />
+        {/* Angel Wings */}
+        <g fill="#ffffff" stroke="#e2e8f0" strokeWidth="1.5">
+          <path d="M22 28 C12 20, 2 26, 6 36 C10 42, 20 38, 24 34 Z" />
+          <path d="M46 28 C56 20, 66 26, 62 36 C58 42, 48 38, 44 34 Z" />
+        </g>
+        {/* Ruby Heart Gem in center */}
+        <path
+          d="M34 26 C31 20, 23 21, 23 27 C23 34, 34 42, 34 42 C34 42, 45 34, 45 27 C45 21, 37 20, 34 26 Z"
+          fill="#d90429"
+          stroke="#ffffff"
+          strokeWidth="2.5"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
+
+  if (holiday === 'stpatricks') {
+    return (
+      <svg
+        width="50"
+        height="48"
+        viewBox="0 0 64 60"
+        style={{
+          position: 'absolute',
+          top: '-27px',
+          left: '-15px',
+          transform: 'rotate(-12deg)',
+          filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.28))',
+          pointerEvents: 'none'
+        }}
+      >
+        {/* White sticker border */}
+        <g stroke="#ffffff" strokeWidth="4" strokeLinejoin="round">
+          <rect x="18" y="10" width="28" height="34" rx="4" fill="#007f5f" />
+          <ellipse cx="32" cy="44" rx="25" ry="6" fill="#007f5f" />
+        </g>
+        {/* Dark emerald brim and cylinder */}
+        <rect x="18" y="10" width="28" height="34" rx="4" fill="#007f5f" />
+        <ellipse cx="32" cy="44" rx="25" ry="6" fill="#007f5f" />
+        {/* Black hat band */}
+        <rect x="18.5" y="34" width="27" height="7" fill="#1b1d20" />
+        {/* Gold buckle */}
+        <rect x="27.5" y="32.5" width="9" height="10" rx="1.5" fill="none" stroke="#ffd700" strokeWidth="2.5" />
+        {/* Shamrock in band */}
+        <g transform="translate(43, 30) scale(0.65)">
+          <circle cx="-5" cy="-3" r="4.5" fill="#52b788" />
+          <circle cx="5" cy="-3" r="4.5" fill="#52b788" />
+          <circle cx="0" cy="5" r="4.5" fill="#52b788" />
+          <circle cx="0" cy="-5" r="4.5" fill="#52b788" />
+          <path d="M0 4 Q3 14 6 18" stroke="#2d6a4f" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+        </g>
+      </svg>
+    )
+  }
+
+  if (holiday === 'thanksgiving') {
+    return (
+      <svg
+        width="50"
+        height="48"
+        viewBox="0 0 64 60"
+        style={{
+          position: 'absolute',
+          top: '-27px',
+          left: '-15px',
+          transform: 'rotate(-12deg)',
+          filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.28))',
+          pointerEvents: 'none'
+        }}
+      >
+        {/* White sticker outline */}
+        <g stroke="#ffffff" strokeWidth="4" strokeLinejoin="round">
+          <polygon points="21,12 43,12 45,43 19,43" fill="#2b2d42" />
+          <ellipse cx="32" cy="44" rx="25" ry="6" fill="#2b2d42" />
+        </g>
+        {/* Hat body */}
+        <polygon points="21,12 43,12 45,43 19,43" fill="#2b2d42" />
+        <ellipse cx="32" cy="44" rx="25" ry="6" fill="#2b2d42" />
+        {/* Burnt-orange autumn band */}
+        <polygon points="19.5,35 44.5,35 45,42 19,42" fill="#c85a17" />
+        {/* Brass buckle */}
+        <rect x="27.5" y="33" width="9" height="10" rx="1.5" fill="none" stroke="#ffd166" strokeWidth="2.5" />
+      </svg>
+    )
+  }
+
+  if (holiday === 'newyear') {
+    return (
+      <svg
+        width="48"
+        height="46"
+        viewBox="0 0 64 60"
+        style={{
+          position: 'absolute',
+          top: '-27px',
+          left: '-15px',
+          transform: 'rotate(-14deg)',
+          filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.35))',
+          pointerEvents: 'none'
+        }}
+      >
+        <g stroke="#ffffff" strokeWidth="3.5" strokeLinejoin="round">
+          <rect x="16" y="10" width="32" height="36" rx="4" fill="#181920" />
+          <ellipse cx="32" cy="44" rx="26" ry="6" fill="#181920" />
+        </g>
+        <rect x="17.5" y="36" width="29" height="7" fill="#ffd700" />
+        <polygon points="32,20 34.5,25.5 40.5,26.2 36,30.2 37.2,36 32,33 26.8,36 28,30.2 23.5,26.2 29.5,25.5" fill="#ffd700" />
+      </svg>
+    )
+  }
+
+  return null
 }
 
 /** Margin Stickers that live in the left & right gutters behind the center column */
@@ -711,7 +900,316 @@ export const MobileMarginStickers = ({ holiday }: { holiday: HolidayType }) => {
         </>
       )}
 
-      {/* ==================== NEW YEAR'S STICKERS ==================== */}
+      {/* ==================== EASTER STICKERS ==================== */}
+      {holiday === 'easter' && (
+        <>
+          {/* Left Margin: Woven Easter Basket Sticker */}
+          <div
+            className="tml-margin-sticker"
+            style={{
+              position: 'fixed',
+              bottom: '105px',
+              left: 'max(14px, calc((100vw - 896px) / 4 - 60px))',
+              animation: 'floatStickerSlow 5.4s ease-in-out infinite',
+              ...stickerWrapperStyle
+            }}
+          >
+            <svg width="124" height="136" viewBox="0 0 130 142">
+              {/* White die-cut backing */}
+              <g stroke="#ffffff" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round">
+                <path d="M26 68 L36 122 L94 122 L104 68 Z" fill="#ffffff" />
+                <path d="M38 68 C38 28, 92 28, 92 68" fill="none" stroke="#ffffff" strokeWidth="12" />
+              </g>
+              {/* Handle */}
+              <path d="M38 68 C38 28, 92 28, 92 68" fill="none" stroke="#a76d38" strokeWidth="7" />
+              {/* Top Bow */}
+              <circle cx="65" cy="30" r="7" fill="#ff80ab" />
+              {/* Painted eggs in basket */}
+              <g>
+                <ellipse cx="48" cy="68" rx="13" ry="17" fill="#ff80ab" transform="rotate(-15 48 68)" />
+                <ellipse cx="82" cy="68" rx="13" ry="17" fill="#70d6ff" transform="rotate(15 82 68)" />
+                <ellipse cx="65" cy="62" rx="14" ry="18" fill="#ffd166" />
+                {/* Decorative stripe on center egg */}
+                <path d="M53 62 Q65 67 77 62" stroke="#ffffff" strokeWidth="3" fill="none" />
+              </g>
+              {/* Woven Basket body */}
+              <path d="M26 68 L36 122 L94 122 L104 68 Z" fill="#b07238" />
+              {/* Weave lines */}
+              <path d="M26 68 Q65 76 104 68" stroke="#8a5323" strokeWidth="4" fill="none" />
+              <path d="M29 86 Q65 94 101 86" stroke="#8a5323" strokeWidth="4" fill="none" />
+              <path d="M33 104 Q65 111 97 104" stroke="#8a5323" strokeWidth="4" fill="none" />
+              <line x1="50" y1="68" x2="52" y2="122" stroke="#8a5323" strokeWidth="3.5" />
+              <line x1="80" y1="68" x2="78" y2="122" stroke="#8a5323" strokeWidth="3.5" />
+            </svg>
+          </div>
+
+          {/* Right Margin: Hopping Easter Bunny Sticker */}
+          <div
+            className="tml-margin-sticker"
+            style={{
+              position: 'fixed',
+              bottom: '95px',
+              right: 'max(14px, calc((100vw - 896px) / 4 - 55px))',
+              animation: 'floatStickerReverse 5.8s ease-in-out infinite',
+              ...stickerWrapperStyle
+            }}
+          >
+            <svg width="115" height="142" viewBox="0 0 120 148">
+              {/* White backing */}
+              <g stroke="#ffffff" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round">
+                {/* Ears */}
+                <ellipse cx="48" cy="28" rx="9" ry="24" fill="#ffffff" transform="rotate(-8 48 28)" />
+                <ellipse cx="70" cy="30" rx="9" ry="24" fill="#ffffff" transform="rotate(12 70 30)" />
+                {/* Head */}
+                <circle cx="58" cy="62" r="24" fill="#ffffff" />
+                {/* Body */}
+                <ellipse cx="62" cy="108" rx="28" ry="32" fill="#ffffff" />
+                {/* Cottontail */}
+                <circle cx="94" cy="116" r="12" fill="#ffffff" />
+              </g>
+              {/* Body & Head */}
+              <ellipse cx="62" cy="108" rx="28" ry="32" fill="#f8fafc" stroke="#e2e8f0" strokeWidth="2" />
+              <circle cx="94" cy="116" r="11" fill="#ffffff" stroke="#e2e8f0" strokeWidth="1.5" />
+              <circle cx="58" cy="62" r="23" fill="#ffffff" stroke="#e2e8f0" strokeWidth="2" />
+              {/* Ears with pink pads */}
+              <ellipse cx="48" cy="28" rx="9" ry="24" fill="#ffffff" stroke="#e2e8f0" strokeWidth="2" transform="rotate(-8 48 28)" />
+              <ellipse cx="48" cy="28" rx="5" ry="17" fill="#ffb7d5" transform="rotate(-8 48 28)" />
+              <ellipse cx="70" cy="30" rx="9" ry="24" fill="#ffffff" stroke="#e2e8f0" strokeWidth="2" transform="rotate(12 70 30)" />
+              <ellipse cx="70" cy="30" rx="5" ry="17" fill="#ffb7d5" transform="rotate(12 70 30)" />
+              {/* Face details */}
+              <circle cx="50" cy="58" r="3" fill="#222" />
+              <circle cx="68" cy="58" r="3" fill="#222" />
+              <polygon points="56,66 62,66 59,70" fill="#f472b6" />
+              {/* Rosy cheeks */}
+              <circle cx="44" cy="65" r="4.5" fill="#fbcfe8" opacity="0.8" />
+              <circle cx="74" cy="65" r="4.5" fill="#fbcfe8" opacity="0.8" />
+            </svg>
+          </div>
+        </>
+      )}
+
+      {/* ==================== VALENTINE'S STICKERS ==================== */}
+      {holiday === 'valentines' && (
+        <>
+          {/* Left Margin: Ruby Velvet Heart Box Sticker */}
+          <div
+            className="tml-margin-sticker"
+            style={{
+              position: 'fixed',
+              bottom: '105px',
+              left: 'max(14px, calc((100vw - 896px) / 4 - 58px))',
+              animation: 'floatStickerSlow 5.2s ease-in-out infinite',
+              ...stickerWrapperStyle
+            }}
+          >
+            <svg width="124" height="120" viewBox="0 0 130 126">
+              {/* White backing */}
+              <path
+                d="M65 116 C65 116, 12 76, 12 40 C12 18, 32 10, 50 20 C58 25, 65 34, 65 34 C65 34, 72 25, 80 20 C98 10, 118 18, 118 40 C118 76, 65 116, 65 116 Z"
+                fill="#ffffff"
+                stroke="#ffffff"
+                strokeWidth="10"
+                strokeLinejoin="round"
+              />
+              {/* Velvet Heart */}
+              <path
+                d="M65 116 C65 116, 12 76, 12 40 C12 18, 32 10, 50 20 C58 25, 65 34, 65 34 C65 34, 72 25, 80 20 C98 10, 118 18, 118 40 C118 76, 65 116, 65 116 Z"
+                fill="#b91c1c"
+              />
+              {/* Golden Ribbon Cross */}
+              <line x1="65" y1="34" x2="65" y2="114" stroke="#ffd700" strokeWidth="8" />
+              <path d="M16 46 Q65 62 114 46" stroke="#ffd700" strokeWidth="8" fill="none" />
+              {/* Golden Bow Center */}
+              <circle cx="65" cy="54" r="8" fill="#ffd700" />
+              <ellipse cx="55" cy="50" rx="9" ry="5" fill="#ffc107" transform="rotate(-25 55 50)" />
+              <ellipse cx="75" cy="50" rx="9" ry="5" fill="#ffc107" transform="rotate(25 75 50)" />
+            </svg>
+          </div>
+
+          {/* Right Margin: Winged Love Letter Envelope Sticker */}
+          <div
+            className="tml-margin-sticker"
+            style={{
+              position: 'fixed',
+              top: '135px',
+              right: 'max(14px, calc((100vw - 896px) / 4 - 64px))',
+              animation: 'floatStickerReverse 5.6s ease-in-out infinite',
+              ...stickerWrapperStyle
+            }}
+          >
+            <svg width="136" height="105" viewBox="0 0 150 115">
+              {/* White backing */}
+              <g stroke="#ffffff" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round">
+                {/* Wings */}
+                <path d="M48 55 C25 35, 6 45, 12 70 C20 78, 42 70, 48 64 Z" fill="#ffffff" />
+                <path d="M102 55 C125 35, 144 45, 138 70 C130 78, 108 70, 102 64 Z" fill="#ffffff" />
+                {/* Envelope */}
+                <rect x="42" y="38" width="66" height="46" rx="4" fill="#ffffff" />
+              </g>
+              {/* Wings */}
+              <path d="M48 55 C25 35, 6 45, 12 70 C20 78, 42 70, 48 64 Z" fill="#fdf2f4" stroke="#fbcfe8" strokeWidth="2" />
+              <path d="M102 55 C125 35, 144 45, 138 70 C130 78, 108 70, 102 64 Z" fill="#fdf2f4" stroke="#fbcfe8" strokeWidth="2" />
+              {/* Envelope Body */}
+              <rect x="42" y="38" width="66" height="46" rx="4" fill="#fffaf0" stroke="#fed7aa" strokeWidth="2" />
+              <polygon points="42,38 75,64 108,38" fill="#fef3c7" stroke="#fed7aa" strokeWidth="2" />
+              {/* Red Wax Heart Seal */}
+              <path
+                d="M75 70 C75 70, 68 64, 68 60 C68 57, 71 55, 73.5 56.5 C75 57.5, 75 58.5, 75 58.5 C75 58.5, 75 57.5, 76.5 56.5 C79 55, 82 57, 82 60 C82 64, 75 70, 75 70 Z"
+                fill="#d90429"
+              />
+            </svg>
+          </div>
+        </>
+      )}
+
+      {/* ==================== ST. PATRICK'S STICKERS ==================== */}
+      {holiday === 'stpatricks' && (
+        <>
+          {/* Left Margin: Pot of Gold Cauldron Sticker */}
+          <div
+            className="tml-margin-sticker"
+            style={{
+              position: 'fixed',
+              bottom: '105px',
+              left: 'max(14px, calc((100vw - 896px) / 4 - 60px))',
+              animation: 'floatStickerSlow 5.3s ease-in-out infinite',
+              ...stickerWrapperStyle
+            }}
+          >
+            <svg width="124" height="122" viewBox="0 0 130 128">
+              {/* White backing */}
+              <g stroke="#ffffff" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round">
+                <ellipse cx="65" cy="46" rx="42" ry="14" fill="#ffffff" />
+                <ellipse cx="65" cy="74" rx="45" ry="38" fill="#ffffff" />
+              </g>
+              {/* Cauldron Belly */}
+              <ellipse cx="65" cy="74" rx="45" ry="38" fill="#1e232a" />
+              {/* Rim */}
+              <ellipse cx="65" cy="46" rx="44" ry="14" fill="#2d333b" />
+              {/* Gold Mound */}
+              <ellipse cx="65" cy="44" rx="38" ry="11" fill="#ffd700" />
+              {/* Gold coins */}
+              <circle cx="52" cy="42" r="6" fill="#ffc107" stroke="#ffa000" strokeWidth="1" />
+              <circle cx="68" cy="40" r="6.5" fill="#ffd700" stroke="#ffa000" strokeWidth="1" />
+              <circle cx="82" cy="43" r="6" fill="#ffc107" stroke="#ffa000" strokeWidth="1" />
+              <circle cx="42" cy="46" r="5.5" fill="#ffd700" stroke="#ffa000" strokeWidth="1" />
+              {/* Sparkles */}
+              <polygon points="65,22 67,29 74,31 67,33 65,40 63,33 56,31 63,29" fill="#fff9a6" />
+              <polygon points="88,26 89,30 93,31 89,32 88,36 87,32 83,31 87,30" fill="#fff9a6" />
+            </svg>
+          </div>
+
+          {/* Right Margin: Lucky 4-Leaf Shamrock with Mini Rainbow Sticker */}
+          <div
+            className="tml-margin-sticker"
+            style={{
+              position: 'fixed',
+              top: '125px',
+              right: 'max(14px, calc((100vw - 896px) / 4 - 58px))',
+              animation: 'floatStickerReverse 5.7s ease-in-out infinite',
+              ...stickerWrapperStyle
+            }}
+          >
+            <svg width="128" height="128" viewBox="0 0 135 135">
+              {/* White backing */}
+              <g stroke="#ffffff" strokeWidth="9" strokeLinejoin="round" strokeLinecap="round">
+                {/* Rainbow Arc */}
+                <path d="M25 85 C25 35, 110 35, 110 85" fill="none" stroke="#ffffff" strokeWidth="16" />
+                {/* 4 Clover Leaves */}
+                <circle cx="48" cy="65" r="16" fill="#ffffff" />
+                <circle cx="82" cy="65" r="16" fill="#ffffff" />
+                <circle cx="65" cy="48" r="16" fill="#ffffff" />
+                <circle cx="65" cy="82" r="16" fill="#ffffff" />
+                <path d="M65 82 Q68 112 85 118" fill="none" stroke="#ffffff" strokeWidth="8" />
+              </g>
+              {/* Rainbow */}
+              <path d="M25 85 C25 35, 110 35, 110 85" fill="none" stroke="#ef4444" strokeWidth="3" />
+              <path d="M27 85 C27 38, 108 38, 108 85" fill="none" stroke="#f59e0b" strokeWidth="3" />
+              <path d="M29 85 C29 41, 106 41, 106 85" fill="none" stroke="#10b981" strokeWidth="3" />
+              <path d="M31 85 C31 44, 104 44, 104 85" fill="none" stroke="#3b82f6" strokeWidth="3" />
+              {/* Shamrock stem */}
+              <path d="M65 82 Q68 112 85 118" fill="none" stroke="#1b4332" strokeWidth="5" strokeLinecap="round" />
+              {/* Shamrock 4 leaves */}
+              <circle cx="48" cy="65" r="15" fill="#007f5f" />
+              <circle cx="82" cy="65" r="15" fill="#007f5f" />
+              <circle cx="65" cy="48" r="15" fill="#2ec4b6" />
+              <circle cx="65" cy="82" r="15" fill="#007f5f" />
+              <circle cx="65" cy="65" r="7" fill="#007f5f" />
+            </svg>
+          </div>
+        </>
+      )}
+
+      {/* ==================== THANKSGIVING STICKERS ==================== */}
+      {holiday === 'thanksgiving' && (
+        <>
+          {/* Left Margin: Wicker Cornucopia Sticker */}
+          <div
+            className="tml-margin-sticker"
+            style={{
+              position: 'fixed',
+              bottom: '105px',
+              left: 'max(14px, calc((100vw - 896px) / 4 - 60px))',
+              animation: 'floatStickerSlow 5.5s ease-in-out infinite',
+              ...stickerWrapperStyle
+            }}
+          >
+            <svg width="130" height="120" viewBox="0 0 140 128">
+              {/* White backing */}
+              <g stroke="#ffffff" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round">
+                <path d="M35 55 C35 25, 115 15, 125 75 C125 105, 95 115, 75 100 L35 85 Z" fill="#ffffff" />
+                <ellipse cx="35" cy="70" rx="18" ry="24" fill="#ffffff" />
+              </g>
+              {/* Horn Body */}
+              <path d="M35 55 C35 25, 115 15, 125 75 C125 105, 95 115, 75 100 L35 85 Z" fill="#99582a" />
+              {/* Horn ridges */}
+              <path d="M60 48 Q85 62 70 95" stroke="#7f4f24" strokeWidth="4" fill="none" />
+              <path d="M85 45 Q105 65 92 88" stroke="#7f4f24" strokeWidth="4" fill="none" />
+              {/* Flared Mouth */}
+              <ellipse cx="35" cy="70" rx="18" ry="24" fill="#7f4f24" />
+              {/* Harvest bounty spilling out */}
+              <circle cx="28" cy="78" r="14" fill="#ea580c" />
+              <circle cx="28" cy="78" r="10" fill="#f97316" />
+              <polygon points="26,62 30,62 28,56" fill="#2d6a4f" />
+              {/* Red apple */}
+              <circle cx="45" cy="84" r="10" fill="#b91c1c" />
+              {/* Yellow gourd */}
+              <ellipse cx="44" cy="62" rx="9" ry="14" fill="#eab308" transform="rotate(25 44 62)" />
+            </svg>
+          </div>
+
+          {/* Right Margin: Pumpkin Pie Slice Sticker */}
+          <div
+            className="tml-margin-sticker"
+            style={{
+              position: 'fixed',
+              bottom: '105px',
+              right: 'max(14px, calc((100vw - 896px) / 4 - 55px))',
+              animation: 'floatStickerReverse 5.9s ease-in-out infinite',
+              ...stickerWrapperStyle
+            }}
+          >
+            <svg width="124" height="110" viewBox="0 0 135 120">
+              {/* White backing */}
+              <g stroke="#ffffff" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round">
+                <polygon points="22,78 112,38 102,96" fill="#ffffff" />
+                <path d="M112 38 Q118 68 102 96" stroke="#ffffff" strokeWidth="12" fill="none" />
+              </g>
+              {/* Flaky Crust Back */}
+              <path d="M112 38 Q118 68 102 96" stroke="#d4a373" strokeWidth="10" fill="none" strokeLinecap="round" />
+              {/* Pumpkin Filling Triangle */}
+              <polygon points="22,78 110,42 100,92" fill="#bc6c25" />
+              <polygon points="22,78 105,72 100,92" fill="#99582a" opacity="0.4" />
+              {/* Whipped cream swirl */}
+              <g transform="translate(68, 66)">
+                <ellipse cx="0" cy="0" rx="12" ry="8" fill="#ffffff" />
+                <circle cx="-2" cy="-4" r="6" fill="#fdfbf7" />
+                <circle cx="0" cy="-7" r="3" fill="#ffffff" />
+              </g>
+            </svg>
+          </div>
+        </>
+      )}
       {holiday === 'newyear' && (
         <>
           {/* Left Margin: Golden Sparkler / Confetti Starburst Sticker */}
@@ -812,6 +1310,10 @@ export const HolidayDebugBar = () => {
           { label: '❄️ Winter', val: 'winter' },
           { label: '🎃 Halloween', val: 'halloween' },
           { label: '🎉 NYE', val: 'newyear' },
+          { label: '🐰 Easter', val: 'easter' },
+          { label: '💖 V-Day', val: 'valentines' },
+          { label: '☘️ St. Pat', val: 'stpatricks' },
+          { label: '🦃 Thanks', val: 'thanksgiving' },
           { label: 'Off', val: null }
         ] as { label: string; val: HolidayType | 'auto' }[]
       ).map((opt) => {
