@@ -256,12 +256,12 @@ export const LoadingScreen = () => {
       
       <style>{`
         @keyframes loadingRunnerSprite {
-          from { background-position: 0px 0px; }
-          to { background-position: -5500px 0px; }
+          from { transform: translate3d(0px, 0px, 0px); }
+          to { transform: translate3d(-5500px, 0px, 0px); }
         }
       `}</style>
 
-      {/* ATOMIC SPRITESHEET ANIMATION (No scanline decodes or frame flickering) */}
+      {/* COMPOSITOR-THREAD SPRITESHEET ANIMATION (Uninterrupted by main thread freezes) */}
       <div style={{ 
           marginBottom: '0px', 
           transform: 'translateY(-20px)',
@@ -272,20 +272,24 @@ export const LoadingScreen = () => {
           alignItems: 'center',
           justifyContent: 'center'
       }}>
-         <div
+        <div style={{ width: '250px', height: '141px', overflow: 'hidden', position: 'relative' }}>
+          <img
+            src="/assets/loading_spritesheet.webp"
+            alt=""
+            onLoad={() => setSpriteReady(true)}
             style={{
-              width: '250px',
+              width: '5500px',
               height: '141px',
-              backgroundImage: "url('/assets/loading_spritesheet.webp')",
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: '5500px 141px',
+              maxWidth: 'none',
+              display: 'block',
+              willChange: 'transform',
               animation: 'loadingRunnerSprite 733.33ms steps(22) infinite',
               opacity: spriteReady ? 1 : 0,
               transition: 'opacity 0.2s ease',
-              willChange: 'background-position',
-              transform: 'translateZ(0)'
+              transform: 'translate3d(0,0,0)'
             }}
-         />
+          />
+        </div>
       </div>
       
       <div style={{ width: '300px', height: '2px', background: '#ccc', borderRadius: '4px', overflow: 'hidden' }}>

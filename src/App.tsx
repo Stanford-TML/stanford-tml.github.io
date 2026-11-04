@@ -60,8 +60,8 @@ const InitialLoadingFallback = () => (
   }}>
     <style>{`
       @keyframes loadingRunnerSprite {
-        from { background-position: 0px 0px; }
-        to { background-position: -5500px 0px; }
+        from { transform: translate3d(0px, 0px, 0px); }
+        to { transform: translate3d(-5500px, 0px, 0px); }
       }
     `}</style>
     <div style={{ 
@@ -74,18 +74,21 @@ const InitialLoadingFallback = () => (
       alignItems: 'center',
       justifyContent: 'center'
     }}>
-      <div
-        style={{
-          width: '250px',
-          height: '141px',
-          backgroundImage: "url('/assets/loading_spritesheet.webp')",
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: '5500px 141px',
-          animation: 'loadingRunnerSprite 733.33ms steps(22) infinite',
-          willChange: 'background-position',
-          transform: 'translateZ(0)'
-        }}
-      />
+      <div style={{ width: '250px', height: '141px', overflow: 'hidden', position: 'relative' }}>
+        <img
+          src="/assets/loading_spritesheet.webp"
+          alt=""
+          style={{
+            width: '5500px',
+            height: '141px',
+            maxWidth: 'none',
+            display: 'block',
+            willChange: 'transform',
+            animation: 'loadingRunnerSprite 733.33ms steps(22) infinite',
+            transform: 'translate3d(0,0,0)'
+          }}
+        />
+      </div>
     </div>
     <div style={{ width: '300px', height: '2px', background: '#ccc', borderRadius: '4px', overflow: 'hidden' }}>
       <div style={{ width: '5%', height: '100%', background: '#af1414' }} />
