@@ -15,6 +15,7 @@ export const StickyNav = ({ isVisible }: StickyNavProps) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { holiday } = useHoliday()
+  const isDarkNav = holiday === 'newyear' || holiday === 'halloween'
   
   const links = ['Home', 'People', 'Publications', 'Courses', 'Join']
 
@@ -53,13 +54,13 @@ export const StickyNav = ({ isVisible }: StickyNavProps) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          background: 'rgba(240, 240, 240, 0.95)', 
+          background: isDarkNav ? 'rgba(18, 14, 26, 0.95)' : 'rgba(240, 240, 240, 0.95)', 
           backdropFilter: 'blur(10px)',
           zIndex: 1000000,
           transition: 'transform 0.3s ease, opacity 0.3s ease',
           transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
           opacity: isVisible ? 1 : 0,
-          borderBottom: '1px solid #ccc',
+          borderBottom: isDarkNav ? '1px solid #332244' : '1px solid #ccc',
           pointerEvents: 'auto', 
           boxSizing: 'border-box'
         }}
@@ -80,7 +81,9 @@ export const StickyNav = ({ isVisible }: StickyNavProps) => {
                 width: 'auto',
                 objectFit: 'contain',
                 display: 'block',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                filter: isDarkNav ? 'brightness(2.2) saturate(1.2)' : 'none',
+                transition: 'filter 0.3s ease'
             }}
           />
           {holiday === 'newyear' && <NavNeonYearBadge isMobile={isMobile} />}
@@ -101,9 +104,9 @@ export const StickyNav = ({ isVisible }: StickyNavProps) => {
               zIndex: 1000002
             }}
           >
-            <div style={{ width: '30px', height: '3px', background: '#555', borderRadius: '2px' }} />
-            <div style={{ width: '30px', height: '3px', background: '#555', borderRadius: '2px' }} />
-            <div style={{ width: '30px', height: '3px', background: '#555', borderRadius: '2px' }} />
+            <div style={{ width: '30px', height: '3px', background: isDarkNav ? '#ffffff' : '#555', borderRadius: '2px' }} />
+            <div style={{ width: '30px', height: '3px', background: isDarkNav ? '#ffffff' : '#555', borderRadius: '2px' }} />
+            <div style={{ width: '30px', height: '3px', background: isDarkNav ? '#ffffff' : '#555', borderRadius: '2px' }} />
           </button>
         ) : (
           /* DESKTOP LINKS */
@@ -113,7 +116,7 @@ export const StickyNav = ({ isVisible }: StickyNavProps) => {
                 key={link} 
                 href={link === 'Home' ? '#home' : `#${link.toLowerCase()}`} 
                 style={{ 
-                    color: '#555', 
+                    color: isDarkNav ? '#ffffff' : '#555', 
                     textDecoration: 'none', 
                     fontSize: '0.9rem', 
                     fontWeight: 600,
@@ -122,8 +125,8 @@ export const StickyNav = ({ isVisible }: StickyNavProps) => {
                     letterSpacing: '0.5px',
                     transition: 'color 0.2s'
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#af1414'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#555'}
+                onMouseEnter={(e) => e.currentTarget.style.color = isDarkNav ? (holiday === 'halloween' ? '#ff7518' : '#ffd700') : '#af1414'}
+                onMouseLeave={(e) => e.currentTarget.style.color = isDarkNav ? '#ffffff' : '#555'}
               >
                 {link}
               </a>

@@ -1,12 +1,14 @@
 // FILE: src/components/HolidayHat.tsx
-import { useMemo, useRef, useLayoutEffect, Suspense } from 'react'
+import { useMemo, useRef, useLayoutEffect, Suspense, Fragment } from 'react'
 import { createPortal, useFrame } from '@react-three/fiber'
-import { useFBX } from '@react-three/drei'
+import { useFBX, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { useHoliday, type HolidayType, isMajorHoliday } from '../utils/holiday'
 import { applyHoloShader } from '../utils/holoShader'
 
 const SANTA_HAT_PATH = '/assets/misc/santahat.fbx'
+const BUNNY_EARS_PATH = '/assets/misc/bunny_ears.glb'
+
 // Normalized base factor: santahat.fbx is ~69.34 units tall (brim radius ~38 units),
 // so multiplying by 1 / 69.34 (0.01442) makes scale=1.0 equal to 1 head-height!
 const FBX_UNIT_NORMALIZATION = 1 / 69.34
@@ -17,8 +19,9 @@ const FBX_UNIT_NORMALIZATION = 1 / 69.34
 const SANTA_REF_BASE_CENTER: [number, number, number] = [-0.076, 0.0, -0.001]
 const SANTA_REF_HEIGHT = 1.0
 
-// Preload the Santa hat FBX so it's ready with the scene
+// Preload the hat assets so they are ready with the scene
 useFBX.preload(SANTA_HAT_PATH)
+useGLTF.preload(BUNNY_EARS_PATH, true, true)
 
 export type RigKind = 'ybot' | 'g1'
 
@@ -59,6 +62,19 @@ export const HALLOWEEN_HAT_TRANSFORMS: Record<RigKind, HatTransformConfig> = {
     position: [0.21, -0.28, -0.05],
     rotation: [-0.54, -0.38, -0.22],
     scale: 1.53
+  }
+}
+
+export const EASTER_HAT_TRANSFORMS: Record<RigKind, HatTransformConfig> = {
+  ybot: {
+    position: [0.12, -0.06, -0.30],
+    rotation: [-0.70, 0.12, -0.16],
+    scale: 1.15
+  },
+  g1: {
+    position: [0.02, -0.18, 0.00],
+    rotation: [0.22, 0.40, -6.36],
+    scale: 1.30
   }
 }
 
@@ -271,6 +287,22 @@ const AABBAlignedHat = ({
   )
 }
 
+const BunnyEarsModel = () => {
+  const { scene } = useGLTF(BUNNY_EARS_PATH, true, true)
+  const cloned = useMemo(() => {
+    const c = scene.clone(true)
+    c.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        child.castShadow = true
+        child.receiveShadow = false
+      }
+    })
+    return c
+  }, [scene])
+
+  return <primitive object={cloned} />
+}
+
 /**
  * Fallback primitive models for Halloween and New Year's (until custom assets are added),
  * automatically AABB-aligned to the Santa hat reference frame.
@@ -353,83 +385,7 @@ const HolidayHatGeometry = ({
   if (holiday === 'easter') {
     return (
       <AABBAlignedHat depKey="easter">
-        <group>
-          {/* Headband base wrapping across the head */}
-          <mesh position={[0, 0.08, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow receiveShadow={false}>
-            <torusGeometry args={[0.46, 0.045, 16, 32, Math.PI]} />
-            <meshStandardMaterial color="#f7f7f7" roughness={0.7} metalness={0.05} />
-          </mesh>
-
-          {/* Left Bunny Ear (perky and upright) */}
-          <group position={[-0.24, 0.12, 0]} rotation={[0.06, 0.05, 0.14]}>
-            {/* Outer Ear */}
-            <mesh position={[0, 0.28, 0]} scale={[1, 1, 0.42]} castShadow receiveShadow={false}>
-              <cylinderGeometry args={[0.13, 0.11, 0.52, 24]} />
-              <meshStandardMaterial color="#fefefe" roughness={0.85} metalness={0.02} />
-            </mesh>
-            <mesh position={[0, 0.62, 0]} scale={[1, 1, 0.42]} castShadow receiveShadow={false}>
-              <coneGeometry args={[0.13, 0.36, 24]} />
-              <meshStandardMaterial color="#fefefe" roughness={0.85} metalness={0.02} />
-            </mesh>
-            {/* Inner Pink Fluff */}
-            <mesh position={[0, 0.28, 0.028]} scale={[0.65, 0.9, 0.15]} castShadow receiveShadow={false}>
-              <cylinderGeometry args={[0.13, 0.11, 0.44, 24]} />
-              <meshStandardMaterial color="#ffafcc" roughness={0.9} metalness={0.0} />
-            </mesh>
-            <mesh position={[0, 0.56, 0.028]} scale={[0.65, 0.85, 0.15]} castShadow receiveShadow={false}>
-              <coneGeometry args={[0.13, 0.28, 24]} />
-              <meshStandardMaterial color="#ffafcc" roughness={0.9} metalness={0.0} />
-            </mesh>
-          </group>
-
-          {/* Right Bunny Ear (flopped slightly to the side and forward) */}
-          <group position={[0.24, 0.12, 0]} rotation={[-0.12, -0.05, -0.22]}>
-            {/* Lower segment */}
-            <mesh position={[0, 0.24, 0]} scale={[1, 1, 0.42]} castShadow receiveShadow={false}>
-              <cylinderGeometry args={[0.13, 0.11, 0.46, 24]} />
-              <meshStandardMaterial color="#fefefe" roughness={0.85} metalness={0.02} />
-            </mesh>
-            <mesh position={[0, 0.24, 0.028]} scale={[0.65, 0.85, 0.15]} castShadow receiveShadow={false}>
-              <cylinderGeometry args={[0.13, 0.11, 0.38, 24]} />
-              <meshStandardMaterial color="#ffafcc" roughness={0.9} metalness={0.0} />
-            </mesh>
-            {/* Bent upper tip */}
-            <group position={[0, 0.45, 0]} rotation={[0.22, 0, -0.18]}>
-              <mesh position={[0, 0.18, 0]} scale={[1, 1, 0.42]} castShadow receiveShadow={false}>
-                <coneGeometry args={[0.125, 0.38, 24]} />
-                <meshStandardMaterial color="#fefefe" roughness={0.85} metalness={0.02} />
-              </mesh>
-              <mesh position={[0, 0.15, 0.028]} scale={[0.65, 0.78, 0.15]} castShadow receiveShadow={false}>
-                <coneGeometry args={[0.125, 0.30, 24]} />
-                <meshStandardMaterial color="#ffafcc" roughness={0.9} metalness={0.0} />
-              </mesh>
-            </group>
-          </group>
-
-          {/* Daisy blossom at the base of the left ear */}
-          <group position={[-0.24, 0.12, 0.12]} scale={0.85}>
-            <mesh castShadow receiveShadow={false}>
-              <sphereGeometry args={[0.045, 16, 16]} />
-              <meshStandardMaterial color="#ffdd59" roughness={0.4} />
-            </mesh>
-            {[0, 1, 2, 3, 4].map((p) => {
-              const ang = (p * Math.PI * 2) / 5
-              return (
-                <mesh
-                  key={p}
-                  position={[Math.cos(ang) * 0.065, Math.sin(ang) * 0.065, -0.01]}
-                  scale={[1, 0.65, 0.5]}
-                  rotation={[0, 0, ang]}
-                  castShadow
-                  receiveShadow={false}
-                >
-                  <sphereGeometry args={[0.035, 12, 12]} />
-                  <meshStandardMaterial color="#ffffff" roughness={0.5} />
-                </mesh>
-              )
-            })}
-          </group>
-        </group>
+        <BunnyEarsModel />
       </AABBAlignedHat>
     )
   }
@@ -545,7 +501,11 @@ export const CharacterHat = ({
 
         const kind = rigKindOverride || detectedKind
         const baseConfig: HatTransformConfig =
-          holiday === 'halloween' ? HALLOWEEN_HAT_TRANSFORMS[kind] : RIG_HAT_TRANSFORMS[kind]
+          holiday === 'halloween'
+            ? HALLOWEEN_HAT_TRANSFORMS[kind]
+            : holiday === 'easter'
+            ? EASTER_HAT_TRANSFORMS[kind]
+            : RIG_HAT_TRANSFORMS[kind]
 
         const finalPos: [number, number, number] = [
           baseConfig.position[0] + positionOffset[0],
@@ -560,25 +520,28 @@ export const CharacterHat = ({
         const hatScale = baseConfig.scale * scaleMultiplier
 
         const portalKey = `hat-${bone.uuid}-${idx}`
-        return createPortal(
-          // Outer group normalizes coordinates so 1.0 unit === 1 headLength in local bone space
-          <group scale={headLength}>
-            <group
-              position={finalPos}
-              rotation={finalRot}
-              scale={hatScale}
-            >
-              <Suspense fallback={null}>
-                <HoloHatInstance
-                  holiday={holiday}
-                  isHolographic={detectedHolo.isHolo}
-                  holoColor={detectedHolo.color}
-                />
-              </Suspense>
-            </group>
-          </group>,
-          bone,
-          portalKey
+        return (
+          <Fragment key={portalKey}>
+            {createPortal(
+              // Outer group normalizes coordinates so 1.0 unit === 1 headLength in local bone space
+              <group scale={headLength}>
+                <group
+                  position={finalPos}
+                  rotation={finalRot}
+                  scale={hatScale}
+                >
+                  <Suspense fallback={null}>
+                    <HoloHatInstance
+                      holiday={holiday}
+                      isHolographic={detectedHolo.isHolo}
+                      holoColor={detectedHolo.color}
+                    />
+                  </Suspense>
+                </group>
+              </group>,
+              bone
+            )}
+          </Fragment>
         )
       })}
     </>

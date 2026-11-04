@@ -1065,7 +1065,7 @@ export const MobileMarginStickers = ({ holiday }: { holiday: HolidayType }) => {
       {/* ==================== ST. PATRICK'S STICKERS ==================== */}
       {holiday === 'stpatricks' && (
         <>
-          {/* Left Margin: Pot of Gold Cauldron Sticker */}
+          {/* St. Patrick's Complete Emblem: Top Hat, Clovers, Pot of Gold & Rainbow */}
           <div
             className="tml-margin-sticker"
             style={{
@@ -1076,66 +1076,20 @@ export const MobileMarginStickers = ({ holiday }: { holiday: HolidayType }) => {
               ...stickerWrapperStyle
             }}
           >
-            <svg width="124" height="122" viewBox="0 0 130 128">
-              {/* White backing */}
-              <g stroke="#ffffff" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round">
-                <ellipse cx="65" cy="46" rx="42" ry="14" fill="#ffffff" />
-                <ellipse cx="65" cy="74" rx="45" ry="38" fill="#ffffff" />
-              </g>
-              {/* Cauldron Belly */}
-              <ellipse cx="65" cy="74" rx="45" ry="38" fill="#1e232a" />
-              {/* Rim */}
-              <ellipse cx="65" cy="46" rx="44" ry="14" fill="#2d333b" />
-              {/* Gold Mound */}
-              <ellipse cx="65" cy="44" rx="38" ry="11" fill="#ffd700" />
-              {/* Gold coins */}
-              <circle cx="52" cy="42" r="6" fill="#ffc107" stroke="#ffa000" strokeWidth="1" />
-              <circle cx="68" cy="40" r="6.5" fill="#ffd700" stroke="#ffa000" strokeWidth="1" />
-              <circle cx="82" cy="43" r="6" fill="#ffc107" stroke="#ffa000" strokeWidth="1" />
-              <circle cx="42" cy="46" r="5.5" fill="#ffd700" stroke="#ffa000" strokeWidth="1" />
-              {/* Sparkles */}
-              <polygon points="65,22 67,29 74,31 67,33 65,40 63,33 56,31 63,29" fill="#fff9a6" />
-              <polygon points="88,26 89,30 93,31 89,32 88,36 87,32 83,31 87,30" fill="#fff9a6" />
-            </svg>
-          </div>
-
-          {/* Right Margin: Lucky 4-Leaf Shamrock with Mini Rainbow Sticker */}
-          <div
-            className="tml-margin-sticker"
-            style={{
-              position: 'fixed',
-              top: '125px',
-              right: 'max(14px, calc((100vw - 896px) / 4 - 58px))',
-              animation: 'floatStickerReverse 5.7s ease-in-out infinite',
-              ...stickerWrapperStyle
-            }}
-          >
-            <svg width="128" height="128" viewBox="0 0 135 135">
-              {/* White backing */}
-              <g stroke="#ffffff" strokeWidth="9" strokeLinejoin="round" strokeLinecap="round">
-                {/* Rainbow Arc */}
-                <path d="M25 85 C25 35, 110 35, 110 85" fill="none" stroke="#ffffff" strokeWidth="16" />
-                {/* 4 Clover Leaves */}
-                <circle cx="48" cy="65" r="16" fill="#ffffff" />
-                <circle cx="82" cy="65" r="16" fill="#ffffff" />
-                <circle cx="65" cy="48" r="16" fill="#ffffff" />
-                <circle cx="65" cy="82" r="16" fill="#ffffff" />
-                <path d="M65 82 Q68 112 85 118" fill="none" stroke="#ffffff" strokeWidth="8" />
-              </g>
-              {/* Rainbow */}
-              <path d="M25 85 C25 35, 110 35, 110 85" fill="none" stroke="#ef4444" strokeWidth="3" />
-              <path d="M27 85 C27 38, 108 38, 108 85" fill="none" stroke="#f59e0b" strokeWidth="3" />
-              <path d="M29 85 C29 41, 106 41, 106 85" fill="none" stroke="#10b981" strokeWidth="3" />
-              <path d="M31 85 C31 44, 104 44, 104 85" fill="none" stroke="#3b82f6" strokeWidth="3" />
-              {/* Shamrock stem */}
-              <path d="M65 82 Q68 112 85 118" fill="none" stroke="#1b4332" strokeWidth="5" strokeLinecap="round" />
-              {/* Shamrock 4 leaves */}
-              <circle cx="48" cy="65" r="15" fill="#007f5f" />
-              <circle cx="82" cy="65" r="15" fill="#007f5f" />
-              <circle cx="65" cy="48" r="15" fill="#2ec4b6" />
-              <circle cx="65" cy="82" r="15" fill="#007f5f" />
-              <circle cx="65" cy="65" r="7" fill="#007f5f" />
-            </svg>
+            <img
+              src="/assets/misc/stpatricks_sticker.svg"
+              alt="St. Patrick's Day Sticker"
+              width={138}
+              height={120}
+              draggable={false}
+              style={{
+                display: 'block',
+                width: '138px',
+                height: 'auto',
+                pointerEvents: 'none',
+                filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.14))'
+              }}
+            />
           </div>
         </>
       )}
@@ -1154,28 +1108,20 @@ export const MobileMarginStickers = ({ holiday }: { holiday: HolidayType }) => {
               ...stickerWrapperStyle
             }}
           >
-            <svg width="130" height="120" viewBox="0 0 140 128">
-              {/* White backing */}
-              <g stroke="#ffffff" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round">
-                <path d="M35 55 C35 25, 115 15, 125 75 C125 105, 95 115, 75 100 L35 85 Z" fill="#ffffff" />
-                <ellipse cx="35" cy="70" rx="18" ry="24" fill="#ffffff" />
-              </g>
-              {/* Horn Body */}
-              <path d="M35 55 C35 25, 115 15, 125 75 C125 105, 95 115, 75 100 L35 85 Z" fill="#99582a" />
-              {/* Horn ridges */}
-              <path d="M60 48 Q85 62 70 95" stroke="#7f4f24" strokeWidth="4" fill="none" />
-              <path d="M85 45 Q105 65 92 88" stroke="#7f4f24" strokeWidth="4" fill="none" />
-              {/* Flared Mouth */}
-              <ellipse cx="35" cy="70" rx="18" ry="24" fill="#7f4f24" />
-              {/* Harvest bounty spilling out */}
-              <circle cx="28" cy="78" r="14" fill="#ea580c" />
-              <circle cx="28" cy="78" r="10" fill="#f97316" />
-              <polygon points="26,62 30,62 28,56" fill="#2d6a4f" />
-              {/* Red apple */}
-              <circle cx="45" cy="84" r="10" fill="#b91c1c" />
-              {/* Yellow gourd */}
-              <ellipse cx="44" cy="62" rx="9" ry="14" fill="#eab308" transform="rotate(25 44 62)" />
-            </svg>
+            <img
+              src="/assets/misc/cornucopia_sticker.svg"
+              alt="Thanksgiving Cornucopia Sticker"
+              width={142}
+              height={100}
+              draggable={false}
+              style={{
+                display: 'block',
+                width: '142px',
+                height: 'auto',
+                pointerEvents: 'none',
+                filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.14))'
+              }}
+            />
           </div>
 
           {/* Right Margin: Pumpkin Pie Slice Sticker */}

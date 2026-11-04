@@ -16,6 +16,8 @@ import { useHoliday } from '../utils/holiday'
 export const Experience = () => {
   const { holiday } = useHoliday()
   const isNewYear = holiday === 'newyear'
+  const isHalloween = holiday === 'halloween'
+  const isDarkScene = isNewYear || isHalloween
   const [isNavVisible, setIsNavVisible] = useState(false)
   const scroll = useScroll()
   const totalPages = getTotalPages()
@@ -54,17 +56,17 @@ export const Experience = () => {
     ambientColor, ambientIntensity, dirLightColor, dirLightIntensity, dirLightPosition, envIntensity,
     darknessLevel, spotPos, spotTarget, spotIntensity, spotColor, spotAngle, spotPenumbra
   } = {
-    bgColor: isNewYear ? '#090b14' : '#c7c7c7',
-    fogColor: isNewYear ? '#070810' : '#9d9d9d',
-    floorColor: isNewYear ? '#1f222e' : '#a0a0a0',
+    bgColor: isHalloween ? '#0d0914' : isNewYear ? '#090b14' : '#c7c7c7',
+    fogColor: isHalloween ? '#0b0711' : isNewYear ? '#070810' : '#9d9d9d',
+    floorColor: isHalloween ? '#1a1324' : isNewYear ? '#1f222e' : '#a0a0a0',
     gridColor: '#af1414',
-    gridSectionColor: isNewYear ? '#3d4256' : '#767676',
-    ambientColor: '#ffffff',
-    ambientIntensity: isNewYear ? 0.16 : 0.4,
-    dirLightColor: isNewYear ? '#dce6ff' : '#ffffff',
-    dirLightIntensity: isNewYear ? 0.45 : 1.5,
+    gridSectionColor: isHalloween ? '#3e2456' : isNewYear ? '#3d4256' : '#767676',
+    ambientColor: isHalloween ? '#9966cc' : '#ffffff',
+    ambientIntensity: isDarkScene ? 0.16 : 0.4,
+    dirLightColor: isHalloween ? '#ffaa44' : isNewYear ? '#dce6ff' : '#ffffff',
+    dirLightIntensity: isHalloween ? 0.65 : isNewYear ? 0.45 : 1.5,
     dirLightPosition: new THREE.Vector3(5.0, 10.0, 5.0),
-    envIntensity: isNewYear ? 0.18 : 0.5,
+    envIntensity: isDarkScene ? 0.18 : 0.5,
     darknessLevel: 0.95, spotPos: new THREE.Vector3(0, 10, 8), spotTarget:new THREE.Vector3(-2.0, 2.0, -1.0), spotIntensity: 1500, spotColor: '#ffddbc', spotAngle: 0.35, spotPenumbra: 0.9
   }
 

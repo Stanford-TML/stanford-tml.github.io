@@ -47,7 +47,7 @@ const IntroRobot = ({ path, name, defaultPos, defaultRot, defaultScale }: any) =
 const IntroButton = ({ text, index, gap, yPos, scale }: any) => {
     const [hovered, setHovered] = useState(false)
     const { holiday } = useHoliday()
-    const isDarkTheme = holiday === 'newyear'
+    const isDarkTheme = holiday === 'newyear' || holiday === 'halloween'
     const xPos = (index - 2) * gap 
 
     const handlePointerOver = () => {
@@ -65,7 +65,7 @@ const IntroButton = ({ text, index, gap, yPos, scale }: any) => {
             <Text
                 font={BUTTON_FONT_URL}
                 fontSize={scale}
-                color={hovered ? (isDarkTheme ? "#ffd700" : "#a30d0e") : (isDarkTheme ? "#e6e8f0" : "#333333")}
+                color={hovered ? (isDarkTheme ? (holiday === "halloween" ? "#ff7518" : "#ffd700") : "#a30d0e") : (isDarkTheme ? "#ffffff" : "#333333")}
                 anchorX="center"
                 anchorY="middle"
                 onPointerOver={handlePointerOver}

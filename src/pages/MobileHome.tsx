@@ -12,12 +12,12 @@ import {
 } from '../components/MobileHolidayOverlay'
 
 export const MobileHome = () => {
-  const[turntableData, setTurntableData] = useState<any[]>([])
+  const [turntableData, setTurntableData] = useState<any[]>([])
   const { holiday } = useHoliday()
-  
+
   // Fetch home content synchronously
   const homeData = getHomeContentSync() || {}
-  
+
   // Fallbacks
   const intro = homeData.intro || { title: "The Movement Lab", subtitle: "@ Stanford" }
   const robot = homeData.robot || { name: "Dr. Karen Liu", title: "Principal Investigator", description: "Welcome to The Movement Lab website!" }
@@ -33,7 +33,7 @@ export const MobileHome = () => {
       }
     }
     loadTurntable()
-  },[])
+  }, [])
 
   return (
     <div
@@ -42,9 +42,9 @@ export const MobileHome = () => {
     >
       <MobileMarginStickers holiday={holiday} />
       <MobileHolidayCanvas holiday={holiday} />
-      
+
       <div className="w-full max-w-4xl bg-[#f4f4f4] shadow-2xl min-h-screen flex flex-col pb-12 relative z-10">
-        
+
         {/* Header Page Title */}
         <div className="pt-28 pb-8 px-6 sm:px-10 relative z-10 flex flex-col items-start">
           <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 mb-3 relative inline-block">
@@ -52,34 +52,34 @@ export const MobileHome = () => {
             {intro.title}
           </h1>
           {/* MOVED STANFORD WORDMARK HERE */}
-          <img 
-            src="/assets/SUSig-red.png" 
+          <img
+            src="/assets/SUSig-red.png"
             srcSet={getResponsiveImage('/assets/SUSig-red.png').srcSet}
             sizes="230px"
-            alt="Stanford University" 
-            className="h-6 sm:h-7 object-contain" 
+            alt="Stanford University"
+            className="h-6 sm:h-7 object-contain"
           />
         </div>
 
         {/* Billboard Section */}
         <div className="px-6 sm:px-10 pb-10 relative z-0">
           <div className="bg-[#f9f9f9] rounded-3xl overflow-hidden shadow-xl shadow-gray-200/50 border border-gray-200 flex flex-col">
-            
+
             {/* Cover Photo */}
             <div className="w-full h-56 sm:h-[350px] bg-[#e0e0e0] relative shrink-0">
-              <ProgressiveImage 
+              <ProgressiveImage
                 highResSrc="assets/cover_photo_wide.jpg"
-                alt="The Movement Lab" 
+                alt="The Movement Lab"
                 sizes="(min-width: 896px) 830px, 100vw"
                 loading="eager"
-                containerClass="w-full h-full" 
+                containerClass="w-full h-full"
                 imageClass="w-full h-full object-bottom block"
               />
             </div>
 
             {/* Content Area */}
             <div className="p-8 sm:p-10 flex flex-col">
-              
+
               {/* Description Body (Wordmark removed from above this) */}
               <p className="text-[#4d4c47] leading-relaxed text-base mb-10 font-medium">
                 {robot.description}
@@ -94,7 +94,7 @@ export const MobileHome = () => {
                   {robot.title}
                 </p>
               </div>
-              
+
             </div>
           </div>
         </div>
@@ -105,14 +105,14 @@ export const MobileHome = () => {
           <div className="flex flex-col gap-6">
             {turntableData.map((item, idx) => (
               <div key={idx} className="bg-white rounded-2xl p-6 sm:p-8 shadow-md shadow-gray-200/40 border-l-4 border-[#8C1515] flex flex-col sm:flex-row gap-6">
-                
+
                 {item.image && (
-                  <ProgressiveImage 
-                    highResSrc={item.image} 
-                    alt={item.title} 
+                  <ProgressiveImage
+                    highResSrc={item.image}
+                    alt={item.title}
                     sizes="(min-width: 896px) 400px, (min-width: 640px) 45vw, 90vw"
                     containerClass="w-full h-48 sm:h-auto sm:min-h-[16rem] sm:w-1/2 rounded-xl overflow-hidden shadow-sm shrink-0"
-                    imageClass="w-full h-full object-cover bg-gray-100" 
+                    imageClass="w-full h-full object-cover bg-gray-100"
                   />
                 )}
 
@@ -131,7 +131,7 @@ export const MobileHome = () => {
             ))}
           </div>
         </div>
-        
+
         {/* Join Us CTA */}
         <div className="px-6 sm:px-10 py-12 mt-6 border-t border-gray-200">
           <div className="text-center max-w-md mx-auto">
@@ -141,7 +141,7 @@ export const MobileHome = () => {
             <p className="text-gray-600 text-sm mb-8 leading-relaxed">
               {joinUs.description}
             </p>
-            <button 
+            <button
               onClick={() => window.location.hash = '#join'}
               className="custom-button"
             >
@@ -159,7 +159,7 @@ export const MobileHome = () => {
             Assets via Mixamo · neverworks (Thingiverse) · Astral-3D (CGTrader)
           </p>
           <p className="text-gray-400 text-[11px]">
-            Sketchfab: Bharad · itspiao · Josean_3dev · misfit410 · Mittergen · rhcreations
+            Sketchfab: assetfactory · Bharad · gogiart · Heliona · itspiao · Josean_3dev · misfit410 · Mittergen · neutralize · rhcreations · Sheila · Thomas Flynn · Yacob
           </p>
         </div>
 

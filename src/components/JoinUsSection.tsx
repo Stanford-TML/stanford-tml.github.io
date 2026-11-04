@@ -393,8 +393,8 @@ export const JoinUsSection = () => {
           <div>
             Assets via Mixamo · neverworks (Thingiverse) · Astral-3D (CGTrader)
           </div>
-          <div style={{ opacity: 0.85, fontSize: '0.68rem' }}>
-            Sketchfab: Bharad · itspiao · Josean_3dev · misfit410 · Mittergen · rhcreations
+          <div style={{ opacity: 0.85, fontSize: '0.68rem', maxWidth: '780px', margin: '0 auto', wordBreak: 'normal' }}>
+            Sketchfab: assetfactory · Bharad · gogiart · Heliona · itspiao · Josean_3dev · misfit410 · Mittergen · neutralize · rhcreations · Sheila · Thomas Flynn · Yacob
           </div>
         </div>
       </Html>
