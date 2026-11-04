@@ -9,6 +9,7 @@ import { Publications } from './pages/Publications'
 import { StickyNav } from './components/StickyNav'
 import { GlobalBackToTop } from './components/GlobalBackToTop'
 import { NotFound } from './pages/NotFound'
+import { HolidayDebugBar } from './components/MobileHolidayOverlay'
 
 // Loaded on demand: importing the 3D scene starts downloading all of its models,
 // so it must not be part of the main bundle that every page and device loads.
@@ -177,6 +178,7 @@ function App() {
       {!isNotFound && (currentRoute !== '#home' || isLiteMode) && <StickyNav isVisible={true} />}
       {renderPage()}
       {!isNotFound && (currentRoute !== '#home' || isLiteMode) && <GlobalBackToTop />}
+      <HolidayDebugBar />
     </>
   )
 }
